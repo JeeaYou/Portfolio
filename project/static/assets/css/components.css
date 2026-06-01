@@ -1,0 +1,274 @@
+/* 버튼/카드/모달 등 전역 컴포넌트 */
+@font-face {
+  font-family: 'SurRoundAir';
+  src: url('/static/fonts/SurRoundAir.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+html, body {
+  font-family: 'SurRoundAir', 'Noto Sans KR', sans-serif;
+}
+:root, body, .t-header, .t-topnav, .t-aside, .t-main, .t-post, .t-button, .t-page-title, .t-nav-list a, .t-meta a {
+  font-family: 'SurRoundAir', 'Noto Sans KR', sans-serif !important;
+}
+
+
+.t-aside, .t-main, .t-header, .t-topnav, .t-post, .t-button, .t-page-title {
+  font-family: 'SurRoundAir', sans-serif;
+}
+
+/* ===== 1) 기본 톤: 티스토리 다크 무드에 더 근접 ===== */
+:root{
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --line: rgba(0,0,0,.12);
+  --text: #e9eef3;
+  --muted: #333;
+  --brand: #ffffff;
+}
+
+*{ box-sizing: border-box }
+html, body { height: 90%; }
+body{
+  margin-top:10%; background:var(--bg); color:var(--text);
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  font-family: "Pretendard", "Noto Sans KR", system-ui, -apple-system, sans-serif;
+}
+
+/* ===== 4) 레이아웃/카드: 기존과 동일 (필요 부분만 유지) ===== */
+.t-shell{
+  margin-top: 102px;
+  min-height: calc(100vh - 100px - 50px);
+  margin-top: 102px;           /* 기존 유지 */
+  padding-bottom: 50px;        /* 푸터가 가리지 않게 */
+@media (max-width: 980px){
+  .t-shell{ grid-template-columns: 3fr }
+  }
+}
+
+.t-main{     
+    width: 90%;
+    padding-left: 20%;
+    margin-top: 40px;   /* 👈 추가 */
+}
+
+.t-page-title{
+    padding: 40px 0 20px 0;
+    line-height: 30px;
+    text-align: center;
+}
+.anytext{
+  color: rgba(251, 75, 2, 1);
+  font-weight: bold;
+}
+.link_category{
+    font-weight: bolder;
+    color: black;
+    margin: 10px 0 50px 0;
+}
+.link_category::after {
+    content: "";
+    display: block;
+    width: 50px;
+    border-bottom: 2px solid #000000;
+    margin: 35px auto;
+}
+.c_cnt{
+  color: rgba(251, 75, 2, 1);
+}
+
+/* 카드 그리드: 한 줄에 6개(스크롤 없이) */
+/* 카드 그리드: 한 줄에 6개 */
+.t-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;                  /* 카드 사이 간격 */
+  justify-content: flex-start; /* 여백 없이 꽉 채워지도록 */
+  margin-top: 0;   /* 👈 카드 리스트 자체에 여백 추가 (선택) */
+}
+
+.t-post {
+  position: relative;
+  flex: 0 0 calc(16.666% - 10px); /* 100% ÷ 6 = 16.666% */
+  max-width: calc(16.666% - 10px);
+  height: 200px;               /* 현재 높이 유지 */
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid #ebebeb;
+  background: url('/eyecarex/static/image/thumbnail/bg_img.jpg') center/cover no-repeat;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+  transition: transform .2s ease, box-shadow .2s ease, background .25s ease;
+}
+
+/* 기본 상태에서는 어둡지 않음 */
+.t-post::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  transition: background .25s ease;
+}
+
+/* hover 시 어두워짐 */
+.t-post:hover::before {
+  background: rgba(0, 0, 0, .45);
+}
+
+/* hover 시 개별 이미지로 변경 */
+.t-post:hover {
+  background-image: var(--hover-bg);
+}
+
+/* 중앙 버튼 */
+.t-cta {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  min-width: 100%;
+  padding: 0 16px;
+  font-weight: 700;
+  font-size: 30px;
+  letter-spacing: .02em;
+  color: #333;
+  text-decoration: none;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+/* hover 시 텍스트 변경 */
+.t-post:hover .t-cta::after { content: "시 작"; }
+
+/* eyetest용(데이터 속성으로 표시) → '검 사' */
+.t-post:hover .t-cta[data-cta="test"]::after { content: "검 사"; }
+
+.t-post:hover .t-cta {
+  color: #fff;
+}
+
+/* 원래 버튼 텍스트는 숨기고 hover 때만 "검사" 표시 */
+.t-cta {
+  font-size: 0; /* 텍스트 숨김 */
+}
+.t-cta::after {
+  content: attr(data-label); /* 기본 텍스트 표시 */
+  font-size: 30px;
+}
+
+
+/* 작은 화면: 2~3개씩 보이도록 자동 줄바꿈 허용 */
+@media (max-width: 1024px) {
+  .t-list { flex-wrap: wrap; }
+  .t-post { flex: 1 1 calc(33.33% - 10px); max-width: none; height: 200px; }
+}
+@media (max-width: 640px) {
+  .t-post { flex: 1 1 calc(50% - 10px); height: 180px; }
+}
+
+.t-thumb{ display:block; border-radius: 40px 40px 0 0; overflow:hidden; aspect-ratio: 16/16; background:#000 }
+.t-thumb img{ width:100%; height:100%; object-fit: cover; display:block }
+
+.t-post-title{ 
+  text-align: center;
+  margin: 10px 20px 0 20px;
+}
+.t-post-title a{ color: var(--muted); text-decoration:none; border-bottom:0 }
+.t-post-title a:hover{ text-decoration: underline }
+
+.t-post-desc{
+      display: -webkit-box;
+    overflow: hidden;
+    width: 300px;
+    font-size: 12px;
+    line-height: 24px;
+    color: #666;
+    vertical-align: top;
+    word-break: break-all;
+    -webkit-box-orient: vertical;
+    text-align: center;
+    margin: 2px 15px 0 15px;
+    height: 40px;
+    font-weight: bold;
+}
+
+.t-button{
+  display:inline-block; padding: 8px 12px; border-radius: 10px;
+  color: var(--text); text-decoration: none; border:1px solid var(--line);
+}
+.t-button:hover{ background: rgba(255,255,255,.06) }
+.t-button.ghost{ background: transparent }
+
+.t-pager{ display:flex; justify-content:center; margin: 18px 0 8px }
+
+.btn{
+    font-size:30px;
+    }
+
+.img_frame{
+      display:inline-block;
+      padding:2px;                 /* 테두리 두께 */
+      border-radius:16px;
+      background: linear-gradient(135deg,#7F7FD5,#86A8E7,#91EAE4);
+      max-width:90%;
+    }
+.img_frame > img{
+    display:block;
+    border-radius:12px;          /* 프레임보다 조금 작게 */
+    max-width:90%;
+    background:#fff;             /* 내부 바탕(투명 PNG면 흰색 받침) */
+}
+
+/* === Buttons: 화면부분 === */
+  /* 카메라 프레임/이미지 폭을 100%로 (기존 90% 규칙 덮어쓰기) */
+  .cam-wrap{ display:inline-block; max-width:min(95vw,1080px); text-align:left; }
+
+  .img_frame{
+    display:block;
+    padding:2px;
+    border-radius:16px;
+    background: linear-gradient(135deg,#7F7FD5,#86A8E7,#91EAE4);
+    max-width:none !important;   /* ← 기존 max-width:90% 제거 */
+    width:100% !important;
+  }
+  /* 카메라 스트림 이미지 */
+  .img_frame > img,
+  .cam-stream{
+    display:block;
+    width:100% !important;       /* ← 100%로 꽉 채움 */
+    max-width:100% !important;   /* ← 90% 규칙 덮어쓰기 */
+    height:auto !important;
+    border-radius:12px;
+    object-fit: contain;
+  }
+
+  /* 프레임 ‘바깥’ 아래쪽 좌/우 끝 버튼 줄 */
+  .cam-actions{
+    display:flex;
+    justify-content:space-between; /* 좌/우 끝 */
+    align-items:center;
+    gap:12px;
+    margin-top:10px;               /* 프레임과 간격 */
+    width:100%;
+  }
+
+  /* 버튼 스타일(필요 시 그대로 사용) */
+  .c-btn{
+    --grad: linear-gradient(90deg,#ffc352,#f452d9,#b63bff,#844eff,#2ab4ff);
+    display:inline-flex; align-items:center; gap:.5rem;
+    padding:12px 18px; border-radius:999px; font-weight:700; font-size:15px;
+    border:none; cursor:pointer; color:#fff; text-decoration:none;
+    background: var(--grad); background-size:200% 100%;
+    box-shadow:0 10px 24px rgba(132,78,255,.22);
+    transition: background-position .35s ease, transform .08s ease, box-shadow .2s ease;
+    white-space: nowrap;
+  }
+  .c-btn:hover{ background-position:100% 0; transform: translateY(-1px); }
+  .c-btn--ghost{
+    color:#333;
+    background: linear-gradient(#fff,#fff) padding-box, var(--grad) border-box;
+    border:2px solid transparent; box-shadow:none;
+  }

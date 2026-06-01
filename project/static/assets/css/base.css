@@ -1,0 +1,261 @@
+/* 리셋/노멀라이즈, 토큰(색/간격/폰트), 그리드, 공통 유틸 */
+@font-face {
+  font-family: 'SurRoundAir';
+  src: url('/static/fonts/SurRoundAir.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+html, body {
+  font-family: 'SurRoundAir', 'Noto Sans KR', sans-serif;
+}
+:root, body, .t-header, .t-topnav, .t-aside, .t-main, .t-post, .t-button, .t-page-title, .t-nav-list a, .t-meta a {
+  font-family: 'SurRoundAir', 'Noto Sans KR', sans-serif !important;
+}
+.t-aside, .t-main, .t-header, .t-topnav, .t-post, .t-button, .t-page-title {
+  font-family: 'SurRoundAir', sans-serif;
+}
+
+/* ===== 1) 기본 톤 ===== */
+:root{
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --line: rgba(0,0,0,.12);
+  --text: #e9eef3;
+  --muted: #333;
+  --brand: #ffffff;
+
+  /* 스크롤 그라데이션 (세로/가로) */
+  --scroll-grad-v: linear-gradient(#ffc352, #f452d9, #b63bff, #844eff, #2ab4ff);
+  --scroll-grad-h: linear-gradient(90deg, #ffc352, #f452d9, #b63bff, #844eff, #2ab4ff);
+}
+
+*{ box-sizing: border-box }
+html, body { height: 90%; }
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  font-family: "Pretendard", "Noto Sans KR", system-ui, -apple-system, sans-serif;
+}
+
+/* ===== 상단 스크롤 진행바(고정) ===== */
+#scroll-progress{
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 4px;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: var(--scroll-grad-h);
+  z-index: 10000;
+  pointer-events: none;
+}
+
+::-webkit-scrollbar{
+  width: 5%;
+  background-color: #F5F5F5;
+}          /* 가로 스크롤 두께 */
+
+html::-webkit-scrollbar:horizontal { height: 10px; } /* 가로는 살림 */
+
+::-webkit-scrollbar-thumb:vertical{
+  background: var(--scroll-grad-v);
+}
+::-webkit-scrollbar-thumb:horizontal{
+  background: var(--scroll-grad-h);
+}
+::-webkit-scrollbar-thumb:hover{ filter: brightness(1.05); }
+::-webkit-scrollbar-thumb:active{ filter: brightness(0.95); }
+
+/* === 가로 스크롤 유틸 === */
+.scroll-x{
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable both-edges;
+  white-space: nowrap; /* 인라인/inline-block 아이템에 적합 */
+}
+.scroll-x-flex{
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable both-edges;
+}
+.scroll-x-flex > *{ flex: 0 0 auto; } /* 줄바꿈 없이 옆으로 흐르게 */
+
+/* ===== 2) 상단 헤더 ===== */
+.t-header{
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  width: 100%;
+  height: 100px;
+  border-bottom: 1px solid #ebebeb;
+  background-color: #fff;
+  box-shadow: 0px 5px 8px rgba(0, 0, 0, 0.03);
+}
+.t-header .t-container{
+  max-width:1080px; margin:0 auto;
+  display:flex; align-items:center; gap:12px;
+}
+.t-brand{
+  color:#000000;
+  text-decoration:none; 
+  border:0;
+  font-weight:800; 
+  letter-spacing:.02em; 
+  font-size:1.25rem;
+}
+
+/* ===== 3) '카테고리' 버튼 ===== */
+.t-menu-btn{
+  margin-left:auto;
+  display:inline-flex; align-items:center; gap:8px;
+  height:36px; padding:0 12px;
+  background:transparent;
+  color:var(--text);
+  border:1px solid var(--line);
+  border-radius:18px;
+  font-size:13px; line-height:1;
+  cursor:pointer;
+  transition:background .2s ease,border-color .2s ease,transform .05s ease;
+}
+.t-menu-btn:hover{
+  background:rgba(255,255,255,.06);
+  border-color:rgba(255,255,255,.22);
+}
+.t-menu-btn:active{ transform:translateY(1px) }
+.t-menu-btn .hamburger{
+  position:relative; width:16px; height:12px; display:inline-block;
+}
+.t-menu-btn .hamburger::before{
+  content:""; position:absolute; left:0; right:0; top:0; height:2px;
+  background:#e4e8ec; border-radius:2px;
+  box-shadow: 0 5px 0 0 #e4e8ec, 0 10px 0 0 #e4e8ec;
+}
+
+/* ===== 4) 레이아웃/카드 ===== */
+.t-shell{
+  margin-top: 102px;
+  min-height: calc(100vh - 100px - 50px);
+  padding-bottom: 50px;        /* 푸터 대비 */
+}
+/* ⬇️ 원래 잘못 들어가 있던 중첩 정리 */
+@media (max-width: 980px){
+  .t-shell{ /* 필요 시 모바일 전용 보정 넣기 */ }
+}
+
+.t-aside{
+  top: 142px;
+  bottom: 82px;
+  width: 13%;
+  position: fixed;
+  border: 1px solid #ebebeb;
+  visibility: visible;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 0 30px 0 30px;
+  font-family: 'SurRoundAir';
+  font-weight: bold;
+  background-color: white;
+  box-shadow: 1px 1px 20px 1px rgba(251, 77, 2, 0.219);
+  border-radius: 20px;
+  margin-left: 40px;
+  float: left;
+  z-index: 2;
+}
+.t-profile{ 
+  text-align:center;
+  margin-top: 40%;
+}
+.t-avatar{
+  display:inline-grid; place-content:center;
+  width:84px;height:84px;border-radius:50%;
+  background:#0b0e10; border:1px solid var(--line);
+  font-weight:700; letter-spacing:.08em;
+}
+.t-bio{  
+  color: rgba(251, 75, 2, 1);
+  font-weight: bold; 
+  font-size:.95rem ;
+  margin-top: 20px;
+  margin-bottom : 50px;
+}
+
+.t-nav-title{
+  font-size: 20px;
+  font-weight:700; 
+  margin: 8px 0 6px; 
+  color: var(--muted) 
+}
+.t-nav-list, .t-meta{ list-style:none; padding:0; margin:0 }
+.t-nav-list li a, .t-meta li a{
+  display:block; padding:8px 10px; border-radius: 10px;
+  color: var(--muted); text-decoration:none; border-bottom:0;
+  font-size: 15px;
+}
+.t-nav-list li a:hover{ background: rgba(255,255,255,.06) }
+.t-divider{ height:1px; background: var(--line); margin: 10px 0 }
+
+/* 모바일: aside 오버레이로 열림 */
+@media (max-width: 980px){
+  .t-aside{
+    position: fixed; inset: 0 auto 0 0; width: 82%;
+    max-width: 320px; height: 100dvh; overflow:auto;
+    transform: translateX(-100%); transition: transform .25s ease;
+    z-index: 1200; border-right: 1px solid var(--line); border-radius: 0;
+  }
+  html.nav-open .t-aside{ transform: translateX(0) }
+}
+
+.t-main{     
+  width: 90%;
+  padding-left: 20%;
+  margin-top: 40px;
+}
+
+.t-page-title{
+  padding: 40px 0 20px 0;
+  line-height: 30px;
+  text-align: center;
+}
+.link_category{
+  font-weight: bolder;
+  color: black;
+  margin: 10px 0 50px 0;
+}
+.link_category::after {
+  content: "";
+  display: block;
+  width: 50px;
+  border-bottom: 2px solid #000000;
+  margin: 35px auto;
+}
+
+.t-button{
+  display:inline-block; padding: 8px 12px; border-radius: 10px;
+  color: var(--text); text-decoration: none; border:1px solid var(--line);
+}
+.t-button:hover{ background: rgba(255,255,255,.06) }
+.t-button.ghost{ background: transparent }
+.t-pager{ display:flex; justify-content:center; margin: 18px 0 8px }
+
+.btn{ font-size:30px; }
+
+.img_frame{
+  display:inline-block;
+  padding:2px;
+  border-radius:16px;
+  background: linear-gradient(135deg,#7F7FD5,#86A8E7,#91EAE4);
+  max-width:90%;
+}
+.img_frame > img{
+  display:block;
+  border-radius:12px;
+  max-width:90%;
+  background:#fff;
+}

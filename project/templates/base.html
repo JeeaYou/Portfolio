@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}EyeCareX{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- 전역 공통 CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/base.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/layout.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/components.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/themes.css') }}">
+  {% block head_extra %}{% endblock %}
+</head>
+
+<body>
+  <div id="scroll-progress" aria-hidden="true"></div>
+  {% block header %}{% endblock %}
+  {% block content %}{% endblock %}
+  {% block footer %}{% endblock %}
+
+  <script>
+  (function () {
+    var bar = document.getElementById('scroll-progress');
+    if (!bar) return; // 엘리먼트 없으면 종료
+
+    function clamp(v, min, max){ return Math.min(max, Math.max(min, v)); }
+
+    function update() {
+      var doc = document.documentElement;
+      var body = document.body;
+      var scrollTop = (doc && doc.scrollTop) || (body && body.scrollTop) || 0;
+      var max = ((doc && doc.scrollHeight) || (body && body.scrollHeight) || 1) - (doc && doc.clientHeight || 0);
+      if (max <= 0) { bar.style.transform = 'scaleX(0)'; return; }
+      var p = clamp(scrollTop / max, 0, 1);
+      bar.style.transform = 'scaleX(' + p + ')';
+    }
+
+    // 초기 1회 갱신
+    update();
+
+    // 스크롤/리사이즈에 반응
+    var rafId = null;
+    function onScrollOrResize(){
+      if (rafId) return;
+      rafId = requestAnimationFrame(function(){
+        rafId = null;
+        update();
+      });
+    }
+    window.addEventListener('scroll', onScrollOrResize, { passive: true });
+    window.addEventListener('resize', onScrollOrResize);
+    document.addEventListener('DOMContentLoaded', update);
+  })();
+  </script>
+</body>
+</html>

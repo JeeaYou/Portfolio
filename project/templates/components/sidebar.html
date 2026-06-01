@@ -1,0 +1,34 @@
+<!-- templates/components/sidebar.html -->
+<div class="t-aside">
+  <div class="t-profile">
+    <div class="t-avatar">
+      <img src="{{ avatar_url }}" alt="Logo">
+    </div>
+    <div class="t-bio">{{ bio_text }}</div>
+  </div>
+
+  <nav class="t-nav">
+    <div class="t-nav-title">{{ title }}</div>
+    <div class="t-divider"></div>
+    <ul class="t-nav-list">
+      {% for items in category %}
+        <li>
+          <a href="{{ url_for(items.url) }}"
+             class="{% if active_id == items.id %}is-active{% endif %}">
+            {{ items.ko_name }}
+            <span class="c_cnt">({{ items["items"]|length }})</span>
+          </a>
+          <ul class="sub_category_list">
+            {% for item in items["items"] %}
+              <li>
+                <a href="{{ item.link }}" class="link_sub_item">
+                - {{ item.ko_name }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+</div>

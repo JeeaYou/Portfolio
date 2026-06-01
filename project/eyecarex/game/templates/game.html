@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block header %}
+  {% include "components/header.html" %}
+{% endblock %}
+
+{% block content %}
+
+{# ① 이 페이지용 사이드바 데이터 세팅 #}
+{% set avatar_url = url_for('eyecarex.static', filename='button/logo.png') %}
+{% set bio_text  = "배움은 끝이 없다!" %}
+{% set title     = "EyeCareX" %}
+{% set active_id = "eyecarex" %}
+{% set nav_items = [
+  {"href": url_for('eyecarex.eyetest.index'),       "label":"눈 검사", "id":"eyetest"},
+  {"href": url_for('eyecarex.game.index'),  "label":"게 임",   "id":"game"}
+] %}
+
+<div class="t-shell">
+  {# ② include로 끼워넣기 #}
+  {% include "components/sidebar.html" %}
+	<div class="t-main">
+		<div class="t-page-title">
+			<a class="anytext">검진하고 눈건강 상태를 확인하세요!</a>
+			<h1 class="link_category">게 임 <a class="c_cnt">(1)</a></h1>
+		</div>
+		<div class="t-list">
+			<div class="t-post" id="winkbird"
+				style="--hover-bg: url('{{ url_for('eyecarex.static', filename='image/thumbnail/eyevision.png') }}')">
+			<a class="t-cta"
+				href="{{ url_for('eyecarex.game.winkbird.show') }}"
+				aria-label="게임 시작" data-label="게임"></a>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block footer %}
+  {% include "components/footer.html" %}
+{% endblock %}

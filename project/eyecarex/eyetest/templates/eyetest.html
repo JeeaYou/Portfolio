@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block header %}
+  {% include "components/header.html" %}
+{% endblock %}
+
+{% block content %}
+
+{# ① 이 페이지용 사이드바 데이터 세팅 #}
+{% set avatar_url = url_for('eyecarex.static', filename='button/logo.png') %}\
+{% set bio_text  = "배움은 끝이 없다!" %}
+{% set title     = "EyeCareX" %}
+{% set active_id = "eyetest" %} {# 필요 시 하이라이트용 #}
+{% set nav_items = [
+  {"href": url_for('eyecarex.eyetest.index'),       "label":"눈 검사", "id":"eyetest"},
+  {"href": url_for('eyecarex.game.index'),  "label":"게 임",   "id":"game"}
+] %}
+
+<div class="t-shell">
+  {# ② include로 끼워넣기 #}
+  {% include "components/sidebar.html" %}
+
+  <div class="t-main">
+    <div class="t-page-title">
+      <a class="anytext">검진하고 눈건강 상태를 확인하세요!</a>
+      <h1 class="link_category">눈건강 검진
+        <a class="c_cnt">(6)</a>
+      </h1>
+    </div>
+    <div class="t-list">
+      <!-- 시력 검사 -->
+      <!-- 카드 배경 이미지들 -->
+      <div class="t-post" id="eyevision"
+          style="--hover-bg: url('{{ url_for('eyecarex.static', filename='image/thumbnail/eyevision.png') }}')">
+        <a class="t-cta"
+          href="{{ url_for('eyecarex.eyetest.eyevision.show') }}"
+          aria-label="시력 검사 시작" data-label="시 력"></a>
+
+      </div>
+      <div class="t-post" id="colortest"
+          style="--hover-bg: url('{{ url_for('eyecarex.static', filename='image/thumbnail/colortest.png') }}')">
+        <a class="t-cta" 
+          href="{{ url_for('eyecarex.eyetest.colortest.show') }}"
+          aria-label="색각 검사 시작" data-label="색 각"></a>
+      </div>
+
+      <div class="t-post" id="cataract"
+          style="--hover-bg: url('{{ url_for('eyecarex.static', filename='image/thumbnail/cataract.png') }}')">
+        <a class="t-cta" 
+          href="{{ url_for('eyecarex.eyetest.cataract.show') }}"  
+          aria-label="백내장 검사 시작" data-label="백내장"></a>
+      </div>
+
+      <div class="t-post" id="astigmatism"
+          style="--hover-bg: url('{{ url_for('eyecarex.static', filename='image/thumbnail/astigmatism.png') }}')">
+        <a class="t-cta" 
+          href="{{ url_for('eyecarex.eyetest.eyetest_comp.show', disease='astigmatism') }}"
+          aria-label="난시 검사 시작" data-label="난 시"></a>
+      </div>
+
+      <div class="t-post" id="glaucoma"
+          style="--hover-bg: url('{{ url_for('eyecarex.static', filename='image/thumbnail/glaucoma.jpg') }}')">
+        <a class="t-cta" 
+          href="{{ url_for('eyecarex.eyetest.eyetest_comp.show', disease='glaucoma') }}"
+          aria-label="녹내장 검사 시작" data-label="녹내장"></a>
+      </div>
+
+      <div class="t-post" id="macula"
+          style="--hover-bg: url('{{ url_for('eyecarex.static', filename='image/thumbnail/maculopathy.jpg') }}')">
+        <a class="t-cta" 
+          href="{{ url_for('eyecarex.eyetest.eyetest_comp.show', disease='maculopathy') }}"
+          aria-label="황반변성 검사 시작" data-label="황반변성"></a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block footer %}
+  {% include "components/footer.html" %}
+{% endblock %}

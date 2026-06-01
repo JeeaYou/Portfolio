@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Jeea's Portfolio</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="static/assets/css/mainstyle.css" />
+    <noscript><link rel="stylesheet" href="static/assets/css/noscript.css" /></noscript>
+  </head>
+  <body class="is-preload">
+    <!-- Wrapper -->
+    <div id="wrapper">
+      <!-- Header -->
+      <header id="header">
+        <div class="content">
+          <div class="inner">
+            <h1>Jeea's Portfolio</h1>
+          </div>
+        </div>
+        <nav>
+          <ul>
+            {% for p in projects %}
+            <li>
+              <a href="{{ p.url }}"
+                 class="swap"
+                 id="{{ p.id }}"
+                 data-text="{{ p.ko_name }}"
+                 data-hover="{{ p.en_name }}">
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </nav>
+      </header>
+
+      <!-- Footer -->
+      <footer id="footer">
+        <ul class="icons">
+          <li><a href="https://yumei1992.tistory.com" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+          <li><a href="https://github.com/JeeaYou" class="icon brands fa-github"><span class="label">Github</span></a></li>
+        </ul>
+        <p class="copyright">Design: 유지아 </p>
+      </footer>
+    </div>
+
+    <!-- BG -->
+    <div id="bg"></div>
+
+    <!-- Scripts -->
+    <script src="static/assets/js/jquery.min.js"></script>
+    <script src="static/assets/js/browser.min.js"></script>
+    <script src="static/assets/js/breakpoints.min.js"></script>
+    <script src="static/assets/js/util.js"></script>
+    <script src="static/assets/js/main.js"></script>
+  </body>
+</html>

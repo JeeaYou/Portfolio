@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block header %}
+  {% include "components/header.html" %}
+{% endblock %}
+
+{% block content %}
+
+<div class="t-shell">
+  {# ② include로 끼워넣기 #}
+  {% include "components/sidebar.html" %}
+  {% for cat in category %}
+    {% set is_eyetest = cat.category_id == 210 %}
+    <div class="t-main">
+      <div class="t-page-title">
+        {% if cat.desc %}<a class="anytext">{{ cat.desc }}</a>{% endif %}
+        <h1 class="link_category">{{ cat.ko_name }}</h1>
+      </div>
+
+      <div class="t-list">
+        {% for item in cat["items"] %}
+          <div class="t-post"
+              id="{{ item.name }}"
+              style="--hover-bg: url('{{ item.thumbnail }}')">
+            <a class="t-cta"
+              data-cta="{{ 'test' if is_eyetest else 'start' }}"
+              href="{{ item.link }}"
+              aria-label="{{ item.ko_name }} 시작"
+              data-label="{{ item.ko_name }}"></a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
+
+</div>
+
+{% endblock %}
+{% block footer %}
+  {% include "components/footer.html" %}
+{% endblock %}

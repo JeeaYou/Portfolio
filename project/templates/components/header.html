@@ -1,0 +1,25 @@
+<!-- templates/components/header.html -->
+<header class="t-header">
+  <div class="t-container">
+    <!-- 좌측: 사이트 로고/제목 -->
+    <a class="t-brand" href="/">J.A.</a>
+
+    <!-- 우측: 상단 네비 (데스크톱에서 보임) -->
+    <div class="t-topnav" aria-label="Primary">
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/project">Project</a></li>
+        <li><a href="/category">Category</a></li>
+        <li class="t-more"><a href="/contact">Contact</a></li>
+        <li><a class="t-subscribe" href="/subscribe">Subscribe</a></li>
+      </ul>
+    </div>
+
+    <!-- 모바일: 버거 버튼 -->
+    <button class="t-burger" aria-label="메뉴 열기"
+            onclick="document.documentElement.classList.toggle('nav-open')">
+      <span class="hamburger" aria-hidden="true"></span>
+      <span class="t-burger-text">카테고리</span>
+    </button>
+  </div>
+</header>

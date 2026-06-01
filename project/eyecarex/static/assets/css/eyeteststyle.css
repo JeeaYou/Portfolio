@@ -1,0 +1,521 @@
+@font-face {
+  font-family: 'SurRoundAir';
+  src: url('/static/fonts/SurRoundAir.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+html, body {
+  font-family: 'SurRoundAir', 'Noto Sans KR', sans-serif;
+}
+:root, body, .t-header, .t-topnav, .t-aside, .t-main, .t-post, .t-button, .t-page-title, .t-nav-list a, .t-meta a {
+  font-family: 'SurRoundAir', 'Noto Sans KR', sans-serif !important;
+}
+
+
+.t-aside, .t-main, .t-header, .t-topnav, .t-post, .t-button, .t-page-title {
+  font-family: 'SurRoundAir', sans-serif;
+}
+
+/* ===== 1) 기본 톤: 티스토리 다크 무드에 더 근접 ===== */
+:root{
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --line: rgba(0,0,0,.12);
+  --text: #e9eef3;
+  --muted: #333;
+  --brand: #ffffff;
+}
+
+*{ box-sizing: border-box }
+html, body { height: 90%; }
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  font-family: "Pretendard", "Noto Sans KR", system-ui, -apple-system, sans-serif;
+}
+
+/* ===== 2) 상단 헤더: 진한 단색 배경 + 얇은 경계 ===== */
+.t-header{
+  position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    width: 100%;
+    height: 100px;
+    border-bottom: 1px solid #ebebeb;
+    background-color: #fff;
+    box-shadow: 0px 5px 8px rgba(0, 0, 0, 0.03);
+}
+
+.t-header .t-container{
+  max-width:1080px; margin:0 auto;
+  display:flex; align-items:center; gap:12px;
+}
+
+/* 브랜드 (블로그 제목 느낌) */
+.t-brand{
+  color:#000000;
+  text-decoration:none; 
+  border:0;
+  font-weight:800; 
+  letter-spacing:.02em; 
+  font-size:1.25rem;
+}
+
+/* ===== 3) '카테고리' 버튼: pill + 3줄 햄버거 ===== */
+.t-menu-btn{
+  margin-left:auto;                 /* 우측 정렬 */
+  display:inline-flex; align-items:center; gap:8px;
+  height:36px; padding:0 12px;
+  background:transparent;
+  color:var(--text);
+  border:1px solid var(--line);
+  border-radius:18px;               /* pill 모양 */
+  font-size:13px; line-height:1;
+  cursor:pointer;
+  transition:background .2s ease,border-color .2s ease,transform .05s ease;
+}
+.t-menu-btn:hover{
+  background:rgba(255,255,255,.06);
+  border-color:rgba(255,255,255,.22);
+}
+.t-menu-btn:active{ transform:translateY(1px) }
+
+/* 3줄 햄버거: pseudo 하나로 3줄 그리기 (요소는 <span class="hamburger"> 그대로 사용) */
+.t-menu-btn .hamburger{
+  position:relative; width:16px; height:12px; display:inline-block;
+}
+.t-menu-btn .hamburger::before{
+  content:""; position:absolute; left:0; right:0; top:0; height:2px;
+  background:#e4e8ec; border-radius:2px;
+  /* 아래 두 줄은 그림자처럼 복제해서 3줄 만들기 */
+  box-shadow:
+    0 5px 0 0 #e4e8ec,  /* 가운데 줄 */
+    0 10px 0 0 #e4e8ec; /* 맨 아래 줄 */
+}
+
+/* ===== 4) 레이아웃/카드: 기존과 동일 (필요 부분만 유지) ===== */
+.t-shell{
+  margin-top: 102px;
+  min-height: calc(100vh - 100px - 50px);
+  margin-top: 102px;           /* 기존 유지 */
+  padding-bottom: 50px;        /* 푸터가 가리지 않게 */
+@media (max-width: 980px){
+  .t-shell{ grid-template-columns: 3fr }
+}
+}
+
+.t-aside{
+      top: 142px;
+    bottom: 82px;
+    width: 13%;
+    position: fixed;
+    border: 1px solid #ebebeb;
+    visibility: visible;
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: 0 30px 0 30px;
+    font-family: 'SurRoundAir';
+    font-weight: bold;
+    background-color: white;
+    box-shadow: 1px 1px 20px 1px rgba(251, 77, 2, 0.219);
+    border-radius: 20px;
+    margin-left: 40px;
+    float: left;
+    z-index: 2;
+}
+.t-profile{ 
+  text-align:center;
+  margin-top: 40%;
+}
+.t-avatar{
+  display:inline-grid; place-content:center;
+  width:84px;height:84px;border-radius:50%;
+  background:#0b0e10; border:1px solid var(--line);
+  font-weight:700; letter-spacing:.08em;
+}
+.t-bio{  
+  color: rgba(251, 75, 2, 1);
+  font-weight: bold; 
+  font-size:.95rem ;
+  margin-top: 20px;
+  margin-bottom : 50px;
+}
+
+.t-nav-title{
+  font-size: 20px;
+  font-weight:700; 
+  margin: 8px 0 6px; 
+  color: var(--muted) 
+}
+.t-nav-list, .t-meta{ list-style:none; padding:0; margin:0 }
+.t-nav-list li a, .t-meta li a{
+  display:block; padding:8px 10px; border-radius: 10px;
+  color: var(--muted); text-decoration:none; border-bottom:0;
+  font-size: 15px;
+}
+.t-nav-list li a:hover{ background: rgba(255,255,255,.06) }
+.t-divider{ height:1px; background: var(--line); margin: 10px 0 }
+
+/* 모바일: aside 오버레이로 열림 */
+@media (max-width: 980px){
+  .t-aside{
+    position: fixed; inset: 0 auto 0 0; width: 82%;
+    max-width: 320px; height: 100dvh; overflow:auto;
+    transform: translateX(-100%); transition: transform .25s ease;
+    z-index: 1200; border-right: 1px solid var(--line); border-radius: 0;
+  }
+  html.nav-open .t-aside{ transform: translateX(0) }
+}
+
+.t-main{     
+    width: 90%;
+    padding-left: 20%;
+      margin-top: 40px;   /* 👈 추가 */
+
+}
+
+.t-page-title{
+    padding: 40px 0 20px 0;
+    line-height: 30px;
+    text-align: center;
+}
+.anytext{
+  color: rgba(251, 75, 2, 1);
+  font-weight: bold;
+}
+.link_category{
+    font-weight: bolder;
+    color: black;
+    margin: 10px 0 50px 0;
+}
+.link_category::after {
+    content: "";
+    display: block;
+    width: 50px;
+    border-bottom: 2px solid #000000;
+    margin: 35px auto;
+}
+.c_cnt{
+  color: rgba(251, 75, 2, 1);
+}
+
+/* 카드 그리드: 한 줄에 6개(스크롤 없이) */
+/* 카드 그리드: 한 줄에 6개 */
+.t-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;                  /* 카드 사이 간격 */
+  justify-content: flex-start; /* 여백 없이 꽉 채워지도록 */
+  margin-top: 10%;   /* 👈 카드 리스트 자체에 여백 추가 (선택) */
+}
+
+.t-post {
+  position: relative;
+  flex: 0 0 calc(16.666% - 10px); /* 100% ÷ 6 = 16.666% */
+  max-width: calc(16.666% - 10px);
+  height: 200px;               /* 현재 높이 유지 */
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid #ebebeb;
+  background: url('/eyecarex/static/image/thumbnail/bg_img.jpg') center/cover no-repeat;
+  box-shadow: 0 2px 10px rgba(0,0,0,.06);
+  transition: transform .2s ease, box-shadow .2s ease, background .25s ease;
+}
+
+/* 기본 상태에서는 어둡지 않음 */
+.t-post::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  transition: background .25s ease;
+}
+
+/* hover 시 어두워짐 */
+.t-post:hover::before {
+  background: rgba(0, 0, 0, .45);
+}
+
+/* hover 시 개별 이미지로 변경 */
+.t-post:hover {
+  background-image: var(--hover-bg);
+}
+
+/* 중앙 버튼 */
+.t-cta {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  min-width: 100%;
+  padding: 0 16px;
+  font-weight: 700;
+  font-size: 30px;
+  letter-spacing: .02em;
+  color: #333;
+  text-decoration: none;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+/* hover 시 텍스트 변경 */
+
+.t-post:hover .t-cta {
+  color: #fff;
+}
+
+/* 원래 버튼 텍스트는 숨기고 hover 때만 "검사" 표시 */
+.t-cta {
+  font-size: 0; /* 텍스트 숨김 */
+}
+.t-cta::after {
+  content: attr(data-label); /* 기본 텍스트 표시 */
+  font-size: 30px;
+}
+
+
+/* 작은 화면: 2~3개씩 보이도록 자동 줄바꿈 허용 */
+@media (max-width: 1024px) {
+  .t-list { flex-wrap: wrap; }
+  .t-post { flex: 1 1 calc(33.33% - 10px); max-width: none; height: 200px; }
+}
+@media (max-width: 640px) {
+  .t-post { flex: 1 1 calc(50% - 10px); height: 180px; }
+}
+
+.t-thumb{ display:block; border-radius: 40px 40px 0 0; overflow:hidden; aspect-ratio: 16/16; background:#000 }
+.t-thumb img{ width:100%; height:100%; object-fit: cover; display:block }
+
+.t-post-title{ 
+  text-align: center;
+  margin: 10px 20px 0 20px;
+}
+.t-post-title a{ color: var(--muted); text-decoration:none; border-bottom:0 }
+.t-post-title a:hover{ text-decoration: underline }
+
+.t-post-desc{
+      display: -webkit-box;
+    overflow: hidden;
+    width: 300px;
+    font-size: 12px;
+    line-height: 24px;
+    color: #666;
+    vertical-align: top;
+    word-break: break-all;
+    -webkit-box-orient: vertical;
+    text-align: center;
+    margin: 2px 15px 0 15px;
+    height: 40px;
+    font-weight: bold;
+}
+
+.t-button{
+  display:inline-block; padding: 8px 12px; border-radius: 10px;
+  color: var(--text); text-decoration: none; border:1px solid var(--line);
+}
+.t-button:hover{ background: rgba(255,255,255,.06) }
+.t-button.ghost{ background: transparent }
+
+.t-pager{ display:flex; justify-content:center; margin: 18px 0 8px }
+/* ===== 상단 네비 (데스크톱) ===== */
+.t-topnav{ margin-left:auto; }
+
+.t-topnav a {
+  color: rgba(0, 0, 0, 0.8);
+  font-family: 'surRoundAir';  
+  font-size: 11pt;
+  font-weight: bold;
+  padding: 15px 25px;
+  /**/
+  position: relative;
+  display: block;
+  text-decoration: none;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.t-topnav li{
+  display: inline-block;
+  margin: 30px;
+}
+.t-topnav ul{
+  display:flex; align-items:center; gap:8px;
+  list-style:none; margin:0; padding:0;
+}
+.t-topnav span{
+  display:inline-block; line-height:1;
+  padding:8px 12px; border-radius:8px;
+  background:transparent; 
+  color:rgb(0, 0, 0);
+  text-decoration:none;
+  border:1px solid transparent;
+  font-size:.95rem; cursor:pointer;
+  font-weight: bold;
+}
+
+.t-topnav a:before, .t-topnav a span:before, .t-topnav a:after, .t-topnav a span:after {
+  content: "";
+  position: absolute;
+}
+
+.t-topnav a:before, .t-topnav a span:before {
+  top: -webkit-calc(50% - .3em);
+  top: calc(50% - .3em);
+  left: -.25em;
+  width: .5em;
+  height: .5em;
+  opacity: 0;
+  -webkit-transform: translate3d(-.6em, 0, 0) rotate(45deg);
+  transform: translate3d(-.6em, 0, 0) rotate(45deg)
+}
+
+.t-topnav a:after, .t-topnav a span:after {
+  bottom: -webkit-calc(50% - .35em);
+  bottom: calc(50% - .35em);
+  right: -.25em;
+  width: .5em;
+  height: .5em;
+  opacity: 0;
+  -webkit-transform: translate3d(.6em, 0, 0) rotate(45deg);
+  transform: translate3d(.6em, 0, 0) rotate(45deg)
+}
+
+.t-topnav a:before, .t-topnav a:after {
+  -webkit-transition: -webkit-transform .3s ease-out, opacity .3s;
+  transition: transform .3s ease-out, opacity .3s
+}
+
+.t-topnav a span:before, .t-topnav a span:after {
+  -webkit-transition: -webkit-transform .3s ease-out .15s, opacity 0s .05s;
+  transition: transform .3s ease-out .15s, opacity 0s .05s
+}
+
+.t-topnav a:hover {
+  overflow: visible;
+  color: #fe664e!important;
+}
+
+.t-topnav a:hover:before, .t-topnav a:hover span:before {
+  -webkit-transform: translate3d(0, 0, 0) rotate(45deg);
+  transform: translate3d(0, 0, 0) rotate(45deg);
+  opacity: 1
+}
+
+.t-topnav a:hover:after, .t-topnav a:hover span:after {
+  -webkit-transform: translate3d(0, 0, 0) rotate(45deg);
+  transform: translate3d(0, 0, 0) rotate(45deg);
+  opacity: 1
+}
+
+.t-topnav a:before, .t-topnav a span:before {
+  border-right: .15em solid rgba(138, 138, 138, 0.4);
+  border-top: .15em solid  rgba(255,151,0,1);
+}
+
+.t-topnav a:after, .t-topnav a span:after {
+  border-left: .15em solid  rgba(255,151,0,1);
+  border-bottom: .15em solid rgba(138, 138, 138, 0.4);
+}
+
+.t-topnav li{
+	display: inline-block;
+    margin: 30px;
+}
+
+/* Other 드롭다운 */
+.t-more details{ position:relative; }
+.t-more summary{
+  list-style:none; cursor:pointer; user-select:none;
+  padding:8px 12px; border-radius:8px; outline:none;
+}
+.t-more summary::-webkit-details-marker{ display:none }
+.t-more[open] summary,
+.t-more summary:hover{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.14);
+}
+.t-more-menu{
+  position:absolute; right:0; top:calc(100% + 8px);
+  min-width:180px; padding:6px; margin:0; list-style:none;
+  background:#0e1012; border:1px solid rgba(255,255,255,.14);
+  border-radius:10px; box-shadow:0 12px 28px rgba(0,0,0,.36);
+}
+.t-more-menu li a{
+  display:block; padding:8px 10px; border-radius:8px;
+  color:var(--text); text-decoration:none;
+}
+.t-more-menu li a:hover{
+  background:rgba(255,255,255,.06);
+}
+
+/* Subscribe 강조 (티스토리 '구독' 느낌) */
+.t-subscribe{
+  border:1px solid rgba(255,255,255,.22);
+}
+.t-subscribe:hover{
+  background:#e9eef3; color:#0b0e10;
+}
+
+/* ===== 모바일 버거 버튼 ===== */
+.t-burger{
+  margin-left:auto; display:none;
+  align-items:center; gap:8px;
+  height:36px; padding:0 12px;
+  background:transparent; color:var(--text);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:18px; cursor:pointer;
+}
+.t-burger .hamburger{
+  position:relative; width:16px; height:12px; display:inline-block;
+}
+.t-burger .hamburger::before{
+  content:""; position:absolute; left:0; right:0; top:0; height:2px;
+  background:#e4e8ec; border-radius:2px;
+  box-shadow:0 5px 0 0 #e4e8ec, 0 10px 0 0 #e4e8ec;
+}
+.t-burger-text{ font-size:.9rem; }
+
+/* 반응형: 모바일에서는 상단 네비 숨기고 버거 표시 */
+@media (max-width: 860px){
+  .t-topnav{ display:none; }
+  .t-burger{ display:inline-flex; }
+}
+
+/* ===== 사이드 패널(기존) 오버레이 연동 ===== */
+@media (max-width: 980px){
+  .t-aside{
+    position: fixed; inset: 0 auto 0 0; width: 82%;
+    max-width: 320px; height: 100dvh; overflow:auto;
+    transform: translateX(-100%); transition: transform .25s ease;
+    z-index: 1200; border-right: 1px solid var(--line); border-radius: 0;
+    background: #0f1214; color:#e9eef3;
+  }
+  html.nav-open .t-aside{ transform: translateX(0) }
+}
+.wrap_etc{
+    margin-left: 30%;
+    margin-right: 10%;
+    padding-top: 48px;
+    padding-bottom: 5px;
+    border-top: 1px solid #ebebeb;
+}
+
+.area_foot {
+    height: 50px;
+    font-size: 12px;
+    line-height: 50px;
+    text-align: center;
+    background-color: #f0f0f0;
+    color: #aaa;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    margin-top: 21px;
+    display: flex;
+    z-index: 1;
+}
