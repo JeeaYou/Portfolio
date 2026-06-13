@@ -12,7 +12,7 @@ def index():
             Project.id, Project.ko_name, Project.en_name, Project.url
         )
         .filter_by(is_active=1)
-        .order_by(Project.id)
+        .order_by(Project.sort_order.asc())
         .all()
     )
 

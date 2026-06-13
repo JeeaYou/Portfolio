@@ -1,0 +1,800 @@
+/* =========================
+   Music AI Page
+   사이드바는 건드리지 않고 본문만 꾸미기
+========================= */
+
+html {
+  scroll-behavior: smooth;
+}
+
+.music-ai-shell .c_cnt {
+  display: none !important;
+}
+
+.music-ai-page {
+  width: 90%;
+  margin-top: 40px 0;
+  padding-left: 20%;
+  box-sizing: border-box;
+}
+
+/* =========================
+   Upload Hero Section
+   음악 오디오 파일 업로드 구역
+========================= */
+
+.music-ai-hero {
+  width: 100%;
+  min-height: calc(80vh - 40px);
+
+  padding: 64px 48px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+  border-radius: 28px;
+  background: linear-gradient(135deg, #f8f7ff 0%, #eef5ff 50%, #ffffff 100%);
+  box-shadow: 0 24px 60px rgba(31, 45, 61, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.music-ai-badge {
+  display: inline-block;
+  margin-bottom: 18px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #5d5fef;
+  background: rgba(93, 95, 239, 0.1);
+}
+
+.music-ai-hero h1 {
+  margin: 0 0 18px;
+  font-size: 44px;
+  line-height: 1.15;
+  font-weight: 800;
+  color: #1f2937;
+}
+
+.music-ai-hero p {
+  max-width: 620px;
+  margin: 0 auto 100px;
+  font-size: 17px;
+  line-height: 1.8;
+  color: #667085;
+}
+
+/* =========================
+   Upload Box
+========================= */
+
+.upload-box {
+  width: 100%;
+  max-width: 380px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* 기본 파일 input 숨기기 */
+.audio-file-input {
+  display: none;
+}
+
+/* 파일 선택 버튼 + 분석 버튼 공통 디자인 */
+.upload-label,
+.analyze-btn {
+  min-width: 220px;
+  height: 52px;
+  padding: 0 28px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 999px;
+
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  text-decoration: none;
+
+  background: linear-gradient(135deg, #6c63ff, #4f46e5);
+  cursor: pointer;
+
+  box-shadow: 0 12px 28px rgba(79, 70, 229, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+
+  box-sizing: border-box;
+}
+
+.upload-label:hover,
+.analyze-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 36px rgba(79, 70, 229, 0.38);
+}
+
+.analyze-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+  transform: none;
+  box-shadow: 0 12px 28px rgba(79, 70, 229, 0.2);
+}
+
+/* =========================
+   Selected File Box
+========================= */
+
+.selected-file-name {
+  width: 100%;
+  max-width: 320px;
+  min-height: 48px;
+
+  margin: 0 !important;
+  padding: 10px 16px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  border: 1px solid rgba(99, 102, 241, 0.16);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.65);
+
+  font-size: 14px;
+  line-height: 1.5;
+  color: #64748b;
+  text-align: center;
+
+  box-sizing: border-box;
+}
+
+.selected-file-name.is-empty {
+  border-style: dashed;
+  background: rgba(255, 255, 255, 0.45);
+  color: #94a3b8;
+}
+
+.selected-file-count {
+  display: block;
+  margin-bottom: 3px;
+
+  font-size: 12px;
+  font-weight: 700;
+  color: #6c63ff;
+}
+
+.selected-file-list {
+  width: 100%;
+  max-height: 90px;
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  padding-right: 4px;
+}
+
+.selected-file-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.selected-file-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.selected-file-list::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.35);
+  border-radius: 999px;
+}
+
+.selected-file-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.55);
+}
+
+.selected-file-item {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+
+  line-height: 1.5;
+  text-align: left;
+
+  box-sizing: border-box;
+}
+
+.selected-file-index {
+  flex: 0 0 auto;
+  color: #6c63ff;
+  font-weight: 700;
+}
+
+.selected-file-text {
+  flex: 1;
+  min-width: 0;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.remove-file-btn {
+  width: 20px;
+  height: 20px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  border: none;
+  border-radius: 50%;
+
+  background: rgba(99, 102, 241, 0.1);
+  color: #6c63ff;
+
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.remove-file-btn:hover {
+  background: rgba(99, 102, 241, 0.18);
+  color: #4f46e5;
+  transform: scale(1.05);
+}
+
+.clear-file-btn {
+  height: 36px;
+  padding: 0 16px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(99, 102, 241, 0.18);
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.7);
+  color: #64748b;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.clear-file-btn:hover {
+  background: #eef2ff;
+  color: #4f46e5;
+  transform: translateY(-1px);
+}
+
+/* =========================
+   Anchor Sections
+   분석결과 보기 / 데이터 시각화
+========================= */
+
+.music-ai-anchor-section {
+  margin-top: 48px;
+  padding: 36px 32px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #f8f7ff 0%, #eef5ff 50%, #ffffff 100%);
+  box-shadow: 0 24px 60px rgba(31, 45, 61, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  scroll-margin-top: 120px;
+}
+
+.music-ai-anchor-section h2 {
+  margin: 0 0 10px;
+  font-size: 26px;
+  font-weight: 800;
+  color: #111827;
+  text-align: center;
+}
+
+.music-ai-anchor-section p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #64748b;
+  text-align: center;
+}
+
+.empty-section-text {
+  margin-top: 16px !important;
+  color: #94a3b8 !important;
+}
+
+/* =========================
+   Result Section
+========================= */
+
+.result-section {
+  width: 100%;
+  margin: 36px auto 0;
+  scroll-margin-top: 120px;
+}
+
+/* =========================
+   Progress Bar Section
+========================= */
+
+.analysis-progress-card {
+  width: 100%;
+  padding: 32px;
+  margin-bottom: 30px;
+
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 12px 30px rgba(31, 45, 61, 0.08);
+
+  box-sizing: border-box;
+}
+
+.progress-title {
+  margin: 0 0 8px !important;
+
+  font-size: 22px !important;
+  font-weight: 800;
+  color: #111827 !important;
+  text-align: center !important;
+}
+
+.progress-desc {
+  margin: 0 0 24px !important;
+
+  font-size: 14px !important;
+  color: #64748b !important;
+  text-align: center !important;
+}
+
+.file-progress-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.file-progress-item {
+  padding: 16px;
+
+  border-radius: 16px;
+  background: #f8fafc;
+  border: 1px solid #eef2f7;
+}
+
+.file-progress-item.is-waiting {
+  opacity: 0.7;
+}
+
+.file-progress-item.is-running {
+  border-color: rgba(99, 102, 241, 0.35);
+  background: #ffffff;
+  box-shadow: 0 8px 22px rgba(99, 102, 241, 0.08);
+}
+
+.file-progress-item.is-running .file-progress-status {
+  color: #4f46e5 !important;
+}
+
+.file-progress-item.is-done .file-progress-bar {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.file-progress-item.is-done .file-progress-percent,
+.file-progress-item.is-done .file-progress-status {
+  color: #059669 !important;
+}
+
+.file-progress-item.is-failed .file-progress-bar {
+  background: linear-gradient(135deg, #fb7185, #e11d48);
+}
+
+.file-progress-item.is-failed .file-progress-percent,
+.file-progress-item.is-failed .file-progress-status {
+  color: #e11d48 !important;
+}
+
+.file-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  margin-bottom: 10px;
+}
+
+.file-progress-name {
+  flex: 1;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: 14px;
+  font-weight: 800;
+  color: #334155;
+}
+
+.file-progress-percent {
+  flex: 0 0 auto;
+
+  font-size: 13px;
+  font-weight: 800;
+  color: #6c63ff;
+}
+
+.file-progress-track {
+  width: 100%;
+  height: 10px;
+
+  overflow: hidden;
+
+  border-radius: 999px;
+  background: #e5e7eb;
+}
+
+.file-progress-bar {
+  height: 100%;
+  width: 0%;
+
+  border-radius: 999px;
+  background: linear-gradient(135deg, #6c63ff, #4f46e5);
+
+  transition: width 0.45s ease;
+}
+
+.file-progress-status {
+  margin: 8px 0 0 !important;
+
+  font-size: 12px !important;
+  font-weight: 700;
+  color: #64748b !important;
+  text-align: left !important;
+}
+
+/* =========================
+   Analysis Result Cards
+========================= */
+
+.analysis-summary-card,
+.analysis-card {
+  width: 100%;
+  padding: 36px;
+  margin-bottom: 30px;
+
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 12px 30px rgba(31, 45, 61, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+
+  box-sizing: border-box;
+}
+
+.analysis-summary-card {
+  text-align: center;
+}
+
+.complete-text {
+  width: fit-content;
+  margin: 0 auto 22px !important;
+  padding: 8px 18px;
+
+  border-radius: 999px;
+  background: rgba(93, 95, 239, 0.1);
+  color: #5d5fef;
+
+  font-size: 14px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.summary-grid div,
+.info-box {
+  padding: 18px 14px;
+  border-radius: 14px;
+  background: #f8fafc;
+  border: 1px solid #eef2f7;
+  text-align: center;
+}
+
+.summary-grid span,
+.info-box span {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.summary-grid strong,
+.info-box strong {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.card-header {
+  margin-bottom: 22px;
+  text-align: center;
+}
+
+.track-number {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 5px 12px;
+
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #4f46e5;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  color: #111827;
+  word-break: break-word;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+/* Original / Vocal 병렬 영역 */
+.analysis-two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.analysis-section {
+  margin-top: 22px;
+  padding: 20px;
+
+  border: 1px solid #eef2f7;
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.analysis-section h3 {
+  margin: 0 0 14px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.analysis-section p {
+  margin: 7px 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #475569;
+  text-align: left;
+}
+
+.analysis-section b {
+  color: #111827;
+}
+
+/* 악기 chip */
+.instrument-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.instrument-chip {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 7px 12px;
+  border-radius: 999px;
+
+  background: #eef2ff;
+  color: #4f46e5;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* 분석 시간 */
+/* =========================
+   Analysis Time Summary
+========================= */
+
+/* =========================
+   Analysis Time Summary
+========================= */
+
+.analysis-time-detail {
+  margin-top: 24px;
+  padding: 22px;
+
+  border-radius: 18px;
+  background: #f8fafc;
+  border: 1px solid #eef2f7;
+}
+
+.analysis-time-detail h3 {
+  margin: 0 0 16px;
+
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+  text-align: center;
+}
+
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.time-box {
+  padding: 16px 12px;
+
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid #eef2f7;
+
+  text-align: center;
+}
+
+.time-box span,
+.total-time-box span {
+  display: block;
+  margin-bottom: 6px;
+
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.time-box strong,
+.total-time-box strong {
+  font-size: 16px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.total-time-box {
+  margin-top: 14px;
+  padding: 16px 12px;
+
+  border-radius: 14px;
+  background: #eef2ff;
+  border: 1px solid rgba(99, 102, 241, 0.18);
+
+  text-align: center;
+}
+
+.total-time-box strong {
+  color: #4f46e5;
+}
+
+@media (max-width: 900px) {
+  .time-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .time-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 에러 */
+.analysis-error {
+  padding: 28px;
+  border-radius: 18px;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #be123c;
+  text-align: center;
+  box-shadow: none;
+}
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 900px) {
+  .music-ai-page {
+    max-width: 90%;
+    padding-left: 20%;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .info-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .analysis-two-column {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .music-ai-page {
+    width: 100%;
+    padding-left: 0;
+    padding: 0 16px;
+  }
+
+  .music-ai-hero {
+    min-height: auto;
+    padding: 38px 22px;
+    border-radius: 22px;
+  }
+
+  .music-ai-hero h1 {
+    font-size: 28px;
+  }
+
+  .music-ai-hero p {
+    font-size: 15px;
+  }
+
+  .upload-box {
+    max-width: 100%;
+  }
+
+  .upload-label,
+  .analyze-btn {
+    width: 100%;
+    min-width: auto;
+    max-width: 260px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .analysis-card,
+  .analysis-summary-card,
+  .analysis-progress-card,
+  .music-ai-anchor-section {
+    padding: 26px 20px;
+  }
+}

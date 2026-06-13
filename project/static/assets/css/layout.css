@@ -97,68 +97,119 @@ body{
     0 10px 0 0 #e4e8ec; /* 맨 아래 줄 */
 }
 
-/* ===== 4) 레이아웃/카드: 기존과 동일 (필요 부분만 유지) ===== */
-.t-shell{
-  margin-top: 102px;
-  min-height: calc(100vh - 100px - 50px);
-  margin-top: 102px;           /* 기존 유지 */
-  padding-bottom: 50px;        /* 푸터가 가리지 않게 */
-@media (max-width: 980px){
-  .t-shell{ grid-template-columns: 3fr }
-}
+.t-shell {
+  position: relative;
+  top: -40px;
 }
 
-.t-aside{
-      top: 142px;
-    bottom: 82px;
-    width: 13%;
-    position: fixed;
-    border: 1px solid #ebebeb;
-    visibility: visible;
-    overflow: auto;
-    overscroll-behavior: contain;
-    padding: 0 30px 0 30px;
-    font-family: 'SurRoundAir';
-    font-weight: bold;
-    background-color: white;
-    box-shadow: 1px 1px 20px 1px rgb(255 210 212);
-    border-radius: 20px;
-    margin-left: 40px;
-    float: left;
-    z-index: 2;
-}
-.t-profile{ 
-  text-align:center;
-  margin-top: 40%;
-}
-.t-avatar{
-  display:inline-grid; place-content:center;
-  width:84px;height:84px;border-radius:50%;
-  background:#0b0e10; border:1px solid var(--line);
-  font-weight:700; letter-spacing:.08em;
-}
-.t-bio{  
-  color: rgba(251, 75, 2, 1);
-  font-weight: bold; 
-  font-size:.95rem ;
-  margin-top: 20px;
-  margin-bottom : 50px;
+/* =========================
+   Simple Sidebar
+========================= */
+
+.t-aside {
+  position: fixed;
+  top: 130px;
+  bottom: 70px;
+  left: 32px;
+
+  width: 220px;
+  padding: 24px 18px;
+
+  visibility: visible;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #e5e7eb;
+  border-radius: 22px;
+  box-shadow: 0 14px 36px rgba(31, 45, 61, 0.08);
+
+  font-family: 'SurRoundAir', 'Noto Sans KR', sans-serif;
+  font-weight: 700;
+
+  z-index: 2;
 }
 
-.t-nav-title{
-  font-size: 20px;
-  font-weight:700; 
-  margin: 8px 0 6px; 
-  color: var(--muted) 
+.t-profile {
+  text-align: center;
+  margin: 6px 0 28px;
 }
-.t-nav-list, .t-meta{ list-style:none; padding:0; margin:0 }
-.t-nav-list li a, .t-meta li a{
-  display:block; padding:8px 0; border-radius: 10px;
-  color: var(--muted); text-decoration:none; border-bottom:0;
-  font-size: 15px;
+
+.t-avatar {
+  display: inline-grid;
+  place-content: center;
+
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+
+  color: #4f46e5;
+  font-weight: 800;
+  letter-spacing: 0.08em;
 }
-.t-nav-list li a:hover{ background: rgba(255,255,255,.06) }
-.t-divider{ height:1px; background: var(--line); margin: 10px 0 }
+
+.t-bio {
+  margin: 14px 0 28px;
+
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.t-nav-title {
+  margin: 16px 0 10px;
+
+  font-size: 14px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.t-nav-list,
+.t-meta {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.t-nav-list li,
+.t-meta li {
+  margin: 4px 0;
+}
+
+.t-nav-list li a,
+.t-meta li a {
+  display: block;
+
+  padding: 10px 12px;
+  border-radius: 12px;
+
+  color: #64748b;
+  text-decoration: none;
+  border-bottom: 0;
+
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.t-nav-list li a:hover,
+.t-meta li a:hover {
+  background: #eef2ff;
+  color: #4f46e5;
+  transform: translateX(2px);
+}
+
+.t-divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 16px 0;
+}
 
 /* 모바일: aside 오버레이로 열림 */
 @media (max-width: 980px){
@@ -390,11 +441,43 @@ body{
 }
 
 /* hover: 배경 검은색 + 텍스트 컬러 순환 */
-.sub_category_list .link_sub_item:hover{
-  background: #f9e5e7;
-  color: #fff;               /* 기본은 하얀색으로 */
-  animation: rainbowColor 1.6s linear infinite;
+.sub_category_list {
+  list-style: none;
+  margin: 4px 0 8px;
+  padding: 0;
 }
+
+.sub_category_list li {
+  margin: 2px 0;
+  width: auto;
+}
+
+.sub_category_list .link_sub_item {
+  position: relative;
+  display: block;
+
+  padding: 8px 12px !important;
+  border-radius: 10px;
+
+  color: #64748b;
+  font-size: 13px !important;
+  font-weight: 700;
+  text-decoration: none;
+
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.sub_category_list .link_sub_item:hover {
+  background: #f8fafc;
+  color: #4f46e5;
+  animation: none;
+  transform: translateX(2px);
+}
+
+.sub_category_list .link_sub_item:active {
+  transform: translateY(1px);
+}
+
 .sub_category_list .link_sub_item:active{ transform: translateY(1px) }
 
 /* 텍스트 컬러 순환 키프레임 */

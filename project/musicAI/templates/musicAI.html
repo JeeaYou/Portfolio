@@ -1,0 +1,609 @@
+{% extends "base.html" %}
+
+{% block header %}
+  {% include "components/header.html" %}
+  <link rel="stylesheet" href="{{ url_for('musicAI.static', filename='assets/css/style.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="t-shell music-ai-shell">
+  {% include "components/sidebar.html" %}
+
+  <main class="music-ai-page">
+    {% for cat in category %}
+
+      {% if cat.category_id == 410 %}
+        <section id="cat-{{ cat.category_id }}" class="music-ai-hero">
+          <div class="music-ai-badge">Music Audio Features Analysis</div>
+
+          <h1>{{ cat.ko_name }}</h1>
+          <p>{{ cat.ko_desc }}</p>
+
+          <div class="upload-box">
+            <div id="selectedFileName" class="selected-file-name is-empty">
+              아직 선택된 파일이 없습니다.
+            </div>
+
+            <button id="clearFileBtn" class="clear-file-btn" type="button" style="display: none;">
+              전체 선택 취소
+            </button>
+
+            <label for="audioFile" class="upload-label">
+              음악 파일 선택
+            </label>
+
+            <input
+              id="audioFile"
+              class="audio-file-input"
+              type="file"
+              accept=".mp3,.wav,.m4a,.flac,.ogg,audio/*"
+              multiple
+            >
+
+            <button id="analyzeBtn" class="analyze-btn" type="button">
+              업로드한 파일 분석하기
+            </button>
+          </div>
+        </section>
+      {% endif %}
+
+
+      {% if cat.category_id == 420 %}
+        <section id="cat-{{ cat.category_id }}" class="music-ai-anchor-section">
+          <h2>{{ cat.ko_name }}</h2>
+          <p>{{ cat.ko_desc }}</p>
+
+          <section id="resultSection" class="result-section"></section>
+        </section>
+      {% endif %}
+
+
+      {% if cat.category_id == 430 %}
+        <section id="cat-{{ cat.category_id }}" class="music-ai-anchor-section">
+          <h2>{{ cat.ko_name }}</h2>
+          <p>{{ cat.ko_desc }}</p>
+
+          <div id="visualizationSection" class="visualization-section">
+            <p class="empty-section-text">
+              데이터 시각화 기능은 준비 중입니다.
+            </p>
+          </div>
+        </section>
+      {% endif %}
+
+    {% endfor %}
+  </main>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const analyzeBtn = document.getElementById("analyzeBtn");
+  const audioFile = document.getElementById("audioFile");
+  const selectedFileName = document.getElementById("selectedFileName");
+  const clearFileBtn = document.getElementById("clearFileBtn");
+  const resultSection = document.getElementById("resultSection");
+
+  let selectedFiles = [];
+  let progressPollingTimer = null;
+  let latestAnalysisResult = null;
+
+  const startAnalyzeUrl = "{{ url_for('musicAI.start_analysis') }}";
+  const progressUrlTemplate = "{{ url_for('musicAI.get_analysis_progress', job_id='__JOB_ID__') }}";
+
+  function escapeHTML(text) {
+    if (text === null || text === undefined) return "";
+
+    return String(text).replace(/[&<>"']/g, function (char) {
+      return {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char];
+    });
+  }
+
+  function syncAudioFileInput() {
+    const dataTransfer = new DataTransfer();
+
+    selectedFiles.forEach(function (file) {
+      dataTransfer.items.add(file);
+    });
+
+    audioFile.files = dataTransfer.files;
+  }
+
+  function renderSelectedFileList() {
+    if (selectedFiles.length === 0) {
+      audioFile.value = "";
+
+      selectedFileName.classList.add("is-empty");
+      selectedFileName.textContent = "아직 선택된 파일이 없습니다.";
+
+      if (clearFileBtn) {
+        clearFileBtn.style.display = "none";
+      }
+
+      return;
+    }
+
+    selectedFileName.classList.remove("is-empty");
+
+    if (clearFileBtn) {
+      clearFileBtn.style.display = "inline-flex";
+    }
+
+    selectedFileName.innerHTML = `
+      <span class="selected-file-count">
+        ${selectedFiles.length}개 파일 선택됨
+      </span>
+
+      <div class="selected-file-list">
+        ${selectedFiles.map(function (file, index) {
+          return `
+            <span class="selected-file-item">
+              <span class="selected-file-index">${index + 1}.</span>
+              <span class="selected-file-text">${escapeHTML(file.name)}</span>
+              <button
+                type="button"
+                class="remove-file-btn"
+                data-index="${index}"
+                aria-label="파일 선택 취소"
+              >
+                ×
+              </button>
+            </span>
+          `;
+        }).join("")}
+      </div>
+    `;
+
+    syncAudioFileInput();
+  }
+
+  if (audioFile) {
+    audioFile.addEventListener("change", function () {
+      selectedFiles = Array.from(audioFile.files);
+      renderSelectedFileList();
+    });
+  }
+
+  selectedFileName.addEventListener("click", function (e) {
+    const removeBtn = e.target.closest(".remove-file-btn");
+
+    if (!removeBtn) return;
+
+    const removeIndex = Number(removeBtn.dataset.index);
+    selectedFiles.splice(removeIndex, 1);
+
+    renderSelectedFileList();
+  });
+
+  if (clearFileBtn) {
+    clearFileBtn.addEventListener("click", function () {
+      selectedFiles = [];
+      renderSelectedFileList();
+    });
+  }
+
+  document.querySelectorAll('.t-nav-list a[href^="#"]').forEach(function (link) {
+    link.addEventListener("click", function (e) {
+      const targetId = this.getAttribute("href");
+
+      if (!targetId || targetId === "#") return;
+
+      const target = document.querySelector(targetId);
+
+      if (target) {
+        e.preventDefault();
+
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+    });
+  });
+
+  if (analyzeBtn) {
+    analyzeBtn.addEventListener("click", async function () {
+      if (selectedFiles.length === 0) {
+        alert("먼저 음악 파일을 선택해주세요.");
+        return;
+      }
+
+      stopProgressPolling();
+
+      latestAnalysisResult = null;
+
+      analyzeBtn.disabled = true;
+      analyzeBtn.textContent = "분석 중...";
+
+      showFileProgressBars(selectedFiles);
+
+      const resultArea = document.getElementById("cat-420");
+      if (resultArea) {
+        resultArea.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+
+      const formData = new FormData();
+
+      selectedFiles.forEach(function (file) {
+        formData.append("audio_files", file);
+      });
+
+      try {
+        const response = await fetch(startAnalyzeUrl, {
+          method: "POST",
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.ok) {
+          throw new Error(data.error || "분석 시작 중 오류가 발생했습니다.");
+        }
+
+        startProgressPolling(data.job_id);
+
+      } catch (error) {
+        stopProgressPolling();
+
+        analyzeBtn.disabled = false;
+        analyzeBtn.textContent = "업로드한 파일 분석하기";
+
+        resultSection.innerHTML = `
+          <div class="analysis-error">
+            <h2>분석 실패</h2>
+            <p>${escapeHTML(error.message)}</p>
+          </div>
+        `;
+      }
+    });
+  }
+
+  function showFileProgressBars(files) {
+    resultSection.innerHTML = `
+      <div class="analysis-progress-card">
+        <p class="progress-title">음악 오디오 분석 진행 중</p>
+        <p class="progress-desc">
+          서버의 실제 순차 분석 상태를 기준으로 표시합니다.
+        </p>
+
+        <div class="file-progress-list">
+          ${files.map(function (file, index) {
+            return `
+              <div class="file-progress-item" data-file-index="${index + 1}">
+                <div class="file-progress-header">
+                  <span class="file-progress-name">${index + 1}. ${escapeHTML(file.name)}</span>
+                  <span class="file-progress-percent">0%</span>
+                </div>
+
+                <div class="file-progress-track">
+                  <div class="file-progress-bar" style="width: 0%;"></div>
+                </div>
+
+                <p class="file-progress-status">분석 대기 중</p>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      </div>
+    `;
+  }
+
+  function startProgressPolling(jobId) {
+    stopProgressPolling();
+
+    pollProgress(jobId);
+
+    progressPollingTimer = setInterval(function () {
+      pollProgress(jobId);
+    }, 800);
+  }
+
+  function stopProgressPolling() {
+    if (progressPollingTimer) {
+      clearInterval(progressPollingTimer);
+      progressPollingTimer = null;
+    }
+  }
+
+  async function pollProgress(jobId) {
+    try {
+      const progressUrl = progressUrlTemplate.replace("__JOB_ID__", encodeURIComponent(jobId));
+
+      const response = await fetch(progressUrl, {
+        method: "GET",
+        cache: "no-store"
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.ok) {
+        throw new Error(data.error || "진행 상태를 불러오지 못했습니다.");
+      }
+
+      const progress = data.progress;
+
+      updateProgressUI(progress);
+
+      if (progress.status === "completed") {
+        stopProgressPolling();
+
+        latestAnalysisResult = progress.result;
+
+        analyzeBtn.disabled = false;
+        analyzeBtn.textContent = "업로드한 파일 분석하기";
+
+        setTimeout(function () {
+          renderResult(latestAnalysisResult);
+
+          resultSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+        }, 600);
+      }
+
+      if (progress.status === "error") {
+        stopProgressPolling();
+
+        analyzeBtn.disabled = false;
+        analyzeBtn.textContent = "업로드한 파일 분석하기";
+
+        resultSection.innerHTML = `
+          <div class="analysis-error">
+            <h2>분석 실패</h2>
+            <p>${escapeHTML(progress.error || "분석 중 오류가 발생했습니다.")}</p>
+          </div>
+        `;
+      }
+
+    } catch (error) {
+      stopProgressPolling();
+
+      analyzeBtn.disabled = false;
+      analyzeBtn.textContent = "업로드한 파일 분석하기";
+
+      resultSection.innerHTML = `
+        <div class="analysis-error">
+          <h2>진행 상태 조회 실패</h2>
+          <p>${escapeHTML(error.message)}</p>
+        </div>
+      `;
+    }
+  }
+
+  function updateProgressUI(progress) {
+    const title = document.querySelector(".progress-title");
+    const desc = document.querySelector(".progress-desc");
+
+    if (title) {
+      title.textContent = "음악 오디오 분석 진행 중";
+    }
+
+    if (desc) {
+      desc.textContent = progress.current_step || "서버 분석 상태를 확인하는 중입니다.";
+    }
+
+    if (!progress.files) return;
+
+    progress.files.forEach(function (file) {
+      const item = document.querySelector(
+        `.file-progress-item[data-file-index="${file.index}"]`
+      );
+
+      if (!item) return;
+
+      const bar = item.querySelector(".file-progress-bar");
+      const percentText = item.querySelector(".file-progress-percent");
+      const statusText = item.querySelector(".file-progress-status");
+
+      const percent = Math.max(0, Math.min(100, Number(file.percent || 0)));
+
+      item.classList.remove("is-waiting", "is-running", "is-done", "is-failed");
+      item.classList.add(`is-${file.status}`);
+
+      if (bar) {
+        bar.style.width = percent + "%";
+      }
+
+      if (percentText) {
+        percentText.textContent = percent + "%";
+      }
+
+      if (statusText) {
+        if (file.status === "waiting") {
+          statusText.textContent = "분석 대기 중";
+        } else if (file.status === "running") {
+          statusText.textContent = progress.current_step || "분석 중";
+        } else if (file.status === "done") {
+          statusText.textContent = "분석 완료";
+        } else if (file.status === "failed") {
+          statusText.textContent = "분석 실패";
+        } else {
+          statusText.textContent = "상태 확인 중";
+        }
+      }
+    });
+  }
+
+  function renderResult(result) {
+    if (!result) {
+      resultSection.innerHTML = `
+        <div class="analysis-error">
+          <h2>분석 결과 없음</h2>
+          <p>분석 결과를 불러오지 못했습니다.</p>
+        </div>
+      `;
+      return;
+    }
+
+    let html = `
+      <p class="complete-text">분석 완료</p>
+
+      <div class="analysis-summary-card">
+        <div class="summary-grid">
+          <div>
+            <span>총 분석 파일 수</span>
+            <strong>${result.total_file_count}</strong>
+          </div>
+          <div>
+            <span>전체 음악 길이</span>
+            <strong>${result.total_music_duration.text}</strong>
+          </div>
+          <div>
+            <span>전체 실행 시간</span>
+            <strong>${result.total_program_execution_time.text}</strong>
+          </div>
+        </div>
+      </div>
+    `;
+
+    result.results.forEach(function (item, index) {
+      const fileInfo = item.file_info;
+      const audio = item.original_audio_analysis;
+      const pitch = item.vocal_pitch_analysis;
+      const instruments = item.background_instrument_analysis;
+      const time = item.analysis_time_summary;
+
+      html += `
+        <article class="analysis-card">
+          <div class="card-header">
+            <span class="track-number">Track ${index + 1}</span>
+            <h2>${escapeHTML(fileInfo.file_name)}</h2>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-box">
+              <span>Duration</span>
+              <strong>${fileInfo.duration_text}</strong>
+            </div>
+            <div class="info-box">
+              <span>Key</span>
+              <strong>${audio.key}</strong>
+            </div>
+            <div class="info-box">
+              <span>Tempo</span>
+              <strong>${audio.tempo} bpm (${audio.tempo_name})</strong>
+            </div>
+            <div class="info-box">
+              <span>Genre</span>
+              <strong>${audio.genre}</strong>
+            </div>
+          </div>
+
+          <div class="analysis-two-column">
+            <div class="analysis-section">
+              <h3>Original Audio Analysis</h3>
+              <p><b>Key Confidence:</b> ${audio.key_confidence}</p>
+              <p><b>Energy:</b> ${audio.energy_level}</p>
+              <p><b>Tempo Name:</b> ${audio.tempo_name}</p>
+              <p><b>Tempo Category:</b> ${audio.tempo_category}</p>
+              <p><b>Energy Score:</b> ${audio.energy_score}</p>
+              <p><b>Spectral Centroid:</b> ${audio.spectral_centroid} Hz</p>
+              <p><b>Spectral Flux:</b> ${audio.spectral_flux}</p>
+              <p><b>Dynamic Range:</b> ${audio.dynamic_range} dB</p>
+              <p><b>Harmonic-to-Noise Ratio:</b> ${audio.harmonic_to_noise_ratio} dB</p>
+              <p><b>Danceability:</b> ${audio.danceability}</p>
+            </div>
+
+            <div class="analysis-section">
+              <h3>Vocal Pitch Analysis</h3>
+      `;
+
+      if (pitch) {
+        html += `
+              <p><b>Lowest Note:</b> ${pitch.lowest_note}</p>
+              <p><b>Lowest Pitch:</b> ${pitch.lowest_pitch_hz} Hz</p>
+              <p><b>Highest Note:</b> ${pitch.highest_note}</p>
+              <p><b>Highest Pitch:</b> ${pitch.highest_pitch_hz} Hz</p>
+              <p><b>Pitch Range:</b> ${pitch.pitch_range_semitones} semitones</p>
+              <p><b>Pitch Range Octaves:</b> ${pitch.pitch_range_octaves}</p>
+        `;
+      } else {
+        html += `
+              <p>보컬 피치 분석 결과 없음</p>
+        `;
+      }
+
+      html += `
+            </div>
+          </div>
+
+          <div class="analysis-section">
+            <h3>Background Instrument Analysis</h3>
+            <p><b>Instrument Count:</b> ${instruments.instrument_count}</p>
+      `;
+
+      if (instruments.instruments && instruments.instruments.length > 0) {
+        html += `<div class="instrument-list">`;
+
+        instruments.instruments.forEach(function (inst) {
+          html += `
+            <span class="instrument-chip">
+              ${inst.instrument} ${inst.percentage}%
+            </span>
+          `;
+        });
+
+        html += `</div>`;
+      } else {
+        html += `
+            <p>감지된 악기 없음</p>
+        `;
+      }
+
+      html += `
+          </div>
+
+          <div class="analysis-time-detail">
+            <h3>Analysis Time Summary</h3>
+
+            <div class="time-grid">
+              <div class="time-box">
+                <span>Original Audio Analysis</span>
+                <strong>${time.original_audio_analysis_time} sec</strong>
+              </div>
+
+              <div class="time-box">
+                <span>Vocal Separation</span>
+                <strong>${time.vocal_separation_time} sec</strong>
+              </div>
+
+              <div class="time-box">
+                <span>Vocal Pitch Analysis</span>
+                <strong>${time.vocal_pitch_analysis_time} sec</strong>
+              </div>
+
+              <div class="time-box">
+                <span>Background Instrument Analysis</span>
+                <strong>${time.background_instrument_analysis_time} sec</strong>
+              </div>
+            </div>
+
+            <div class="total-time-box">
+              <span>Total Analysis Time</span>
+              <strong>${time.total_analysis_time} sec</strong>
+            </div>
+          </div>
+        </article>
+      `;
+    });
+
+    resultSection.innerHTML = html;
+  }
+});
+</script>
+
+{% endblock %}
+
+{% block footer %}
+  {% include "components/footer.html" %}
+{% endblock %}

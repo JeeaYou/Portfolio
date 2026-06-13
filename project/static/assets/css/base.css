@@ -138,17 +138,6 @@ html::-webkit-scrollbar:horizontal { height: 10px; } /* 가로는 살림 */
   box-shadow: 0 5px 0 0 #e4e8ec, 0 10px 0 0 #e4e8ec;
 }
 
-/* ===== 4) 레이아웃/카드 ===== */
-.t-shell{
-  margin-top: 102px;
-  min-height: calc(100vh - 100px - 50px);
-  padding-bottom: 50px;        /* 푸터 대비 */
-}
-/* ⬇️ 원래 잘못 들어가 있던 중첩 정리 */
-@media (max-width: 980px){
-  .t-shell{ /* 필요 시 모바일 전용 보정 넣기 */ }
-}
-
 .t-aside{
   top: 142px;
   bottom: 82px;
@@ -215,7 +204,7 @@ html::-webkit-scrollbar:horizontal { height: 10px; } /* 가로는 살림 */
 .t-main{     
   width: 90%;
   padding-left: 20%;
-  margin-top: 40px;
+  margin: 40px;
 }
 
 .t-page-title{

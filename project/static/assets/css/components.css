@@ -38,13 +38,15 @@ body{
 }
 
 /* ===== 4) 레이아웃/카드: 기존과 동일 (필요 부분만 유지) ===== */
-.t-shell{
+.t-shell {
   margin-top: 102px;
   min-height: calc(100vh - 100px - 50px);
-  margin-top: 102px;           /* 기존 유지 */
-  padding-bottom: 50px;        /* 푸터가 가리지 않게 */
-@media (max-width: 980px){
-  .t-shell{ grid-template-columns: 3fr }
+  padding-bottom: 50px;
+}
+
+@media (max-width: 980px) {
+  .t-shell {
+    grid-template-columns: 1fr;
   }
 }
 

@@ -20,12 +20,12 @@ def handemote():
     return render_template("handemote.html")
 
 def register_into(app):
-    # ✅ 1) 먼저 자식 트리(eyetest, game)를 handemote(bp)에 부착
+    # 1) 먼저 자식 트리(eyetest, game)를 handemote(bp)에 부착
     from .handgesture import register_into as register_eyetest
     register_eyetest(bp)   # -> /handemote/eyetest/...
     
     # from .game    import register_into as register_game
     # register_game(bp)      # -> /handemote/game/...
 
-    # ✅ 2) 완성된 eyecarex를 앱에 '한 번만' 등록
+    # 2) 완성된 eyecarex를 앱에 '한 번만' 등록
     app.register_blueprint(bp)
