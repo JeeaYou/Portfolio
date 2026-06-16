@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block header %}
+  {% include "components/header.html" %}
+{% endblock %}
+
+{% block content %}
+ {% include "components/sidebar.html" %}
+<div id="main">
+  <article id="eyetest" class="testbody" style="text-align:center;">
+    <h2 class="major" style="color:#000;">시력 검사</h2>
+
+    <p style="color:#000;">
+      오른쪽 눈부터 테스트 시작합니다.<br>
+      화면을 보며 알맞는 방향을 가리키세요.
+    </p>
+    <div class="screenshot" style="padding:10px; text-align:center;">
+      <div class="cam-wrap">
+        <div class="img_frame">
+          <img class="cam-stream"
+              src="{{ url_for('eyecarex.eyetest.eyevision.cam') }}"
+              alt="시력 검사 실시간 화면">
+        </div>
+
+        <div class="cam-actions">
+          <a class="c-btn c-btn--ghost" href="{{ url_for('eyecarex.eyecarex') }}">← 돌아가기</a>
+          <button class="c-btn" type="button" onclick="location.reload()">다시하기 ↺</button>
+        </div>
+      </div>
+    </div>
+  </article>
+</div>
+{% endblock %}
+
+{% block footer %}
+  {% include "components/footer.html" %}
+{% endblock %}

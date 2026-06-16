@@ -1,0 +1,24 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# MusicAI generated files
+project/musicAI/uploads/
+project/musicAI/separated/
+project/musicAI/analysis_results/
+project/musicAI/progress/
+
+# Logs
+*.log
+
+# Environment
+.env

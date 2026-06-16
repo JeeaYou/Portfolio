@@ -1,0 +1,43 @@
+<!-- templates/components/sidebar.html -->
+<div class="t-aside">
+  <div class="t-profile">
+    <div class="t-avatar">
+      {% if avatar_url %}
+        <img src="{{ avatar_url }}" alt="Logo">
+      {% endif %}
+    </div>
+    <div class="t-bio">{{ bio_text }}</div>
+  </div>
+
+  <nav class="t-nav">
+    <div class="t-nav-title">{{ title }}</div>
+    <div class="t-divider"></div>
+
+    <ul class="t-nav-list">
+      {% for items in category %}
+        {% set category_href = items.url or '#' %}
+
+        <li>
+          <a href="{{ category_href }}"
+             class="{% if active_id == items.category_id %}is-active{% endif %}">
+            {{ items.ko_name }}
+
+            {% if request.blueprint != "musicAI" %}
+              <span class="c_cnt">({{ items["items"]|length }})</span>
+            {% endif %}
+          </a>
+
+          <ul class="sub_category_list">
+            {% for item in items["items"] %}
+              <li>
+                <a href="{{ item.link or '#' }}" class="link_sub_item">
+                  - {{ item.ko_name }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+</div>

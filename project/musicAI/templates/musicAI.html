@@ -1,0 +1,769 @@
+{% extends "base.html" %}
+
+{% block header %}
+  {% include "components/header.html" %}
+  <link rel="stylesheet" href="{{ url_for('musicAI.static', filename='assets/css/style.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="t-shell music-ai-shell">
+  {% include "components/sidebar.html" %}
+
+  <main class="music-ai-page">
+    {% for cat in category %}
+
+      {% if cat.category_id == 410 %}
+        <section id="cat-{{ cat.category_id }}" class="music-ai-hero">
+          <div class="music-ai-badge">Music Audio Features Analysis</div>
+
+          <h1>{{ cat.ko_name }}</h1>
+          <p>{{ cat.ko_desc }}</p>
+
+          <div class="upload-box">
+            <div id="selectedFileName" class="selected-file-name is-empty">
+              아직 선택된 파일이 없습니다.
+            </div>
+
+            <button id="clearFileBtn" class="clear-file-btn" type="button" style="display: none;">
+              전체 선택 취소
+            </button>
+
+            <label for="audioFile" class="upload-label">
+              음악 파일 선택
+            </label>
+
+            <input
+              id="audioFile"
+              class="audio-file-input"
+              type="file"
+              accept=".mp3,.wav,.m4a,.flac,.ogg,audio/*"
+              multiple
+            >
+
+            <button id="analyzeBtn" class="analyze-btn" type="button">
+              업로드한 파일 분석하기
+            </button>
+          </div>
+        </section>
+      {% endif %}
+
+
+      {% if cat.category_id == 420 %}
+        <section id="cat-{{ cat.category_id }}" class="music-ai-anchor-section">
+          <h2>{{ cat.ko_name }}</h2>
+          <p>{{ cat.ko_desc }}</p>
+
+          <section id="resultSection" class="result-section">
+            <div id="resultRoot"></div>
+          </section>
+
+          <template id="summaryResultTemplate">
+            <p class="complete-text">분석 완료</p>
+
+            <div class="analysis-summary-card">
+              <div class="summary-grid">
+                <div>
+                  <span>총 분석 파일 수</span>
+                  <strong data-field="summary_total_file_count"></strong>
+                </div>
+
+                <div>
+                  <span>전체 음악 길이</span>
+                  <strong data-field="summary_total_music_duration"></strong>
+                </div>
+
+                <div>
+                  <span>전체 실행 시간</span>
+                  <strong data-field="summary_total_program_execution_time"></strong>
+                </div>
+              </div>
+            </div>
+          </template>
+
+          <template id="trackResultTemplate">
+            <article class="analysis-card">
+              <div class="card-header">
+                <span class="track-number" data-field="track_number"></span>
+                <h2 data-field="file_name"></h2>
+              </div>
+
+              <div class="info-grid">
+                <div class="info-box">
+                  <span>Duration</span>
+                  <strong data-field="duration_text"></strong>
+                </div>
+
+                <div class="info-box">
+                  <span>Key</span>
+                  <strong data-field="key"></strong>
+                </div>
+
+                <div class="info-box">
+                  <span>Tempo</span>
+                  <strong data-field="tempo"></strong>
+                </div>
+
+                <div class="info-box">
+                  <span>Genre</span>
+                  <strong data-field="genre"></strong>
+                </div>
+
+                <div class="info-box">
+                  <span>Mood</span>
+                  <strong data-field="mood"></strong>
+                </div>
+
+                <div class="info-box">
+                  <span>Rhythm</span>
+                  <strong data-field="rhythm_pattern"></strong>
+                </div>
+              </div>
+
+              <div class="analysis-two-column">
+                <div class="analysis-section">
+                  <h3>Original Audio Analysis</h3>
+
+                  <p><b>Key Confidence:</b> <span data-field="key_confidence"></span></p>
+                  <p><b>Tempo Category:</b> <span data-field="tempo_category"></span></p>
+                  <p><b>Tempo Description:</b> <span data-field="tempo_description"></span></p>
+
+                  <p><b>Rhythm Pattern:</b> <span data-field="rhythm_pattern_detail"></span></p>
+                  <p><b>Beat Count:</b> <span data-field="beat_count"></span></p>
+                  <p><b>Beat Strength:</b> <span data-field="beat_strength"></span></p>
+                  <p><b>Beat Regularity:</b> <span data-field="beat_regularity"></span></p>
+
+                  <p><b>Energy:</b> <span data-field="energy_level"></span></p>
+                  <p><b>Energy Score:</b> <span data-field="energy_score"></span></p>
+                  <p><b>RMS:</b> <span data-field="rms"></span></p>
+                  <p><b>Mood:</b> <span data-field="mood_detail"></span></p>
+
+                  <p><b>Spectral Centroid:</b> <span data-field="spectral_centroid"></span></p>
+                  <p><b>Spectral Bandwidth:</b> <span data-field="spectral_bandwidth"></span></p>
+                  <p><b>Spectral Rolloff:</b> <span data-field="spectral_rolloff"></span></p>
+                  <p><b>Spectral Flatness:</b> <span data-field="spectral_flatness"></span></p>
+                  <p><b>Spectral Flux:</b> <span data-field="spectral_flux"></span></p>
+                  <p><b>Zero Crossing Rate:</b> <span data-field="zero_crossing_rate"></span></p>
+
+                  <p><b>Dynamic Range:</b> <span data-field="dynamic_range"></span></p>
+                  <p><b>Harmonic-to-Noise Ratio:</b> <span data-field="harmonic_to_noise_ratio"></span></p>
+                  <p><b>Danceability:</b> <span data-field="danceability"></span></p>
+
+                  <p><b>MFCC Mean:</b> <span data-field="mfcc_mean"></span></p>
+                  <p><b>MFCC Std:</b> <span data-field="mfcc_std"></span></p>
+                  <p><b>Spectral Contrast:</b> <span data-field="spectral_contrast_mean"></span></p>
+                  <p><b>Chroma Mean:</b> <span data-field="chroma_mean"></span></p>
+                  <p><b>Tonnetz Mean:</b> <span data-field="tonnetz_mean"></span></p>
+                </div>
+
+                <div class="analysis-section">
+                  <h3>Vocal Pitch Analysis</h3>
+
+                  <div data-section="pitch_result">
+                    <p><b>Lowest Note:</b> <span data-field="lowest_note"></span></p>
+                    <p><b>Lowest Pitch:</b> <span data-field="lowest_pitch_hz"></span></p>
+                    <p><b>Highest Note:</b> <span data-field="highest_note"></span></p>
+                    <p><b>Highest Pitch:</b> <span data-field="highest_pitch_hz"></span></p>
+                    <p><b>Pitch Range:</b> <span data-field="pitch_range_semitones"></span></p>
+                    <p><b>Pitch Range Octaves:</b> <span data-field="pitch_range_octaves"></span></p>
+                  </div>
+
+                  <p data-section="pitch_empty" style="display: none;">
+                    보컬 피치 분석 결과 없음
+                  </p>
+                </div>
+              </div>
+
+              <div class="analysis-section">
+                <h3>Background Instrument Analysis</h3>
+                <p><b>Instrument Count:</b> <span data-field="instrument_count"></span></p>
+                <div class="instrument-list" data-field="instrument_list"></div>
+              </div>
+
+              <div class="analysis-time-detail">
+                <h3>Analysis Time Summary</h3>
+
+                <div class="time-grid">
+                  <div class="time-box">
+                    <span>Original Audio Analysis</span>
+                    <strong data-field="original_audio_analysis_time"></strong>
+                  </div>
+
+                  <div class="time-box">
+                    <span>Vocal Separation</span>
+                    <strong data-field="vocal_separation_time"></strong>
+                  </div>
+
+                  <div class="time-box">
+                    <span>Vocal Pitch Analysis</span>
+                    <strong data-field="vocal_pitch_analysis_time"></strong>
+                  </div>
+
+                  <div class="time-box">
+                    <span>Background Instrument Analysis</span>
+                    <strong data-field="background_instrument_analysis_time"></strong>
+                  </div>
+                </div>
+
+                <div class="total-time-box">
+                  <span>Total Analysis Time</span>
+                  <strong data-field="total_analysis_time"></strong>
+                </div>
+              </div>
+            </article>
+          </template>
+        </section>
+      {% endif %}
+
+
+      {% if cat.category_id == 430 %}
+        <section id="cat-{{ cat.category_id }}" class="music-ai-anchor-section">
+          <h2>{{ cat.ko_name }}</h2>
+          <p>{{ cat.ko_desc }}</p>
+
+          <div id="visualizationSection" class="visualization-section">
+            <p class="empty-section-text">
+              데이터 시각화 기능은 준비 중입니다.
+            </p>
+          </div>
+        </section>
+      {% endif %}
+
+    {% endfor %}
+  </main>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const analyzeBtn = document.getElementById("analyzeBtn");
+  const audioFile = document.getElementById("audioFile");
+  const selectedFileName = document.getElementById("selectedFileName");
+  const clearFileBtn = document.getElementById("clearFileBtn");
+  const resultSection = document.getElementById("resultSection");
+  const resultRoot = document.getElementById("resultRoot");
+  const summaryResultTemplate = document.getElementById("summaryResultTemplate");
+  const trackResultTemplate = document.getElementById("trackResultTemplate");
+
+  let selectedFiles = [];
+  let progressPollingTimer = null;
+  let latestAnalysisResult = null;
+
+  const startAnalyzeUrl = "{{ url_for('musicAI.start_analysis') }}";
+  const progressUrlTemplate = "{{ url_for('musicAI.get_analysis_progress', job_id='__JOB_ID__') }}";
+
+  function escapeHTML(text) {
+    if (text === null || text === undefined) return "";
+
+    return String(text).replace(/[&<>"']/g, function (char) {
+      return {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char];
+    });
+  }
+
+  function displayValue(value, suffix = "") {
+    if (value === null || value === undefined || value === "") {
+      return "-";
+    }
+
+    return `${value}${suffix}`;
+  }
+
+  function displayArrayPreview(values, limit = 6) {
+    if (!Array.isArray(values) || values.length === 0) {
+      return "-";
+    }
+
+    const preview = values
+      .slice(0, limit)
+      .map(function (value) {
+        const numberValue = Number(value);
+
+        if (Number.isFinite(numberValue)) {
+          return numberValue.toFixed(4);
+        }
+
+        return String(value);
+      })
+      .join(", ");
+
+    return values.length > limit ? `${preview} ...` : preview;
+  }
+
+  function setField(root, fieldName, value, suffix = "") {
+    if (!root) return;
+
+    const target = root.querySelector(`[data-field="${fieldName}"]`);
+
+    if (!target) return;
+
+    target.textContent = displayValue(value, suffix);
+  }
+
+  function showError(title, message) {
+    if (!resultRoot) return;
+
+    resultRoot.innerHTML = `
+      <div class="analysis-error">
+        <h2>${escapeHTML(title)}</h2>
+        <p>${escapeHTML(message)}</p>
+      </div>
+    `;
+  }
+
+  function syncAudioFileInput() {
+    const dataTransfer = new DataTransfer();
+
+    selectedFiles.forEach(function (file) {
+      dataTransfer.items.add(file);
+    });
+
+    audioFile.files = dataTransfer.files;
+  }
+
+  function renderSelectedFileList() {
+    if (selectedFiles.length === 0) {
+      audioFile.value = "";
+
+      selectedFileName.classList.add("is-empty");
+      selectedFileName.textContent = "아직 선택된 파일이 없습니다.";
+
+      if (clearFileBtn) {
+        clearFileBtn.style.display = "none";
+      }
+
+      return;
+    }
+
+    selectedFileName.classList.remove("is-empty");
+
+    if (clearFileBtn) {
+      clearFileBtn.style.display = "inline-flex";
+    }
+
+    selectedFileName.innerHTML = `
+      <span class="selected-file-count">
+        ${selectedFiles.length}개 파일 선택됨
+      </span>
+
+      <div class="selected-file-list">
+        ${selectedFiles.map(function (file, index) {
+          return `
+            <span class="selected-file-item">
+              <span class="selected-file-index">${index + 1}.</span>
+              <span class="selected-file-text">${escapeHTML(file.name)}</span>
+              <button
+                type="button"
+                class="remove-file-btn"
+                data-index="${index}"
+                aria-label="파일 선택 취소"
+              >
+                ×
+              </button>
+            </span>
+          `;
+        }).join("")}
+      </div>
+    `;
+
+    syncAudioFileInput();
+  }
+
+  if (audioFile) {
+    audioFile.addEventListener("change", function () {
+      selectedFiles = Array.from(audioFile.files);
+      renderSelectedFileList();
+    });
+  }
+
+  if (selectedFileName) {
+    selectedFileName.addEventListener("click", function (e) {
+      const removeBtn = e.target.closest(".remove-file-btn");
+
+      if (!removeBtn) return;
+
+      const removeIndex = Number(removeBtn.dataset.index);
+      selectedFiles.splice(removeIndex, 1);
+
+      renderSelectedFileList();
+    });
+  }
+
+  if (clearFileBtn) {
+    clearFileBtn.addEventListener("click", function () {
+      selectedFiles = [];
+      renderSelectedFileList();
+    });
+  }
+
+  document.querySelectorAll('.t-nav-list a[href^="#"]').forEach(function (link) {
+    link.addEventListener("click", function (e) {
+      const targetId = this.getAttribute("href");
+
+      if (!targetId || targetId === "#") return;
+
+      const target = document.querySelector(targetId);
+
+      if (target) {
+        e.preventDefault();
+
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+    });
+  });
+
+  if (analyzeBtn) {
+    analyzeBtn.addEventListener("click", async function () {
+      if (selectedFiles.length === 0) {
+        alert("먼저 음악 파일을 선택해주세요.");
+        return;
+      }
+
+      stopProgressPolling();
+
+      latestAnalysisResult = null;
+
+      analyzeBtn.disabled = true;
+      analyzeBtn.textContent = "분석 중...";
+
+      showFileProgressBars(selectedFiles);
+
+      const resultArea = document.getElementById("cat-420");
+      if (resultArea) {
+        resultArea.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+
+      const formData = new FormData();
+
+      selectedFiles.forEach(function (file) {
+        formData.append("audio_files", file);
+      });
+
+      try {
+        const response = await fetch(startAnalyzeUrl, {
+          method: "POST",
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.ok) {
+          throw new Error(data.error || "분석 시작 중 오류가 발생했습니다.");
+        }
+
+        startProgressPolling(data.job_id);
+
+      } catch (error) {
+        stopProgressPolling();
+
+        analyzeBtn.disabled = false;
+        analyzeBtn.textContent = "업로드한 파일 분석하기";
+
+        showError("분석 실패", error.message);
+      }
+    });
+  }
+
+  function showFileProgressBars(files) {
+    if (!resultRoot) return;
+
+    resultRoot.innerHTML = `
+      <div class="analysis-progress-card">
+        <p class="progress-title">음악 오디오 분석 진행 중</p>
+        <p class="progress-desc">
+          서버의 실제 순차 분석 상태를 기준으로 표시합니다.
+        </p>
+
+        <div class="file-progress-list">
+          ${files.map(function (file, index) {
+            return `
+              <div class="file-progress-item" data-file-index="${index + 1}">
+                <div class="file-progress-header">
+                  <span class="file-progress-name">${index + 1}. ${escapeHTML(file.name)}</span>
+                  <span class="file-progress-percent">0%</span>
+                </div>
+
+                <div class="file-progress-track">
+                  <div class="file-progress-bar" style="width: 0%;"></div>
+                </div>
+
+                <p class="file-progress-status">분석 대기 중</p>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      </div>
+    `;
+  }
+
+  function startProgressPolling(jobId) {
+    stopProgressPolling();
+
+    pollProgress(jobId);
+
+    progressPollingTimer = setInterval(function () {
+      pollProgress(jobId);
+    }, 800);
+  }
+
+  function stopProgressPolling() {
+    if (progressPollingTimer) {
+      clearInterval(progressPollingTimer);
+      progressPollingTimer = null;
+    }
+  }
+
+  async function pollProgress(jobId) {
+    try {
+      const progressUrl = progressUrlTemplate.replace("__JOB_ID__", encodeURIComponent(jobId));
+
+      const response = await fetch(progressUrl, {
+        method: "GET",
+        cache: "no-store"
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.ok) {
+        throw new Error(data.error || "진행 상태를 불러오지 못했습니다.");
+      }
+
+      const progress = data.progress;
+
+      updateProgressUI(progress);
+
+      if (progress.status === "completed") {
+        stopProgressPolling();
+
+        latestAnalysisResult = progress.result;
+
+        analyzeBtn.disabled = false;
+        analyzeBtn.textContent = "업로드한 파일 분석하기";
+
+        setTimeout(function () {
+          renderResult(latestAnalysisResult);
+
+          resultSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+        }, 600);
+      }
+
+      if (progress.status === "error") {
+        stopProgressPolling();
+
+        analyzeBtn.disabled = false;
+        analyzeBtn.textContent = "업로드한 파일 분석하기";
+
+        showError(
+          "분석 실패",
+          progress.error || "분석 중 오류가 발생했습니다."
+        );
+      }
+
+    } catch (error) {
+      stopProgressPolling();
+
+      analyzeBtn.disabled = false;
+      analyzeBtn.textContent = "업로드한 파일 분석하기";
+
+      showError("진행 상태 조회 실패", error.message);
+    }
+  }
+
+  function updateProgressUI(progress) {
+    const title = document.querySelector(".progress-title");
+    const desc = document.querySelector(".progress-desc");
+
+    if (title) {
+      title.textContent = "음악 오디오 분석 진행 중";
+    }
+
+    if (desc) {
+      desc.textContent = progress.current_step || "서버 분석 상태를 확인하는 중입니다.";
+    }
+
+    if (!progress.files) return;
+
+    progress.files.forEach(function (file) {
+      const item = document.querySelector(
+        `.file-progress-item[data-file-index="${file.index}"]`
+      );
+
+      if (!item) return;
+
+      const bar = item.querySelector(".file-progress-bar");
+      const percentText = item.querySelector(".file-progress-percent");
+      const statusText = item.querySelector(".file-progress-status");
+
+      const percent = Math.max(0, Math.min(100, Number(file.percent || 0)));
+
+      item.classList.remove("is-waiting", "is-running", "is-done", "is-failed");
+      item.classList.add(`is-${file.status}`);
+
+      if (bar) {
+        bar.style.width = percent + "%";
+      }
+
+      if (percentText) {
+        percentText.textContent = percent + "%";
+      }
+
+      if (statusText) {
+        if (file.status === "waiting") {
+          statusText.textContent = "분석 대기 중";
+        } else if (file.status === "running") {
+          statusText.textContent = progress.current_step || "분석 중";
+        } else if (file.status === "done") {
+          statusText.textContent = "분석 완료";
+        } else if (file.status === "failed") {
+          statusText.textContent = "분석 실패";
+        } else {
+          statusText.textContent = "상태 확인 중";
+        }
+      }
+    });
+  }
+
+  function fillSummaryTemplate(summaryNode, result) {
+    setField(summaryNode, "summary_total_file_count", result.total_file_count);
+    setField(summaryNode, "summary_total_music_duration", result.total_music_duration?.text);
+    setField(summaryNode, "summary_total_program_execution_time", result.total_program_execution_time?.text);
+  }
+
+  function fillTrackTemplate(card, item, index) {
+    const fileInfo = item.file_info || {};
+    const audio = item.original_audio_analysis || {};
+    const pitch = item.vocal_pitch_analysis || null;
+    const instruments = item.background_instrument_analysis || {};
+    const time = item.analysis_time_summary || {};
+
+    setField(card, "track_number", `Track ${index + 1}`);
+    setField(card, "file_name", fileInfo.file_name);
+    setField(card, "duration_text", fileInfo.duration_text);
+
+    setField(card, "key", audio.key);
+    setField(card, "tempo", `${displayValue(audio.tempo)} bpm (${displayValue(audio.tempo_name)})`);
+    setField(card, "genre", audio.genre);
+    setField(card, "mood", audio.mood);
+    setField(card, "rhythm_pattern", audio.rhythm_pattern);
+
+    setField(card, "key_confidence", audio.key_confidence);
+    setField(card, "tempo_category", audio.tempo_category);
+    setField(card, "tempo_description", audio.tempo_description);
+
+    setField(card, "rhythm_pattern_detail", audio.rhythm_pattern);
+    setField(card, "beat_count", audio.beat_count);
+    setField(card, "beat_strength", audio.beat_strength);
+    setField(card, "beat_regularity", audio.beat_regularity);
+
+    setField(card, "energy_level", audio.energy_level);
+    setField(card, "energy_score", audio.energy_score);
+    setField(card, "rms", audio.rms);
+    setField(card, "mood_detail", audio.mood);
+
+    setField(card, "spectral_centroid", audio.spectral_centroid, " Hz");
+    setField(card, "spectral_bandwidth", audio.spectral_bandwidth);
+    setField(card, "spectral_rolloff", audio.spectral_rolloff);
+    setField(card, "spectral_flatness", audio.spectral_flatness);
+    setField(card, "spectral_flux", audio.spectral_flux);
+    setField(card, "zero_crossing_rate", audio.zero_crossing_rate);
+
+    setField(card, "dynamic_range", audio.dynamic_range, " dB");
+    setField(card, "harmonic_to_noise_ratio", audio.harmonic_to_noise_ratio, " dB");
+    setField(card, "danceability", audio.danceability);
+
+    setField(card, "mfcc_mean", displayArrayPreview(audio.mfcc_mean));
+    setField(card, "mfcc_std", displayArrayPreview(audio.mfcc_std));
+    setField(card, "spectral_contrast_mean", displayArrayPreview(audio.spectral_contrast_mean));
+    setField(card, "chroma_mean", displayArrayPreview(audio.chroma_mean));
+    setField(card, "tonnetz_mean", displayArrayPreview(audio.tonnetz_mean));
+
+    const pitchResult = card.querySelector('[data-section="pitch_result"]');
+    const pitchEmpty = card.querySelector('[data-section="pitch_empty"]');
+
+    if (pitch) {
+      if (pitchResult) pitchResult.style.display = "";
+      if (pitchEmpty) pitchEmpty.style.display = "none";
+
+      setField(card, "lowest_note", pitch.lowest_note);
+      setField(card, "lowest_pitch_hz", pitch.lowest_pitch_hz, " Hz");
+      setField(card, "highest_note", pitch.highest_note);
+      setField(card, "highest_pitch_hz", pitch.highest_pitch_hz, " Hz");
+      setField(card, "pitch_range_semitones", pitch.pitch_range_semitones, " semitones");
+      setField(card, "pitch_range_octaves", pitch.pitch_range_octaves);
+    } else {
+      if (pitchResult) pitchResult.style.display = "none";
+      if (pitchEmpty) pitchEmpty.style.display = "";
+    }
+
+    setField(card, "instrument_count", instruments.instrument_count);
+
+    const instrumentList = card.querySelector('[data-field="instrument_list"]');
+
+    if (instrumentList) {
+      instrumentList.innerHTML = "";
+
+      if (instruments.instruments && instruments.instruments.length > 0) {
+        instruments.instruments.forEach(function (inst) {
+          const chip = document.createElement("span");
+          chip.className = "instrument-chip";
+          chip.textContent = `${displayValue(inst.instrument)} ${displayValue(inst.percentage, "%")}`;
+          instrumentList.appendChild(chip);
+        });
+      } else {
+        instrumentList.textContent = "감지된 악기 없음";
+      }
+    }
+
+    setField(card, "original_audio_analysis_time", time.original_audio_analysis_time, " sec");
+    setField(card, "vocal_separation_time", time.vocal_separation_time, " sec");
+    setField(card, "vocal_pitch_analysis_time", time.vocal_pitch_analysis_time, " sec");
+    setField(card, "background_instrument_analysis_time", time.background_instrument_analysis_time, " sec");
+    setField(card, "total_analysis_time", time.total_analysis_time, " sec");
+  }
+
+  function renderResult(result) {
+    if (!resultRoot || !summaryResultTemplate || !trackResultTemplate) return;
+
+    resultRoot.innerHTML = "";
+
+    if (!result) {
+      showError("분석 결과 없음", "분석 결과를 불러오지 못했습니다.");
+      return;
+    }
+
+    const summaryFragment = summaryResultTemplate.content.cloneNode(true);
+    fillSummaryTemplate(summaryFragment, result);
+    resultRoot.appendChild(summaryFragment);
+
+    const results = result.results || [];
+
+    results.forEach(function (item, index) {
+      const fragment = trackResultTemplate.content.cloneNode(true);
+      const card = fragment.querySelector(".analysis-card");
+
+      fillTrackTemplate(card, item, index);
+
+      resultRoot.appendChild(fragment);
+    });
+  }
+});
+</script>
+
+{% endblock %}
+
+{% block footer %}
+  {% include "components/footer.html" %}
+{% endblock %}

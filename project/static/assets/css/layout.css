@@ -1,0 +1,492 @@
+/* 헤더/푸터/사이드 등 전역 레이아웃 */
+@font-face {
+  font-family: 'SurRoundAir';
+  src: url('/static/fonts/SurRoundAir.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+html, body {
+  font-family: 'SurRoundAir', 'Noto Sans KR', sans-serif;
+}
+:root, body, .t-header, .t-topnav, .t-aside, .t-main, .t-post, .t-button, .t-page-title, .t-nav-list a, .t-meta a {
+  font-family: 'SurRoundAir', 'Noto Sans KR', sans-serif !important;
+}
+
+
+.t-aside, .t-main, .t-header, .t-topnav, .t-post, .t-button, .t-page-title {
+  font-family: 'SurRoundAir', sans-serif;
+}
+
+/* ===== 1) 기본 톤: 티스토리 다크 무드에 더 근접 ===== */
+:root{
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --line: rgba(0,0,0,.12);
+  --text: #e9eef3;
+  --muted: #333;
+  --brand: #ffffff;
+}
+
+*{ box-sizing: border-box }
+html, body { height: 90%; }
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  font-family: "Pretendard", "Noto Sans KR", system-ui, -apple-system, sans-serif;
+}
+
+/* ===== 2) 상단 헤더: 진한 단색 배경 + 얇은 경계 ===== */
+.t-header{
+  position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    width: 100%;
+    height: 100px;
+    border-bottom: 1px solid #ebebeb;
+    background-color: #fff;
+    box-shadow: 0px 5px 8px rgba(0, 0, 0, 0.03);
+}
+
+.t-header .t-container{
+  max-width:1080px; margin:0 auto;
+  display:flex; align-items:center; gap:12px;
+}
+
+/* 브랜드 (블로그 제목 느낌) */
+.t-brand{
+  color:#000000;
+  text-decoration:none; 
+  border:0;
+  font-weight:800; 
+  letter-spacing:.02em; 
+  font-size:1.25rem;
+}
+
+/* ===== 3) '카테고리' 버튼: pill + 3줄 햄버거 ===== */
+.t-menu-btn{
+  margin-left:auto;                 /* 우측 정렬 */
+  display:inline-flex; align-items:center; gap:8px;
+  height:36px; padding:0 12px;
+  background:transparent;
+  color:var(--text);
+  border:1px solid var(--line);
+  border-radius:18px;               /* pill 모양 */
+  font-size:13px; line-height:1;
+  cursor:pointer;
+  transition:background .2s ease,border-color .2s ease,transform .05s ease;
+}
+.t-menu-btn:hover{
+  background:rgba(255,255,255,.06);
+  border-color:rgba(255,255,255,.22);
+}
+.t-menu-btn:active{ transform:translateY(1px) }
+
+/* 3줄 햄버거: pseudo 하나로 3줄 그리기 (요소는 <span class="hamburger"> 그대로 사용) */
+.t-menu-btn .hamburger{
+  position:relative; width:16px; height:12px; display:inline-block;
+}
+.t-menu-btn .hamburger::before{
+  content:""; position:absolute; left:0; right:0; top:0; height:2px;
+  background:#e4e8ec; border-radius:2px;
+  /* 아래 두 줄은 그림자처럼 복제해서 3줄 만들기 */
+  box-shadow:
+    0 5px 0 0 #e4e8ec,  /* 가운데 줄 */
+    0 10px 0 0 #e4e8ec; /* 맨 아래 줄 */
+}
+
+.t-shell {
+  position: relative;
+  top: -40px;
+}
+
+/* =========================
+   Simple Sidebar
+========================= */
+
+.t-aside {
+  position: fixed;
+  top: 130px;
+  bottom: 70px;
+  left: 32px;
+
+  width: 220px;
+  padding: 24px 18px;
+
+  visibility: visible;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #e5e7eb;
+  border-radius: 22px;
+  box-shadow: 0 14px 36px rgba(31, 45, 61, 0.08);
+
+  font-family: 'SurRoundAir', 'Noto Sans KR', sans-serif;
+  font-weight: 700;
+
+  z-index: 2;
+}
+
+.t-profile {
+  text-align: center;
+  margin: 6px 0 28px;
+}
+
+.t-avatar {
+  display: inline-grid;
+  place-content: center;
+
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+
+  color: #4f46e5;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.t-bio {
+  margin: 14px 0 28px;
+
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.t-nav-title {
+  margin: 16px 0 10px;
+
+  font-size: 14px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.t-nav-list,
+.t-meta {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.t-nav-list li,
+.t-meta li {
+  margin: 4px 0;
+}
+
+.t-nav-list li a,
+.t-meta li a {
+  display: block;
+
+  padding: 10px 12px;
+  border-radius: 12px;
+
+  color: #64748b;
+  text-decoration: none;
+  border-bottom: 0;
+
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.t-nav-list li a:hover,
+.t-meta li a:hover {
+  background: #eef2ff;
+  color: #4f46e5;
+  transform: translateX(2px);
+}
+
+.t-divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 16px 0;
+}
+
+/* 모바일: aside 오버레이로 열림 */
+@media (max-width: 980px){
+  .t-aside{
+    position: fixed; inset: 0 auto 0 0; width: 82%;
+    max-width: 320px; height: 100dvh; overflow:auto;
+    transform: translateX(-100%); transition: transform .25s ease;
+    z-index: 1200; border-right: 1px solid var(--line); border-radius: 0;
+  }
+  html.nav-open .t-aside{ transform: translateX(0) }
+}
+
+/* ===== 상단 네비 (데스크톱) ===== */
+.t-topnav{ margin-left:auto; }
+
+.t-topnav a {
+  color: rgba(0, 0, 0, 0.8);
+  font-family: 'surRoundAir';  
+  font-size: 11pt;
+  font-weight: bold;
+  padding: 15px 25px;
+  /**/
+  position: relative;
+  display: block;
+  text-decoration: none;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.t-topnav li{
+  display: inline-block;
+  margin: 30px;
+}
+.t-topnav ul{
+  display:flex; align-items:center; gap:8px;
+  list-style:none; margin:0; padding:0;
+}
+.t-topnav span{
+  display:inline-block; line-height:1;
+  padding:8px 12px; border-radius:8px;
+  background:transparent; 
+  color:rgb(0, 0, 0);
+  text-decoration:none;
+  border:1px solid transparent;
+  font-size:.95rem; cursor:pointer;
+  font-weight: bold;
+}
+
+.t-topnav a:before, .t-topnav a span:before, .t-topnav a:after, .t-topnav a span:after {
+  content: "";
+  position: absolute;
+}
+
+.t-topnav a:before, .t-topnav a span:before {
+  top: -webkit-calc(50% - .3em);
+  top: calc(50% - .3em);
+  left: -.25em;
+  width: .5em;
+  height: .5em;
+  opacity: 0;
+  -webkit-transform: translate3d(-.6em, 0, 0) rotate(45deg);
+  transform: translate3d(-.6em, 0, 0) rotate(45deg)
+}
+
+.t-topnav a:after, .t-topnav a span:after {
+  bottom: -webkit-calc(50% - .35em);
+  bottom: calc(50% - .35em);
+  right: -.25em;
+  width: .5em;
+  height: .5em;
+  opacity: 0;
+  -webkit-transform: translate3d(.6em, 0, 0) rotate(45deg);
+  transform: translate3d(.6em, 0, 0) rotate(45deg)
+}
+
+.t-topnav a:before, .t-topnav a:after {
+  -webkit-transition: -webkit-transform .3s ease-out, opacity .3s;
+  transition: transform .3s ease-out, opacity .3s
+}
+
+.t-topnav a span:before, .t-topnav a span:after {
+  -webkit-transition: -webkit-transform .3s ease-out .15s, opacity 0s .05s;
+  transition: transform .3s ease-out .15s, opacity 0s .05s
+}
+
+.t-topnav a:hover {
+  overflow: visible;
+  color: #fe664e!important;
+}
+
+.t-topnav a:hover:before, .t-topnav a:hover span:before {
+  -webkit-transform: translate3d(0, 0, 0) rotate(45deg);
+  transform: translate3d(0, 0, 0) rotate(45deg);
+  opacity: 1
+}
+
+.t-topnav a:hover:after, .t-topnav a:hover span:after {
+  -webkit-transform: translate3d(0, 0, 0) rotate(45deg);
+  transform: translate3d(0, 0, 0) rotate(45deg);
+  opacity: 1
+}
+
+.t-topnav a:before, .t-topnav a span:before {
+  border-right: .2em solid rgba(138, 138, 138, 0.4);
+  border-top: .2em solid  rgba(255,151,0,1);
+}
+
+.t-topnav a:after, .t-topnav a span:after {
+  border-left: .2em solid  rgba(255,151,0,1);
+  border-bottom: .2em solid rgba(138, 138, 138, 0.4);
+}
+
+.t-topnav li{
+	display: inline-block;
+    margin: 30px;
+}
+
+/* Other 드롭다운 */
+.t-more details{ position:relative; }
+.t-more summary{
+  list-style:none; cursor:pointer; user-select:none;
+  padding:8px 12px; border-radius:8px; outline:none;
+}
+.t-more summary::-webkit-details-marker{ display:none }
+.t-more[open] summary,
+.t-more summary:hover{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.14);
+}
+.t-more-menu{
+  position:absolute; right:0; top:calc(100% + 8px);
+  min-width:180px; padding:6px; margin:0; list-style:none;
+  background:#0e1012; border:1px solid rgba(255,255,255,.14);
+  border-radius:10px; box-shadow:0 12px 28px rgba(0,0,0,.36);
+}
+.t-more-menu li a{
+  display:block; padding:8px 10px; border-radius:8px;
+  color:var(--text); text-decoration:none;
+}
+.t-more-menu li a:hover{
+  background:rgba(255,255,255,.06);
+}
+
+/* Subscribe 강조 (티스토리 '구독' 느낌) */
+.t-subscribe{
+  border:1px solid rgba(255,255,255,.22);
+}
+.t-subscribe:hover{
+  background:#e9eef3; color:#0b0e10;
+}
+
+/* ===== 모바일 버거 버튼 ===== */
+.t-burger{
+  margin-left:auto; display:none;
+  align-items:center; gap:8px;
+  height:36px; padding:0 12px;
+  background:transparent; color:var(--text);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:18px; cursor:pointer;
+}
+.t-burger .hamburger{
+  position:relative; width:16px; height:12px; display:inline-block;
+}
+.t-burger .hamburger::before{
+  content:""; position:absolute; left:0; right:0; top:0; height:2px;
+  background:#e4e8ec; border-radius:2px;
+  box-shadow:0 5px 0 0 #e4e8ec, 0 10px 0 0 #e4e8ec;
+}
+.t-burger-text{ font-size:.9rem; }
+
+/* 반응형: 모바일에서는 상단 네비 숨기고 버거 표시 */
+@media (max-width: 860px){
+  .t-topnav{ display:none; }
+  .t-burger{ display:inline-flex; }
+}
+
+/* ===== 사이드 패널(기존) 오버레이 연동 ===== */
+@media (max-width: 980px){
+  .t-aside{
+    position: fixed; inset: 0 auto 0 0; width: 82%;
+    max-width: 320px; height: 100dvh; overflow:auto;
+    transform: translateX(-100%); transition: transform .25s ease;
+    z-index: 1200; border-right: 1px solid var(--line); border-radius: 0;
+    background: #0f1214; color:#e9eef3;
+  }
+  html.nav-open .t-aside{ transform: translateX(0) }
+}
+
+/* 하위 리스트 기본 */
+.sub_category_list {
+  list-style: none; 
+  margin: 0;  
+  padding: 0;    
+}
+.link_sub_item{
+  font-size: 13px !important;
+  padding : 5px !important;
+}
+
+.area_foot {
+    height: 50px;
+    font-size: 12px;
+    line-height: 50px;
+    text-align: center;
+    background-color: #f0f0f0;
+    color: #aaa;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    margin-top: 21px;
+    display: flex;
+    z-index: 1;
+}
+
+.sub_category_list{
+  list-style: none; 
+  /* margin: 6px 0 0 0; padding-left: 12px; */
+}
+.sub_category_list li{ margin: 2px 0; 
+  width: 120px;
+}
+
+.sub_category_list .link_sub_item{
+  position: relative;
+  display: block;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background .2s ease, transform .05s ease;
+}
+
+/* hover: 배경 검은색 + 텍스트 컬러 순환 */
+.sub_category_list {
+  list-style: none;
+  margin: 4px 0 8px;
+  padding: 0;
+}
+
+.sub_category_list li {
+  margin: 2px 0;
+  width: auto;
+}
+
+.sub_category_list .link_sub_item {
+  position: relative;
+  display: block;
+
+  padding: 8px 12px !important;
+  border-radius: 10px;
+
+  color: #64748b;
+  font-size: 13px !important;
+  font-weight: 700;
+  text-decoration: none;
+
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.sub_category_list .link_sub_item:hover {
+  background: #f8fafc;
+  color: #4f46e5;
+  animation: none;
+  transform: translateX(2px);
+}
+
+.sub_category_list .link_sub_item:active {
+  transform: translateY(1px);
+}
+
+.sub_category_list .link_sub_item:active{ transform: translateY(1px) }
+
+/* 텍스트 컬러 순환 키프레임 */
+@keyframes rainbowColor {
+  0%   { color: #ff5252; }   /* 레드 */
+  16%  { color: #ffb74d; }   /* 오렌지 */
+  33%  { color: #ffee58; }   /* 옐로 */
+  50%  { color: #66bb6a; }   /* 그린 */
+  66%  { color: #26c6da; }   /* 시안 */
+  83%  { color: #42a5f5; }   /* 블루 */
+  100% { color: #ab47bc; }   /* 퍼플 */
+}
