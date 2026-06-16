@@ -1,0 +1,221 @@
+{
+    "status": "completed",
+    "total_files": 2,
+    "current_file_index": 0,
+    "processed_count": 2,
+    "current_step": "전체 분석 완료",
+    "files": [
+        {
+            "index": 1,
+            "file_name": "All In My Mind - Jazz Dream Pop.mp3",
+            "status": "done",
+            "percent": 100
+        },
+        {
+            "index": 2,
+            "file_name": "City Of Stars.mp3",
+            "status": "done",
+            "percent": 100
+        }
+    ],
+    "result": {
+        "total_file_count": 2,
+        "total_music_duration": {
+            "seconds": 394.0,
+            "text": "6 min 34 sec"
+        },
+        "total_program_execution_time": {
+            "seconds": 98.22,
+            "text": "1 min 38 sec"
+        },
+        "results": [
+            {
+                "file_info": {
+                    "file_name": "All In My Mind - Jazz Dream Pop.mp3",
+                    "file_path": "/Users/jeea/Documents/프로그래밍/Python File/portfolio/project/musicAI/uploads/All In My Mind - Jazz Dream Pop.mp3",
+                    "duration": 244.29,
+                    "duration_text": "4:04"
+                },
+                "original_audio_analysis": {
+                    "key": "G# minor",
+                    "key_confidence": 0.958,
+                    "key_method": "librosa",
+                    "tempo": 105,
+                    "tempo_name": "Andante",
+                    "tempo_category": "Moderately Slow",
+                    "tempo_description": "걷는 속도",
+                    "energy_score": 70.61,
+                    "energy_level": "High Energy",
+                    "rms": 0.13127,
+                    "genre": "Pop-like",
+                    "spectral_centroid": 1816.32,
+                    "spectral_flux": 0.04528,
+                    "dynamic_range": 11.65,
+                    "harmonic_to_noise_ratio": 2.03,
+                    "danceability": 43.93
+                },
+                "vocal_pitch_analysis": {
+                    "lowest_pitch_hz": 138.59,
+                    "lowest_note": "C♯3",
+                    "highest_pitch_hz": 392.0,
+                    "highest_note": "G4",
+                    "pitch_range_semitones": 18,
+                    "pitch_range_octaves": 1.5
+                },
+                "background_instrument_analysis": {
+                    "instrument_count": 5,
+                    "instruments": [
+                        {
+                            "instrument": "Guitar",
+                            "score": 0.35099413990974426,
+                            "percentage": 35.1,
+                            "matched_labels": [
+                                "Steel guitar, slide guitar",
+                                "Guitar",
+                                "Electric guitar",
+                                "Bass guitar",
+                                "Acoustic guitar",
+                                "Tapping (guitar technique)"
+                            ]
+                        },
+                        {
+                            "instrument": "Strings",
+                            "score": 0.14782916009426117,
+                            "percentage": 14.8,
+                            "matched_labels": [
+                                "Plucked string instrument"
+                            ]
+                        },
+                        {
+                            "instrument": "Bass",
+                            "score": 0.022551918402314186,
+                            "percentage": 2.3,
+                            "matched_labels": [
+                                "Bass guitar"
+                            ]
+                        },
+                        {
+                            "instrument": "Electronic Instruments",
+                            "score": 0.016260366886854172,
+                            "percentage": 1.6,
+                            "matched_labels": [
+                                "Keyboard (musical)",
+                                "Synthesizer"
+                            ]
+                        },
+                        {
+                            "instrument": "Piano / Keyboard",
+                            "score": 0.016260366886854172,
+                            "percentage": 1.6,
+                            "matched_labels": [
+                                "Keyboard (musical)",
+                                "Piano"
+                            ]
+                        }
+                    ]
+                },
+                "analysis_time_summary": {
+                    "original_audio_analysis_time": 2.92,
+                    "vocal_separation_time": 50.36,
+                    "vocal_pitch_analysis_time": 6.97,
+                    "background_instrument_analysis_time": 0.38,
+                    "total_analysis_time": 60.63
+                }
+            },
+            {
+                "file_info": {
+                    "file_name": "City Of Stars.mp3",
+                    "file_path": "/Users/jeea/Documents/프로그래밍/Python File/portfolio/project/musicAI/uploads/City Of Stars.mp3",
+                    "duration": 149.71,
+                    "duration_text": "2:29"
+                },
+                "original_audio_analysis": {
+                    "key": "D minor",
+                    "key_confidence": 0.983,
+                    "key_method": "librosa",
+                    "tempo": 110,
+                    "tempo_name": "Moderato",
+                    "tempo_category": "Medium",
+                    "tempo_description": "보통 빠르기",
+                    "energy_score": 64.11,
+                    "energy_level": "Medium Energy",
+                    "rms": 0.0838,
+                    "genre": "Pop-like",
+                    "spectral_centroid": 1668.29,
+                    "spectral_flux": 0.04746,
+                    "dynamic_range": 16.38,
+                    "harmonic_to_noise_ratio": 5.62,
+                    "danceability": 42.5
+                },
+                "vocal_pitch_analysis": {
+                    "lowest_pitch_hz": 130.81,
+                    "lowest_note": "C3",
+                    "highest_pitch_hz": 440.0,
+                    "highest_note": "A4",
+                    "pitch_range_semitones": 21,
+                    "pitch_range_octaves": 1.75
+                },
+                "background_instrument_analysis": {
+                    "instrument_count": 5,
+                    "instruments": [
+                        {
+                            "instrument": "Piano / Keyboard",
+                            "score": 0.4553608298301697,
+                            "percentage": 45.5,
+                            "matched_labels": [
+                                "Piano",
+                                "Electric piano",
+                                "Keyboard (musical)"
+                            ]
+                        },
+                        {
+                            "instrument": "Electronic Instruments",
+                            "score": 0.3655434548854828,
+                            "percentage": 36.6,
+                            "matched_labels": [
+                                "Keyboard (musical)",
+                                "Synthesizer"
+                            ]
+                        },
+                        {
+                            "instrument": "Strings",
+                            "score": 0.01912672072649002,
+                            "percentage": 1.9,
+                            "matched_labels": [
+                                "Harpsichord",
+                                "Plucked string instrument",
+                                "Cello",
+                                "Bowed string instrument"
+                            ]
+                        },
+                        {
+                            "instrument": "Guitar",
+                            "score": 0.01710282266139984,
+                            "percentage": 1.7,
+                            "matched_labels": [
+                                "Guitar",
+                                "Acoustic guitar"
+                            ]
+                        },
+                        {
+                            "instrument": "Bass",
+                            "score": 0.008409935049712658,
+                            "percentage": 0.8,
+                            "matched_labels": [
+                                "Double bass"
+                            ]
+                        }
+                    ]
+                },
+                "analysis_time_summary": {
+                    "original_audio_analysis_time": 1.89,
+                    "vocal_separation_time": 30.77,
+                    "vocal_pitch_analysis_time": 4.6,
+                    "background_instrument_analysis_time": 0.33,
+                    "total_analysis_time": 37.59
+                }
+            }
+        ]
+    },
+    "error": null
+}
