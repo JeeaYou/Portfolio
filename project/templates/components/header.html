@@ -1,25 +1,150 @@
 <!-- templates/components/header.html -->
 <header class="t-header">
   <div class="t-container">
-    <!-- 좌측: 사이트 로고/제목 -->
-    <a class="t-brand" href="/">J.A.</a>
+    <a class="t-brand" href="/">
+      J.A<span>.</span>
+    </a>
 
-    <!-- 우측: 상단 네비 (데스크톱에서 보임) -->
-    <div class="t-topnav" aria-label="Primary">
+    <nav class="t-topnav" aria-label="{{ t('header_nav_aria_label') }}">
       <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/project">Project</a></li>
-        <li><a href="/category">Category</a></li>
-        <li class="t-more"><a href="/contact">Contact</a></li>
-        <li><a class="t-subscribe" href="/subscribe">Subscribe</a></li>
+        <li>
+          <a class="{% if request.path == '/' %}is-active{% endif %}" href="/">
+            {{ t('header_nav_home') }}
+          </a>
+        </li>
+
+        <!-- Projects Hover Menu -->
+        <li class="t-project-hover-item">
+          <a
+            class="t-project-main-link {% if request.path.startswith('/project') %}is-active{% endif %}"
+          >
+            {{ t('header_nav_projects') }}
+          </a>
+
+          <div class="t-project-hover-menu">
+            {% for project in header_projects %}
+              <a href="{{ project.url }}" class="t-project-hover-link">
+                {{ project.display_name }}
+              </a>
+            {% else %}
+              <a href="/project" class="t-project-hover-link">
+                Project List
+              </a>
+            {% endfor %}
+          </div>
+        </li>
+
+        <li>
+          <a href="/about">
+            {{ t('header_nav_about') }}
+          </a>
+        </li>
+
+        <li>
+          <a href="/skills">
+            {{ t('header_nav_skills') }}
+          </a>
+        </li>
+
+        <li>
+          <a class="{% if request.path.startswith('/archive') %}is-active{% endif %}" href="/archive">
+            {{ t('header_nav_archive') }}
+          </a>
+        </li>
+
+        <li>
+          <a class="t-resume-btn" href="/resume">
+            <span class="resume-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M21 3L9.5 14.5"></path>
+                <path d="M21 3L14 21L9.5 14.5L3 10L21 3Z"></path>
+              </svg>
+            </span>
+            {{ t('header_nav_resume') }}
+          </a>
+        </li>
       </ul>
+    </nav>
+
+    <!-- 언어 변경 -->
+    <div class="header-lang-item">
+      <div class="header-lang-dropdown">
+        <button type="button" class="header-lang-current">
+          {% if current_lang == "ko" %}
+            한글
+          {% elif current_lang == "zh" %}
+            中文
+          {% else %}
+            ENG
+          {% endif %}
+          <span>▾</span>
+        </button>
+
+        <div class="header-lang-menu">
+          <button type="button" data-lang="en" class="header-lang-option">
+            ENG
+          </button>
+
+          <button type="button" data-lang="ko" class="header-lang-option">
+            한글
+          </button>
+
+          <button type="button" data-lang="zh" class="header-lang-option">
+            中文
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!-- 모바일: 버거 버튼 -->
-    <button class="t-burger" aria-label="메뉴 열기"
-            onclick="document.documentElement.classList.toggle('nav-open')">
+    <button
+      class="t-burger"
+      type="button"
+      aria-label="{{ t('header_burger_aria_label') }}"
+      onclick="document.documentElement.classList.toggle('nav-open')"
+    >
       <span class="hamburger" aria-hidden="true"></span>
-      <span class="t-burger-text">카테고리</span>
     </button>
   </div>
 </header>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const langButtons = document.querySelectorAll("[data-lang]");
+
+    langButtons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        const lang = button.dataset.lang;
+
+        document.cookie =
+          "lang=" + lang + "; path=/; max-age=" + 60 * 60 * 24 * 365;
+
+        window.location.reload();
+      });
+    });
+
+    const header = document.querySelector(".t-header");
+    const projectItem = document.querySelector(".t-project-hover-item");
+
+    if (header && projectItem) {
+      projectItem.addEventListener("mouseenter", function () {
+        header.classList.add("is-project-open");
+      });
+
+      projectItem.addEventListener("mouseleave", function () {
+        header.classList.remove("is-project-open");
+      });
+
+      projectItem.addEventListener("focusin", function () {
+        header.classList.add("is-project-open");
+      });
+
+      projectItem.addEventListener("focusout", function () {
+        setTimeout(function () {
+          if (!projectItem.contains(document.activeElement)) {
+            header.classList.remove("is-project-open");
+          }
+        }, 0);
+      });
+    }
+  });
+</script>

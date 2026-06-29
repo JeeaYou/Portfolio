@@ -4,37 +4,61 @@ import pandas as pd
 import os
 import cv2
 
-# 모든 테스트 가져오기
+
 def make_eyeChart(curr_dir):
-    static_dir = Path(curr_dir)
+    static_dir = Path(curr_dir).resolve()
     out_dir = static_dir / "csv_file"
     csv_path = out_dir / "시력표.csv"
 
-    if csv_path.exists():
-        df = pd.read_csv(csv_path)
-        print("-파일이 이미 존재합니다.")
-    else:
+    def create_csv():
         dataList = []
-        folders = glob(str(static_dir / "image" / "*"))   # ← curr_dir 활용
+
+        folders = glob(str(static_dir / "image" / "*"))
+
         for idx, folder in enumerate(folders, start=1):
             imgs = glob(os.path.join(folder, "*.jpg"))
+
             for img in imgs:
-                name = Path(img).stem         # 파일명
-                category = Path(folder).name  # 폴더명 (등급)
+                img_path = Path(img).resolve()
 
                 dataList.append({
-                    "방향": name,
-                    "시력": category,
+                    "방향": img_path.stem,
+                    "시력": Path(folder).name,
                     "등급": idx,
-                    "경로": img,
+                    "경로": str(img_path),
                 })
 
-        df = pd.DataFrame(dataList)
-        out_dir.mkdir(parents=True, exist_ok=True)
-        df.to_csv(csv_path, index=False, encoding="utf-8-sig")
-        print("-생성 완료.")
+        df_new = pd.DataFrame(dataList)
 
-    return df
+        out_dir.mkdir(parents=True, exist_ok=True)
+        df_new.to_csv(csv_path, index=False, encoding="utf-8-sig")
+
+        print("-시력표 CSV 새로 생성 완료.")
+        return df_new
+
+    if csv_path.exists():
+        df = pd.read_csv(csv_path)
+
+        # 기존 CSV 안에 Windows 경로 또는 존재하지 않는 경로가 있으면 재생성
+        if "경로" not in df.columns or df.empty:
+            print("-CSV가 비어 있거나 경로 컬럼이 없습니다. 다시 생성합니다.")
+            return create_csv()
+
+        invalid_paths = []
+
+        for path in df["경로"].tolist():
+            if not Path(str(path)).exists():
+                invalid_paths.append(path)
+
+        if invalid_paths:
+            print("-CSV 안의 이미지 경로가 현재 환경과 맞지 않습니다. 다시 생성합니다.")
+            print("예시 잘못된 경로:", invalid_paths[0])
+            return create_csv()
+
+        print("-파일이 이미 존재합니다.")
+        return df
+
+    return create_csv()
 
 # 랜덤 이미지 가져오기
 def get_eyeImg(level, df):
@@ -51,7 +75,13 @@ def get_eyeImg(level, df):
 # 다음 이미지 불러오기
 def load_next_image(level, df, w, h):
     img_name, img_level, img_eyelevel, img_url = get_eyeImg(level, df)
-    img_test = cv2.resize(cv2.imread(img_url), (w, h))
+
+    img = cv2.imread(img_url)
+
+    if img is None:
+        raise FileNotFoundError(f"시력표 이미지를 읽을 수 없습니다: {img_url}")
+
+    img_test = cv2.resize(img, (w, h))
 
     return img_name, img_level, img_eyelevel, img_url, img_test
 

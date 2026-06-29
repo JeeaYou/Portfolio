@@ -1,43 +1,133 @@
 <!-- templates/components/sidebar.html -->
-<div class="t-aside">
+<aside class="t-aside" aria-label="Sidebar Navigation">
   <div class="t-profile">
     <div class="t-avatar">
       {% if avatar_url %}
-        <img src="{{ avatar_url }}" alt="Logo">
+        <img
+          src="{{ avatar_url }}"
+          alt="Logo"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
+        >
+        <span class="avatar-logo" style="display:none;">J.A<span>.</span></span>
+      {% else %}
+        <span class="avatar-logo">J.A<span>.</span></span>
       {% endif %}
     </div>
-    <div class="t-bio">{{ bio_text }}</div>
+
+    <strong class="t-profile-name">J.A<span>.</span></strong>
+    <div class="t-bio">{{ bio_text or "Backend & AI" }}</div>
   </div>
 
   <nav class="t-nav">
-    <div class="t-nav-title">{{ title }}</div>
-    <div class="t-divider"></div>
+    <div class="t-nav-title">{{ title or "Portfolio" }}</div>
 
     <ul class="t-nav-list">
-      {% for items in category %}
-        {% set category_href = items.url or '#' %}
+      {% for cat in category or [] %}
+        {% set category_href = cat.get("url") or "#" %}
+        {% set nav_name = cat.get("display_name") or cat.get("name") or cat.get("raw_ko_name") or cat.get("raw_en_name") or "" %}
+        {% set nav_url = category_href|string %}
+        {% set category_id = cat.get("category_id") %}
+        {% set child_items = cat.get("items") or [] %}
 
         <li>
           <a href="{{ category_href }}"
-             class="{% if active_id == items.category_id %}is-active{% endif %}">
-            {{ items.ko_name }}
+             class="{% if active_id is defined and active_id == category_id %}is-active{% endif %}">
 
-            {% if request.blueprint != "musicAI" %}
-              <span class="c_cnt">({{ items["items"]|length }})</span>
-            {% endif %}
+            <span class="nav-icon" aria-hidden="true">
+              {% if 'home' in nav_url|lower or '홈' in nav_name|lower %}
+                <svg viewBox="0 0 24 24">
+                  <path d="M3 10.8L12 3l9 7.8"></path>
+                  <path d="M5.5 9.5V21h13V9.5"></path>
+                  <path d="M9.5 21v-6h5v6"></path>
+                </svg>
+
+              {% elif 'project' in nav_url|lower or '프로젝트' in nav_name|lower %}
+                <svg viewBox="0 0 24 24">
+                  <path d="M3.5 6.5h6l2 2h9v10.5a2 2 0 0 1-2 2h-15a2 2 0 0 1-2-2v-11a2 2 0 0 1 2-2z"></path>
+                </svg>
+
+              {% elif 'category' in nav_url|lower or '카테고리' in nav_name|lower %}
+                <svg viewBox="0 0 24 24">
+                  <rect x="4" y="4" width="6" height="6" rx="1.5"></rect>
+                  <rect x="14" y="4" width="6" height="6" rx="1.5"></rect>
+                  <rect x="4" y="14" width="6" height="6" rx="1.5"></rect>
+                  <rect x="14" y="14" width="6" height="6" rx="1.5"></rect>
+                </svg>
+
+              {% elif 'contact' in nav_url|lower or '문의' in nav_name|lower or '연락' in nav_name|lower %}
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 6.5h16v11H4z"></path>
+                  <path d="M4 7l8 6 8-6"></path>
+                </svg>
+
+              {% elif 'music' in nav_url|lower or 'music' in nav_name|lower or '음악' in nav_name|lower %}
+                <svg viewBox="0 0 24 24">
+                  <path d="M9 18V5l10-2v13"></path>
+                  <path d="M9 18a2.5 2.5 0 1 1-2.5-2.5A2.5 2.5 0 0 1 9 18z"></path>
+                  <path d="M19 16a2.5 2.5 0 1 1-2.5-2.5A2.5 2.5 0 0 1 19 16z"></path>
+                </svg>
+
+              {% else %}
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 6.5h16v11H4z"></path>
+                  <path d="M4 11.5h16"></path>
+                </svg>
+              {% endif %}
+            </span>
+
+            <span class="nav-text">
+              {{ nav_name }}
+
+              {% if request.blueprint != "musicAI" %}
+                <span class="c_cnt">({{ child_items|length }})</span>
+              {% endif %}
+            </span>
           </a>
 
-          <ul class="sub_category_list">
-            {% for item in items["items"] %}
-              <li>
-                <a href="{{ item.link or '#' }}" class="link_sub_item">
-                  - {{ item.ko_name }}
-                </a>
-              </li>
-            {% endfor %}
-          </ul>
+          {% if child_items %}
+            <ul class="sub_category_list">
+              {% for item in child_items %}
+                {% set item_href = item.link or item.url or "#" %}
+                {% set item_name = item.display_name or item.name or item.ko_name or item.en_name or item.zh_name or "" %}
+
+                <li>
+                  <a href="{{ item_href }}" class="link_sub_item">
+                    {{ item_name }}
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
         </li>
       {% endfor %}
     </ul>
   </nav>
-</div>
+
+  <div class="t-follow">
+    <div class="t-follow-title">FOLLOW</div>
+
+    <div class="t-follow-list">
+      <a href="{{ github_url|default('https://github.com/JeeaYou/Portfolio', true) }}" aria-label="GitHub">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2.8a9.2 9.2 0 0 0-2.9 17.9c.45.08.62-.2.62-.43v-1.6c-2.5.55-3.03-1.08-3.03-1.08-.41-1.04-1-1.32-1-1.32-.82-.56.06-.55.06-.55.9.06 1.38.93 1.38.93.8 1.37 2.1.97 2.62.74.08-.58.31-.97.57-1.2-2-.23-4.1-1-4.1-4.46 0-.98.35-1.78.93-2.41-.09-.23-.4-1.15.09-2.38 0 0 .76-.24 2.5.92a8.6 8.6 0 0 1 4.55 0c1.73-1.16 2.49-.92 2.49-.92.5 1.23.19 2.15.1 2.38.58.63.92 1.43.92 2.41 0 3.47-2.1 4.22-4.1 4.45.32.28.6.82.6 1.66v2.44c0 .24.16.52.63.43A9.2 9.2 0 0 0 12 2.8z"></path>
+        </svg>
+      </a>
+
+      <a href="{{ linkedin_url|default('#', true) }}" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24">
+          <path d="M6.5 9.5V20"></path>
+          <path d="M6.5 6.2v.1"></path>
+          <path d="M11 20V9.5"></path>
+          <path d="M11 14.2c0-2.6 1.4-4.2 3.6-4.2 2.1 0 3.4 1.4 3.4 4.2V20"></path>
+        </svg>
+      </a>
+
+      <a href="{{ mail_url|default('/contact', true) }}" aria-label="Mail">
+        <svg viewBox="0 0 24 24">
+          <path d="M4 6.5h16v11H4z"></path>
+          <path d="M4 7l8 6 8-6"></path>
+        </svg>
+      </a>
+    </div>
+  </div>
+</aside>

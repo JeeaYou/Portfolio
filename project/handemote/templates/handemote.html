@@ -7,35 +7,57 @@
 {% block content %}
 
 <div class="t-shell">
-  {# ② include로 끼워넣기 #}
   {% include "components/sidebar.html" %}
-  {% for cat in category %}
-    {% set is_eyetest = cat.category_id == 210 %}
+
+  {% for cat in category or [] %}
+    {% set cat_name = cat.display_name or cat.name or "" %}
+    {% set cat_desc = cat.display_desc or cat.des or cat.desc or "" %}
+
+    {% if current_lang == "en" %}
+      {% set cta_text = "Start" %}
+    {% elif current_lang == "zh" %}
+      {% set cta_text = "开始" %}
+    {% else %}
+      {% set cta_text = "시작" %}
+    {% endif %}
+
     <div class="t-main">
       <div class="t-page-title">
-        {% if cat.desc %}<a class="anytext">{{ cat.desc }}</a>{% endif %}
-        <h1 class="link_category">{{ cat.ko_name }}</h1>
-      </div>
+        {% if cat_desc %}
+          <a class="anytext">{{ cat_desc }}</a>
+        {% endif %}
 
+        <h1 class="link_category">{{ cat_name }}</h1>
+      </div>
+      
       <div class="t-list">
-        {% for item in cat["items"] %}
-          <div class="t-post"
-              id="{{ item.name }}"
-              style="--hover-bg: url('{{ item.thumbnail }}')">
-            <a class="t-cta"
-              data-cta="{{ 'test' if is_eyetest else 'start' }}"
-              href="{{ item.link }}"
-              aria-label="{{ item.ko_name }} 시작"
-              data-label="{{ item.ko_name }}"></a>
+        {% for item in cat["items"] or [] %}
+          {% set item_name = item.display_name or item.name or item.ko_name or item.en_name or item.zh_name or "" %}
+          {% set item_link = item.link or item.url or "#" %}
+          {% set item_thumbnail = item.thumbnail or "" %}
+
+          <div
+            class="t-post"
+            id="feature-{{ loop.index }}"
+            style="--hover-bg: url('{{ item_thumbnail }}')"
+          >
+            <a
+              class="t-cta"
+              data-action="{{ 'test' if is_eyetest else 'start' }}"
+              data-cta="{{ cta_text }}"
+              href="{{ item_link }}"
+              aria-label="{{ item_name }} {{ cta_text }}"
+              data-label="{{ item_name }}"
+            ></a>
           </div>
         {% endfor %}
       </div>
     </div>
   {% endfor %}
-
 </div>
 
 {% endblock %}
+
 {% block footer %}
   {% include "components/footer.html" %}
 {% endblock %}

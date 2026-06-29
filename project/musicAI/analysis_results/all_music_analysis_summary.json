@@ -1,111 +1,18 @@
 {
-    "total_file_count": 2,
+    "total_file_count": 1,
     "total_music_duration": {
-        "seconds": 394.0,
-        "text": "6 min 34 sec"
+        "seconds": 149.71,
+        "text": "2 min 29 sec"
     },
     "total_program_execution_time": {
-        "seconds": 18.67,
-        "text": "0 min 18 sec"
+        "seconds": 24.83,
+        "text": "0 min 24 sec"
     },
     "results": [
         {
             "file_info": {
-                "file_name": "All In My Mind - Jazz Dream Pop.mp3",
-                "file_path": "/Users/jeea/Documents/프로그래밍/Python File/portfolio/project/musicAI/uploads/All In My Mind - Jazz Dream Pop.mp3",
-                "duration": 244.29,
-                "duration_text": "4:04"
-            },
-            "original_audio_analysis": {
-                "key": "G# minor",
-                "key_confidence": 0.958,
-                "key_method": "librosa",
-                "tempo": 105,
-                "tempo_name": "Andante",
-                "tempo_category": "Moderately Slow",
-                "tempo_description": "걷는 속도",
-                "energy_score": 70.61,
-                "energy_level": "High Energy",
-                "rms": 0.13127,
-                "genre": "Pop-like",
-                "spectral_centroid": 1816.32,
-                "spectral_flux": 0.04528,
-                "dynamic_range": 11.65,
-                "harmonic_to_noise_ratio": 2.03,
-                "danceability": 43.93
-            },
-            "vocal_pitch_analysis": {
-                "lowest_pitch_hz": 138.59,
-                "lowest_note": "C♯3",
-                "highest_pitch_hz": 369.99,
-                "highest_note": "F♯4",
-                "pitch_range_semitones": 17,
-                "pitch_range_octaves": 1.42
-            },
-            "background_instrument_analysis": {
-                "instrument_count": 5,
-                "instruments": [
-                    {
-                        "instrument": "Guitar",
-                        "score": 0.35078558325767517,
-                        "percentage": 35.1,
-                        "matched_labels": [
-                            "Steel guitar, slide guitar",
-                            "Guitar",
-                            "Electric guitar",
-                            "Bass guitar",
-                            "Acoustic guitar",
-                            "Tapping (guitar technique)"
-                        ]
-                    },
-                    {
-                        "instrument": "Strings",
-                        "score": 0.144566148519516,
-                        "percentage": 14.5,
-                        "matched_labels": [
-                            "Plucked string instrument"
-                        ]
-                    },
-                    {
-                        "instrument": "Bass",
-                        "score": 0.02214624732732773,
-                        "percentage": 2.2,
-                        "matched_labels": [
-                            "Bass guitar"
-                        ]
-                    },
-                    {
-                        "instrument": "Electronic Instruments",
-                        "score": 0.01636531762778759,
-                        "percentage": 1.6,
-                        "matched_labels": [
-                            "Keyboard (musical)",
-                            "Synthesizer"
-                        ]
-                    },
-                    {
-                        "instrument": "Piano / Keyboard",
-                        "score": 0.01636531762778759,
-                        "percentage": 1.6,
-                        "matched_labels": [
-                            "Keyboard (musical)",
-                            "Piano"
-                        ]
-                    }
-                ]
-            },
-            "analysis_time_summary": {
-                "original_audio_analysis_time": 3.02,
-                "vocal_separation_time": 0.0,
-                "vocal_pitch_analysis_time": 8.31,
-                "background_instrument_analysis_time": 0.42,
-                "total_analysis_time": 11.76
-            }
-        },
-        {
-            "file_info": {
                 "file_name": "City Of Stars.mp3",
-                "file_path": "/Users/jeea/Documents/프로그래밍/Python File/portfolio/project/musicAI/uploads/City Of Stars.mp3",
+                "file_path": "/Users/jeea/Documents/Portfolio/project/musicAI/uploads/City Of Stars.mp3",
                 "duration": 149.71,
                 "duration_text": "2:29"
             },
@@ -117,12 +24,96 @@
                 "tempo_name": "Moderato",
                 "tempo_category": "Medium",
                 "tempo_description": "보통 빠르기",
+                "rhythm_pattern": "Steady rhythm",
+                "beat_count": 230,
+                "beat_strength": 0.83587,
+                "beat_regularity": 0.2742,
                 "energy_score": 64.11,
                 "energy_level": "Medium Energy",
                 "rms": 0.0838,
                 "genre": "Pop-like",
+                "mood": "Dramatic / Emotional",
                 "spectral_centroid": 1668.29,
+                "spectral_bandwidth": 2323.95,
+                "spectral_rolloff": 3080.55,
+                "spectral_flatness": 4.9e-05,
                 "spectral_flux": 0.04746,
+                "zero_crossing_rate": 0.034402,
+                "mfcc_mean": [
+                    -276.30591,
+                    166.3046,
+                    14.04396,
+                    14.66852,
+                    -5.74933,
+                    12.92001,
+                    -4.7966,
+                    1.30007,
+                    -4.62177,
+                    -5.40843,
+                    -1.15588,
+                    -2.27845,
+                    -8.30589,
+                    -4.91763,
+                    -8.53724,
+                    -7.84571,
+                    -2.59462,
+                    -5.74406,
+                    -5.50953,
+                    -5.8877
+                ],
+                "mfcc_std": [
+                    81.82875,
+                    34.13213,
+                    32.37048,
+                    25.68939,
+                    17.17609,
+                    13.5192,
+                    14.97974,
+                    13.10449,
+                    11.84724,
+                    10.8567,
+                    9.45963,
+                    9.0325,
+                    9.23557,
+                    8.60595,
+                    7.91515,
+                    7.21921,
+                    8.53182,
+                    7.76246,
+                    7.28538,
+                    7.78361
+                ],
+                "spectral_contrast_mean": [
+                    18.39352,
+                    13.42484,
+                    17.88116,
+                    20.31712,
+                    20.54724,
+                    20.67857,
+                    57.26302
+                ],
+                "chroma_mean": [
+                    0.3303,
+                    0.19733,
+                    0.42661,
+                    0.17963,
+                    0.32279,
+                    0.30813,
+                    0.13755,
+                    0.27226,
+                    0.17019,
+                    0.43619,
+                    0.30448,
+                    0.18326
+                ],
+                "tonnetz_mean": [
+                    0.18611,
+                    0.18436,
+                    -0.11977,
+                    -0.01272,
+                    -0.00668,
+                    0.00289
+                ],
                 "dynamic_range": 16.38,
                 "harmonic_to_noise_ratio": 5.62,
                 "danceability": 42.5
@@ -136,12 +127,12 @@
                 "pitch_range_octaves": 1.75
             },
             "background_instrument_analysis": {
-                "instrument_count": 5,
+                "instrument_count": 4,
                 "instruments": [
                     {
                         "instrument": "Piano / Keyboard",
-                        "score": 0.3987167477607727,
-                        "percentage": 39.9,
+                        "score": 0.4402586817741394,
+                        "percentage": 44.0,
                         "matched_labels": [
                             "Piano",
                             "Electric piano",
@@ -150,8 +141,8 @@
                     },
                     {
                         "instrument": "Electronic Instruments",
-                        "score": 0.33103689551353455,
-                        "percentage": 33.1,
+                        "score": 0.3663526177406311,
+                        "percentage": 36.6,
                         "matched_labels": [
                             "Keyboard (musical)",
                             "Synthesizer"
@@ -159,8 +150,8 @@
                     },
                     {
                         "instrument": "Strings",
-                        "score": 0.01706538163125515,
-                        "percentage": 1.7,
+                        "score": 0.021151766180992126,
+                        "percentage": 2.1,
                         "matched_labels": [
                             "Harpsichord",
                             "Plucked string instrument",
@@ -170,30 +161,23 @@
                     },
                     {
                         "instrument": "Guitar",
-                        "score": 0.013930640183389187,
-                        "percentage": 1.4,
+                        "score": 0.017239447683095932,
+                        "percentage": 1.7,
                         "matched_labels": [
                             "Guitar",
                             "Acoustic guitar"
-                        ]
-                    },
-                    {
-                        "instrument": "Bass",
-                        "score": 0.009367043152451515,
-                        "percentage": 0.9,
-                        "matched_labels": [
-                            "Double bass"
                         ]
                     }
                 ]
             },
             "analysis_time_summary": {
-                "original_audio_analysis_time": 2.01,
+                "original_audio_analysis_time": 11.8,
                 "vocal_separation_time": 0.0,
-                "vocal_pitch_analysis_time": 4.56,
-                "background_instrument_analysis_time": 0.33,
-                "total_analysis_time": 6.91
-            }
+                "vocal_pitch_analysis_time": 4.83,
+                "background_instrument_analysis_time": 0.9,
+                "total_analysis_time": 17.54
+            },
+            "db_track_id": "track_0000207"
         }
     ]
 }

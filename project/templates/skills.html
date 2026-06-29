@@ -1,0 +1,642 @@
+{% extends "base.html" %}
+
+{% block header %}
+  {% include "components/header.html" %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/skills.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{% macro skill_card(skill) %}
+  <article class="skill-card">
+    <div class="skill-card-top">
+      <span class="skill-logo {{ skill.logo_class }}">{{ skill.logo }}</span>
+
+      <div>
+        <h3>{{ skill.name }}</h3>
+        <p>{{ skill.desc }}</p>
+      </div>
+
+      <em>{{ skill.level }}</em>
+    </div>
+
+    <div class="skill-progress">
+      <span
+        class="skill-progress-bar"
+        data-width="{{ skill.width | default(0) }}"
+      ></span>
+    </div>
+  </article>
+{% endmacro %}
+
+
+{% set filters = [
+  {"key": "all", "label": t("skills_filter_all")},
+  {"key": "language", "label": t("skills_filter_language")},
+  {"key": "ai", "label": t("skills_filter_ai")},
+  {"key": "backend", "label": t("skills_filter_backend")},
+  {"key": "database", "label": t("skills_filter_database")},
+  {"key": "frontend", "label": t("skills_filter_frontend")},
+  {"key": "tools", "label": t("skills_filter_tools")}
+] %}
+
+
+{% set core_strengths = [
+  {
+    "title": t("skills_core_programming_title"),
+    "desc": t("skills_core_programming_desc")
+  },
+  {
+    "title": t("skills_core_ai_title"),
+    "desc": t("skills_core_ai_desc")
+  },
+  {
+    "title": t("skills_core_backend_title"),
+    "desc": t("skills_core_backend_desc")
+  },
+  {
+    "title": t("skills_core_enterprise_title"),
+    "desc": t("skills_core_enterprise_desc")
+  }
+] %}
+
+
+{% set glance_items = [
+  {
+    "num": "01",
+    "title": t("skills_glance_language_title"),
+    "desc": t("skills_glance_language_desc")
+  },
+  {
+    "num": "02",
+    "title": t("skills_glance_ai_title"),
+    "desc": t("skills_glance_ai_desc")
+  },
+  {
+    "num": "03",
+    "title": t("skills_glance_backend_title"),
+    "desc": t("skills_glance_backend_desc")
+  }
+] %}
+
+
+{% set level = {
+  "expert": t("skills_level_expert"),
+  "advanced": t("skills_level_advanced"),
+  "intermediate": t("skills_level_intermediate"),
+  "basic": t("skills_level_basic")
+} %}
+
+
+{% set skill_categories = [
+  {
+    "key": "language",
+    "num": "01",
+    "title": t("skills_category_language_title"),
+    "badge": t("skills_category_language_badge"),
+    "desc": t("skills_category_language_desc"),
+    "skills": [
+      {
+        "logo_class": "java",
+        "logo": "J",
+        "name": "Java",
+        "desc": t("skills_desc_java"),
+        "level": level.expert,
+        "width": 92
+      },
+      {
+        "logo_class": "python",
+        "logo": "Py",
+        "name": "Python",
+        "desc": t("skills_desc_python"),
+        "level": level.advanced,
+        "width": 82
+      },
+      {
+        "logo_class": "c",
+        "logo": "C",
+        "name": "C",
+        "desc": t("skills_desc_c"),
+        "level": level.basic,
+        "width": 48
+      },
+      {
+        "logo_class": "sql",
+        "logo": "SQL",
+        "name": "SQL",
+        "desc": t("skills_desc_sql"),
+        "level": level.expert,
+        "width": 88
+      },
+      {
+        "logo_class": "js",
+        "logo": "JS",
+        "name": "JavaScript",
+        "desc": t("skills_desc_javascript_language"),
+        "level": level.advanced,
+        "width": 75
+      }
+    ]
+  },
+  {
+    "key": "ai",
+    "num": "02",
+    "title": t("skills_category_ai_title"),
+    "badge": t("skills_category_ai_badge"),
+    "desc": t("skills_category_ai_desc"),
+    "skills": [
+      {
+        "logo_class": "tensorflow",
+        "logo": "TF",
+        "name": "TensorFlow",
+        "desc": t("skills_desc_tensorflow"),
+        "level": level.basic,
+        "width": 50
+      },
+      {
+        "logo_class": "torch",
+        "logo": "PT",
+        "name": "PyTorch / Torch",
+        "desc": t("skills_desc_torch"),
+        "level": level.intermediate,
+        "width": 62
+      },
+      {
+        "logo_class": "numpy",
+        "logo": "NP",
+        "name": "NumPy",
+        "desc": t("skills_desc_numpy"),
+        "level": level.intermediate,
+        "width": 64
+      },
+      {
+        "logo_class": "pandas",
+        "logo": "PD",
+        "name": "Pandas",
+        "desc": t("skills_desc_pandas"),
+        "level": level.intermediate,
+        "width": 62
+      },
+      {
+        "logo_class": "mediapipe",
+        "logo": "MP",
+        "name": "MediaPipe",
+        "desc": t("skills_desc_mediapipe"),
+        "level": level.intermediate,
+        "width": 66
+      },
+      {
+        "logo_class": "opencv",
+        "logo": "CV",
+        "name": "OpenCV",
+        "desc": t("skills_desc_opencv"),
+        "level": level.intermediate,
+        "width": 66
+      },
+      {
+        "logo_class": "cvzone",
+        "logo": "CZ",
+        "name": "cvZone",
+        "desc": t("skills_desc_cvzone"),
+        "level": level.intermediate,
+        "width": 60
+      },
+      {
+        "logo_class": "librosa",
+        "logo": "LB",
+        "name": "Librosa",
+        "desc": t("skills_desc_librosa"),
+        "level": level.intermediate,
+        "width": 68
+      },
+      {
+        "logo_class": "torchcrepe",
+        "logo": "TC",
+        "name": "Torchcrepe",
+        "desc": t("skills_desc_torchcrepe"),
+        "level": level.intermediate,
+        "width": 62
+      },
+      {
+        "logo_class": "demucs",
+        "logo": "DM",
+        "name": "Demucs",
+        "desc": t("skills_desc_demucs"),
+        "level": level.intermediate,
+        "width": 60
+      },
+      {
+        "logo_class": "ffmpeg",
+        "logo": "FF",
+        "name": "FFmpeg",
+        "desc": t("skills_desc_ffmpeg"),
+        "level": level.intermediate,
+        "width": 62
+      },
+      {
+        "logo_class": "brity",
+        "logo": "BR",
+        "name": "SDS Brity RPA",
+        "desc": t("skills_desc_brity"),
+        "level": level.intermediate,
+        "width": 68
+      },
+      {
+        "logo_class": "uipath",
+        "logo": "UI",
+        "name": "UiPath",
+        "desc": t("skills_desc_uipath"),
+        "level": level.basic,
+        "width": 52
+      }
+    ]
+  },
+  {
+    "key": "backend",
+    "num": "03",
+    "title": t("skills_category_backend_title"),
+    "badge": t("skills_category_backend_badge"),
+    "desc": t("skills_category_backend_desc"),
+    "skills": [
+      {
+        "logo_class": "spring",
+        "logo": "SB",
+        "name": "Spring Boot",
+        "desc": t("skills_desc_spring_boot"),
+        "level": level.expert,
+        "width": 90
+      },
+      {
+        "logo_class": "flask",
+        "logo": "F",
+        "name": "Flask",
+        "desc": t("skills_desc_flask"),
+        "level": level.advanced,
+        "width": 80
+      },
+      {
+        "logo_class": "api",
+        "logo": "API",
+        "name": "REST API",
+        "desc": t("skills_desc_rest_api"),
+        "level": level.expert,
+        "width": 90
+      },
+      {
+        "logo_class": "jpa",
+        "logo": "JPA",
+        "name": "JPA",
+        "desc": t("skills_desc_jpa"),
+        "level": level.advanced,
+        "width": 76
+      },
+      {
+        "logo_class": "mybatis",
+        "logo": "MB",
+        "name": "MyBatis",
+        "desc": t("skills_desc_mybatis"),
+        "level": level.advanced,
+        "width": 80
+      },
+      {
+        "logo_class": "jsp",
+        "logo": "JSP",
+        "name": "JSP",
+        "desc": t("skills_desc_jsp"),
+        "level": level.intermediate,
+        "width": 68
+      }
+    ]
+  },
+  {
+    "key": "database",
+    "num": "04",
+    "title": t("skills_category_database_title"),
+    "badge": t("skills_category_database_badge"),
+    "desc": t("skills_category_database_desc"),
+    "skills": [
+      {
+        "logo_class": "oracle",
+        "logo": "OR",
+        "name": "Oracle",
+        "desc": t("skills_desc_oracle"),
+        "level": level.advanced,
+        "width": 78
+      },
+      {
+        "logo_class": "postgres",
+        "logo": "PG",
+        "name": "PostgreSQL",
+        "desc": t("skills_desc_postgresql"),
+        "level": level.advanced,
+        "width": 76
+      },
+      {
+        "logo_class": "mysql",
+        "logo": "MY",
+        "name": "MySQL",
+        "desc": t("skills_desc_mysql"),
+        "level": level.intermediate,
+        "width": 68
+      },
+      {
+        "logo_class": "mssql",
+        "logo": "MS",
+        "name": "MS SQL",
+        "desc": t("skills_desc_mssql"),
+        "level": level.intermediate,
+        "width": 66
+      }
+    ]
+  },
+  {
+    "key": "frontend",
+    "num": "05",
+    "title": t("skills_category_frontend_title"),
+    "badge": t("skills_category_frontend_badge"),
+    "desc": t("skills_category_frontend_desc"),
+    "skills": [
+      {
+        "logo_class": "html",
+        "logo": "H",
+        "name": "HTML",
+        "desc": t("skills_desc_html"),
+        "level": level.advanced,
+        "width": 84
+      },
+      {
+        "logo_class": "css",
+        "logo": "CSS",
+        "name": "CSS",
+        "desc": t("skills_desc_css"),
+        "level": level.advanced,
+        "width": 82
+      },
+      {
+        "logo_class": "js",
+        "logo": "JS",
+        "name": "JavaScript",
+        "desc": t("skills_desc_javascript_frontend"),
+        "level": level.advanced,
+        "width": 75
+      },
+      {
+        "logo_class": "jquery",
+        "logo": "jQ",
+        "name": "jQuery",
+        "desc": t("skills_desc_jquery"),
+        "level": level.intermediate,
+        "width": 66
+      },
+      {
+        "logo_class": "ajax",
+        "logo": "AX",
+        "name": "Ajax",
+        "desc": t("skills_desc_ajax"),
+        "level": level.intermediate,
+        "width": 64
+      },
+      {
+        "logo_class": "nexacro",
+        "logo": "NX",
+        "name": "Nexacro",
+        "desc": t("skills_desc_nexacro"),
+        "level": level.intermediate,
+        "width": 65
+      }
+    ]
+  },
+  {
+    "key": "tools",
+    "num": "06",
+    "title": t("skills_category_tools_title"),
+    "badge": t("skills_category_tools_badge"),
+    "desc": t("skills_category_tools_desc"),
+    "skills": [
+      {
+        "logo_class": "git",
+        "logo": "G",
+        "name": "Git",
+        "desc": t("skills_desc_git"),
+        "level": level.advanced,
+        "width": 78
+      },
+      {
+        "logo_class": "svn",
+        "logo": "SVN",
+        "name": "SVN",
+        "desc": t("skills_desc_svn"),
+        "level": level.intermediate,
+        "width": 68
+      },
+      {
+        "logo_class": "maven",
+        "logo": "MV",
+        "name": "Maven",
+        "desc": t("skills_desc_maven"),
+        "level": level.intermediate,
+        "width": 66
+      },
+      {
+        "logo_class": "gradle",
+        "logo": "GR",
+        "name": "Gradle",
+        "desc": t("skills_desc_gradle"),
+        "level": level.intermediate,
+        "width": 66
+      },
+      {
+        "logo_class": "tomcat",
+        "logo": "TC",
+        "name": "Tomcat",
+        "desc": t("skills_desc_tomcat"),
+        "level": level.intermediate,
+        "width": 70
+      },
+      {
+        "logo_class": "weblogic",
+        "logo": "WL",
+        "name": "WebLogic",
+        "desc": t("skills_desc_weblogic"),
+        "level": level.intermediate,
+        "width": 68
+      },
+      {
+        "logo_class": "linux",
+        "logo": "LX",
+        "name": "Linux",
+        "desc": t("skills_desc_linux"),
+        "level": level.intermediate,
+        "width": 62
+      }
+    ]
+  }
+] %}
+
+
+<main class="skills-page">
+
+  <section class="skills-main">
+
+    <section class="skills-hero">
+      <div>
+        <span class="skills-eyebrow">{{ t("skills_hero_eyebrow") }}</span>
+        <h1>{{ t("skills_hero_title") }}</h1>
+        <p>{{ t("skills_hero_desc") }}</p>
+      </div>
+    </section>
+
+    <section class="skills-filter" aria-label="Skill filters">
+      {% for filter in filters %}
+        <button
+          type="button"
+          class="skill-filter-btn {% if loop.first %}is-active{% endif %}"
+          data-filter="{{ filter.key }}"
+        >
+          {{ filter.label }}
+        </button>
+      {% endfor %}
+    </section>
+
+    <section class="skills-summary-grid">
+
+      <article class="skills-core-card">
+        <div class="skills-card-title">
+          <span class="skills-icon-bubble">✦</span>
+          <h2>{{ t("skills_core_strengths_title") }}</h2>
+        </div>
+
+        <ul class="skills-core-list">
+          {% for item in core_strengths %}
+            <li>
+              <span>✓</span>
+              <p>
+                <strong>{{ item.title }}</strong>
+                {{ item.desc }}
+              </p>
+            </li>
+          {% endfor %}
+        </ul>
+
+        <div class="skills-cube-art" aria-hidden="true">
+          <div class="cube cube-lg"></div>
+          <div class="cube cube-md"></div>
+          <div class="cube cube-sm"></div>
+          <div class="cube cube-xs"></div>
+        </div>
+      </article>
+
+      <article class="skills-glance-card">
+        <div class="skills-card-title">
+          <span class="skills-icon-bubble">↗</span>
+          <h2>{{ t("skills_glance_title") }}</h2>
+        </div>
+
+        <div class="skills-glance-list">
+          {% for item in glance_items %}
+            <div>
+              <span>{{ item.num }}</span>
+              <p>
+                <strong>{{ item.title }}</strong>
+                {{ item.desc }}
+              </p>
+            </div>
+          {% endfor %}
+        </div>
+      </article>
+
+    </section>
+
+    {% for category in skill_categories %}
+      <section class="skill-category" data-section="{{ category.key }}">
+        <div class="category-head">
+          <div>
+            <span class="category-label">{{ category.num }}</span>
+            <h2>{{ category.title }}</h2>
+            <p>{{ category.desc }}</p>
+          </div>
+
+          <strong>{{ category.badge }}</strong>
+        </div>
+
+        <div class="skills-grid">
+          {% for skill in category.skills %}
+            {{ skill_card(skill) }}
+          {% endfor %}
+        </div>
+      </section>
+    {% endfor %}
+
+    <section class="skills-section">
+      <h2 class="skills-section-title">
+        <span></span>
+        {{ t("skills_focus_title") }}
+      </h2>
+
+      <div class="focus-grid">
+        <article class="focus-card purple">
+          <span>💡</span>
+          <h3>{{ t("skills_focus_problem_title") }}</h3>
+          <p>{{ t("skills_focus_problem_desc") }}</p>
+        </article>
+
+        <article class="focus-card blue">
+          <span>◎</span>
+          <h3>{{ t("skills_focus_adaptation_title") }}</h3>
+          <p>{{ t("skills_focus_adaptation_desc") }}</p>
+        </article>
+
+        <article class="focus-card green">
+          <span>✦</span>
+          <h3>{{ t("skills_focus_collaboration_title") }}</h3>
+          <p>{{ t("skills_focus_collaboration_desc") }}</p>
+        </article>
+      </div>
+    </section>
+
+    <p class="skills-quote">
+      “{{ t("skills_quote") }}”
+    </p>
+
+  </section>
+
+</main>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const filterButtons = document.querySelectorAll(".skill-filter-btn");
+    const categories = document.querySelectorAll(".skill-category");
+    const progressBars = document.querySelectorAll(".skill-progress-bar");
+
+    progressBars.forEach(function (bar) {
+      const rawWidth = Number(bar.dataset.width || 0);
+      const safeWidth = Math.max(0, Math.min(rawWidth, 100));
+
+      bar.style.width = safeWidth + "%";
+    });
+
+    filterButtons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        const filter = button.dataset.filter;
+
+        filterButtons.forEach(function (btn) {
+          btn.classList.remove("is-active");
+        });
+
+        button.classList.add("is-active");
+
+        categories.forEach(function (section) {
+          const sectionType = section.dataset.section;
+
+          if (filter === "all" || filter === sectionType) {
+            section.classList.remove("is-hidden");
+          } else {
+            section.classList.add("is-hidden");
+          }
+        });
+      });
+    });
+  });
+</script>
+
+{% endblock %}

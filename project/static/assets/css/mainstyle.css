@@ -341,7 +341,7 @@ body.home-page #wrapper {
   justify-content: center;
   flex-wrap: wrap;
   gap: 8px;
-
+  width: 80%;
   margin-top: 22px;
 }
 
@@ -1206,3 +1206,4 @@ body.home-page #footer.home-footer .icons a:hover {
 .project-card.is-hand-project:hover {
   box-shadow: none !important;
 }
+

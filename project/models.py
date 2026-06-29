@@ -1,24 +1,58 @@
 from sqlalchemy import text
 from . import db
 
+
+class Translate(db.Model):
+    __tablename__ = "translate"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    page_name = db.Column(db.String(100))
+    page = db.Column(db.String(100))
+    pre_tag = db.Column(db.String(100))
+
+    tag_type = db.Column(db.String(50))
+    class_name = db.Column(db.String(100))
+    id_name = db.Column(db.String(100))
+
+    content_key = db.Column(db.String(150), nullable=False, unique=True)
+
+    en_content = db.Column(db.Text)
+    ko_content = db.Column(db.Text)
+    zh_content = db.Column(db.Text)
+
+    updated_at = db.Column(db.DateTime)
+    is_active = db.Column(db.Boolean, default=True)
+
+
 class Project(db.Model):
     __tablename__ = "projects"
 
-    id         = db.Column(db.Integer, primary_key=True)
-    name       = db.Column(db.String(100), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
     sort_order = db.Column(db.Integer, default=0)
-    en_name    = db.Column(db.String(100), nullable=False)
-    ko_name    = db.Column(db.String(100), nullable=False)
-    zh_name    = db.Column(db.String(100), nullable=False)
 
-    url        = db.Column(db.String(128))
-    thumbnail  = db.Column(db.String(255))
-    is_active  = db.Column(db.Boolean, nullable=False, default=True)
+    en_name = db.Column(db.String(100), nullable=False)
+    ko_name = db.Column(db.String(100), nullable=False)
+    zh_name = db.Column(db.String(100), nullable=False)
+
+    en_des = db.Column(db.String(255))
+    ko_des = db.Column(db.String(255))
+    zh_des = db.Column(db.String(255))
+
+    url = db.Column(db.String(128))
+    thumbnail = db.Column(db.String(255))
+    is_active = db.Column(db.Boolean, nullable=False, default=True)
+
     created_at = db.Column(
-        db.TIMESTAMP, nullable=False, server_default=text("CURRENT_TIMESTAMP")
+        db.TIMESTAMP,
+        nullable=False,
+        server_default=text("CURRENT_TIMESTAMP")
     )
+
     updated_at = db.Column(
-        db.TIMESTAMP, nullable=False,
+        db.TIMESTAMP,
+        nullable=False,
         server_default=text("CURRENT_TIMESTAMP"),
         onupdate=text("CURRENT_TIMESTAMP"),
     )
@@ -27,27 +61,33 @@ class Project(db.Model):
 class Category(db.Model):
     __tablename__ = "category"
 
-    id         = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     project_id = db.Column(db.Integer, db.ForeignKey("projects.id"), nullable=False)
-    name       = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
     sort_order = db.Column(db.Integer, default=0)
 
-    en_name    = db.Column(db.String(100), nullable=False)
-    ko_name    = db.Column(db.String(100), nullable=False)
-    zh_name    = db.Column(db.String(100), nullable=False)
+    en_name = db.Column(db.String(100), nullable=False)
+    ko_name = db.Column(db.String(100), nullable=False)
+    zh_name = db.Column(db.String(100), nullable=False)
 
-    url        = db.Column(db.String(128))
-    en_des     = db.Column(db.String(255))
-    ko_des     = db.Column(db.String(255))
-    zh_des     = db.Column(db.String(255))
+    url = db.Column(db.String(128))
 
-    show  = db.Column(db.String(255))
-    is_active  = db.Column(db.Boolean, nullable=False, default=True)
+    en_des = db.Column(db.String(255))
+    ko_des = db.Column(db.String(255))
+    zh_des = db.Column(db.String(255))
+
+    show = db.Column(db.String(255))
+    is_active = db.Column(db.Boolean, nullable=False, default=True)
+
     created_at = db.Column(
-        db.TIMESTAMP, nullable=False, server_default=text("CURRENT_TIMESTAMP")
+        db.TIMESTAMP,
+        nullable=False,
+        server_default=text("CURRENT_TIMESTAMP")
     )
+
     updated_at = db.Column(
-        db.TIMESTAMP, nullable=False,
+        db.TIMESTAMP,
+        nullable=False,
         server_default=text("CURRENT_TIMESTAMP"),
         onupdate=text("CURRENT_TIMESTAMP"),
     )
@@ -56,31 +96,36 @@ class Category(db.Model):
 class Feature(db.Model):
     __tablename__ = "features"
 
-    id          = db.Column(db.Integer, primary_key=True)
-    project_id  = db.Column(db.Integer, db.ForeignKey("projects.id"), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    project_id = db.Column(db.Integer, db.ForeignKey("projects.id"), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey("category.id"), nullable=False)
-    name        = db.Column(db.String(100), nullable=False)
-    sort_order  = db.Column(db.Integer, default=0)
+    name = db.Column(db.String(100), nullable=False)
+    sort_order = db.Column(db.Integer, default=0)
 
-    en_name     = db.Column(db.String(100), nullable=False)
-    ko_name     = db.Column(db.String(100), nullable=False)
-    zh_name     = db.Column(db.String(100), nullable=False)
+    en_name = db.Column(db.String(100), nullable=False)
+    ko_name = db.Column(db.String(100), nullable=False)
+    zh_name = db.Column(db.String(100), nullable=False)
 
-    url         = db.Column(db.String(128))
-    en_des      = db.Column(db.String(255))
-    ko_des      = db.Column(db.String(255))
-    zh_des      = db.Column(db.String(255))
+    url = db.Column(db.String(128))
 
-    thumbnail   = db.Column(db.String(255))
-    show   = db.Column(db.String(255))
-    cam   = db.Column(db.Boolean, nullable=False, default=True)
-    is_active   = db.Column(db.Boolean, nullable=False, default=True)
+    en_des = db.Column(db.String(255))
+    ko_des = db.Column(db.String(255))
+    zh_des = db.Column(db.String(255))
 
-    created_at  = db.Column(
-        db.TIMESTAMP, nullable=False, server_default=text("CURRENT_TIMESTAMP")
+    thumbnail = db.Column(db.String(255))
+    show = db.Column(db.String(255))
+    cam = db.Column(db.Boolean, nullable=False, default=True)
+    is_active = db.Column(db.Boolean, nullable=False, default=True)
+
+    created_at = db.Column(
+        db.TIMESTAMP,
+        nullable=False,
+        server_default=text("CURRENT_TIMESTAMP")
     )
-    updated_at  = db.Column(
-        db.TIMESTAMP, nullable=False,
+
+    updated_at = db.Column(
+        db.TIMESTAMP,
+        nullable=False,
         server_default=text("CURRENT_TIMESTAMP"),
         onupdate=text("CURRENT_TIMESTAMP"),
     )
@@ -94,6 +139,7 @@ class MusicTrack(db.Model):
     file_path = db.Column(db.Text, nullable=False)
     duration = db.Column(db.Numeric(10, 2))
     is_active = db.Column(db.Integer, nullable=False, default=1)
+
     created_at = db.Column(
         db.TIMESTAMP,
         nullable=False,
@@ -139,12 +185,15 @@ class MusicAudioFeature(db.Model):
     spectral_contrast_mean = db.Column(db.Text)
     chroma_mean = db.Column(db.Text)
     tonnetz_mean = db.Column(db.Text)
+
     is_active = db.Column(db.Integer, nullable=False, default=1)
+
     created_at = db.Column(
         db.TIMESTAMP,
         nullable=False,
         server_default=text("CURRENT_TIMESTAMP")
     )
+
 
 class MusicCluster(db.Model):
     __tablename__ = "music_clusters"
@@ -160,11 +209,13 @@ class MusicCluster(db.Model):
     cluster_id = db.Column(db.Integer, nullable=False)
     group_label = db.Column(db.String(50))
     is_active = db.Column(db.Integer, nullable=False, default=1)
+
     created_at = db.Column(
         db.TIMESTAMP,
         nullable=False,
         server_default=text("CURRENT_TIMESTAMP")
     )
+
 
 class AnalysisJob(db.Model):
     __tablename__ = "analysis_jobs"
@@ -182,8 +233,68 @@ class AnalysisJob(db.Model):
     started_at = db.Column(db.TIMESTAMP)
     finished_at = db.Column(db.TIMESTAMP)
     is_active = db.Column(db.Integer, nullable=False, default=1)
+
     created_at = db.Column(
         db.TIMESTAMP,
         nullable=False,
         server_default=text("CURRENT_TIMESTAMP")
     )
+
+class ArchiveItem(db.Model):
+    __tablename__ = "archive_items"
+
+    id = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
+
+    project_name = db.Column(db.String(100), nullable=False)
+    category_key = db.Column(db.String(50), nullable=False)
+
+    ko_category = db.Column(db.String(100))
+    en_category = db.Column(db.String(100))
+    zh_category = db.Column(db.String(100))
+
+    ko_title = db.Column(db.String(255))
+    en_title = db.Column(db.String(255))
+    zh_title = db.Column(db.String(255))
+
+    ko_description = db.Column(db.Text)
+    en_description = db.Column(db.Text)
+    zh_description = db.Column(db.Text)
+
+    tech_stack = db.Column(db.String(500))
+
+    status = db.Column(db.String(50), default="Completed")
+    visual = db.Column(db.String(50), default="code")
+    archive_date = db.Column(db.Date)
+
+    sort_order = db.Column(db.Integer, default=0)
+    featured = db.Column(db.Boolean, default=False)
+    is_active = db.Column(db.Boolean, default=True)
+
+    created_at = db.Column(db.DateTime)
+    updated_at = db.Column(db.DateTime)
+
+
+class Resume(db.Model):
+    __tablename__ = "resume"
+
+    id = db.Column(db.BigInteger, primary_key=True)
+
+    section_key = db.Column(db.String(50), nullable=False)
+    content_key = db.Column(db.String(100), nullable=False, unique=True)
+
+    parent_key = db.Column(db.String(100))
+    item_type = db.Column(db.String(30), nullable=False)
+
+    icon = db.Column(db.String(30))
+    link_url = db.Column(db.String(255))
+
+    en_content = db.Column(db.Text)
+    ko_content = db.Column(db.Text)
+    zh_content = db.Column(db.Text)
+
+    sort_order = db.Column(db.Integer, nullable=False, default=0)
+    is_active = db.Column(db.Boolean, nullable=False, default=True)
+    is_editable = db.Column(db.Boolean, nullable=False, default=True)
+    is_print_visible = db.Column(db.Boolean, nullable=False, default=True)
+
+    updated_at = db.Column(db.DateTime)

@@ -7,8 +7,12 @@ def show():
     return render_template("eyevision.html")
 
 import os, cv2, time, datetime
+import urllib.request
+
 from cvzone.FaceMeshModule import FaceMeshDetector
 import mediapipe as mp
+from mediapipe.tasks import python
+from mediapipe.tasks.python import vision
 from PIL import ImageFont
 
 # 공용/eyevision 모듈들
@@ -23,6 +27,25 @@ from .eyeVision_Module import (
 def hit(p, center, half):
     x, y = p; cx, cy = center
     return abs(x - cx) < half and abs(y - cy) < half
+
+def ensure_hand_landmarker_model(eyecarex_dir):
+    model_dir = os.path.join(eyecarex_dir, "models")
+    os.makedirs(model_dir, exist_ok=True)
+
+    model_path = os.path.join(model_dir, "hand_landmarker.task")
+
+    if not os.path.exists(model_path):
+        print("Downloading MediaPipe HandLandmarker model...")
+
+        model_url = (
+            "https://storage.googleapis.com/mediapipe-models/"
+            "hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task"
+        )
+
+        urllib.request.urlretrieve(model_url, model_path)
+        print("HandLandmarker download complete.")
+
+    return model_path
 
 @bp.get("/cam")   # 최종 스트림 URL: /eyetest/eyevision/cam
 def cam():
@@ -41,9 +64,19 @@ def cam():
         half      = btn_size//2
 
         detector = FaceMeshDetector(maxFaces=1)
-        hands = mp.solutions.hands.Hands(
-            max_num_hands=1, min_detection_confidence=0.5, min_tracking_confidence=0.5
+
+        hand_model_path = ensure_hand_landmarker_model(eyecarex_dir)
+
+        hand_options = vision.HandLandmarkerOptions(
+            base_options=python.BaseOptions(model_asset_path=hand_model_path),
+            running_mode=vision.RunningMode.IMAGE,
+            num_hands=1,
+            min_hand_detection_confidence=0.5,
+            min_hand_presence_confidence=0.5,
+            min_tracking_confidence=0.5,
         )
+
+        hand_landmarker = vision.HandLandmarker.create_from_options(hand_options)
         
         # 2) 경로 만들기 + 검증해서 읽기
         font_path = os.path.join(eyecarex_dir, "fonts", "H2GSRB.TTF")
@@ -78,7 +111,13 @@ def cam():
         mode, finish, next_test, testEnd = 'normal', False, False, False
         eye = '오른쪽눈'
         img_name, img_level, img_eyelevel, img_url = get_eyeImg(level, dataList)
-        img_test = cv2.resize(cv2.imread(img_url), (h2, h2))
+        img_raw = cv2.imread(img_url)
+
+        if img_raw is None:
+            raise FileNotFoundError(f"시력표 이미지를 읽을 수 없습니다: {img_url}")
+
+        img_test = cv2.resize(img_raw, (h2, h2))
+        
         List = []
 
         counter = 0
@@ -98,7 +137,13 @@ def cam():
                 break
 
             frame, faces = detector.findFaceMesh(frame, draw=False)
-            results = hands.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+
+            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            mp_image = mp.Image(
+                image_format=mp.ImageFormat.SRGB,
+                data=rgb_frame
+            )
+            hand_results = hand_landmarker.detect(mp_image)
 
             if faces:
                 face = faces[0]
@@ -111,11 +156,14 @@ def cam():
 
                 if in_range:
                     overlay_jpg(frame, img_test, w2, int(h2 * 1.15))
-                    if results.multi_hand_landmarks:
+                    if hand_results.hand_landmarks:
                         h_img, w_img = frame.shape[:2]
-                        for hand in results.multi_hand_landmarks:
-                            fx = int(hand.landmark[8].x * w_img)
-                            fy = int(hand.landmark[8].y * h_img)
+
+                        for hand in hand_results.hand_landmarks:
+                            index_finger_tip = hand[8]
+
+                            fx = int(index_finger_tip.x * w_img)
+                            fy = int(index_finger_tip.y * h_img)
                             cv2.circle(frame, (fx, fy), 5, (255, 0, 255), -1, cv2.LINE_AA)
 
                             hit_any = False
@@ -185,6 +233,7 @@ def cam():
             yield (b"--frame\r\n"
                    b"Content-Type: image/jpeg\r\n\r\n" + buf.tobytes() + b"\r\n")
 
+        hand_landmarker.close()
         cap.release()
 
     return Response(gen(), mimetype="multipart/x-mixed-replace; boundary=frame")

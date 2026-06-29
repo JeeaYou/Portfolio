@@ -3,6 +3,7 @@ import certifi
 import subprocess
 import sys
 import os
+import signal
 from pathlib import Path
 
 import librosa
@@ -37,6 +38,53 @@ PROGRESS_DIR.mkdir(parents=True, exist_ok=True)
 SEPARATED_DIR = BASE_DIR / "separated"
 ANALYSIS_RESULTS_DIR = BASE_DIR / "analysis_results"
 ANALYSIS_RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+
+# =============================
+# 분석 취소 상태 관리
+# =============================
+
+_CURRENT_DEMUCS_PROCESSES = {}
+_CURRENT_DEMUCS_PROCESSES_LOCK = threading.Lock()
+
+
+class AnalysisCancelled(Exception):
+    """사용자가 화면 이동/Home 클릭 등으로 분석을 취소한 경우 사용한다."""
+    pass
+
+
+def terminate_process_tree(process, timeout=3):
+    """
+    Demucs가 내부적으로 하위 프로세스를 만들 수 있으므로
+    부모 process만 terminate하지 않고 프로세스 그룹까지 종료한다.
+    macOS/Linux에서는 start_new_session=True로 실행한 뒤 os.killpg를 사용한다.
+    """
+    if not process or process.poll() is not None:
+        return
+
+    try:
+        if os.name == "posix":
+            os.killpg(os.getpgid(process.pid), signal.SIGTERM)
+        else:
+            process.terminate()
+
+        try:
+            process.wait(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            if os.name == "posix":
+                os.killpg(os.getpgid(process.pid), signal.SIGKILL)
+            else:
+                process.kill()
+
+            process.wait(timeout=timeout)
+
+    except ProcessLookupError:
+        pass
+    except Exception:
+        try:
+            process.kill()
+        except Exception:
+            pass
+
 
 NOTE_NAMES = [
     "C", "C#", "D", "D#", "E", "F",
@@ -161,7 +209,120 @@ def init_progress(job_id, audio_files):
         "current_step": "분석 준비 중",
         "files": make_progress_files(audio_files),
         "result": None,
-        "error": None
+        "error": None,
+        "cancel_requested": False,
+        "cancel_reason": None
+    })
+
+
+def request_cancel_analysis(job_id, reason="user_navigation"):
+    """
+    라우터의 cancel_analysis API에서 호출한다.
+
+    1) progress JSON에 cancel_requested=True 저장
+    2) 현재 실행 중인 Demucs subprocess가 있으면 terminate/kill
+    3) 분석 루프가 check_cancelled()에서 즉시 중단되도록 한다.
+    """
+    if not job_id:
+        return False
+
+    progress = read_progress(job_id)
+
+    if progress is None:
+        return False
+
+    progress["status"] = "cancelled"
+    progress["current_step"] = "사용자 이동으로 분석이 취소되었습니다."
+    progress["cancel_requested"] = True
+    progress["cancel_reason"] = reason
+    progress["error"] = None
+
+    files = progress.get("files") or []
+    for file_item in files:
+        if file_item.get("status") == "running":
+            file_item["status"] = "failed"
+            file_item["percent"] = 100
+
+    progress["files"] = files
+    write_progress(job_id, progress)
+
+    with _CURRENT_DEMUCS_PROCESSES_LOCK:
+        process = _CURRENT_DEMUCS_PROCESSES.get(job_id)
+
+    if process and process.poll() is None:
+        print()
+        print("=" * 100)
+        print(f"분석 취소 요청 수신: job_id={job_id}, reason={reason}")
+        print("실행 중인 Demucs 프로세스를 종료합니다.")
+        print("=" * 100)
+
+        terminate_process_tree(process)
+
+    return True
+
+
+def is_cancel_requested(job_id):
+    if not job_id:
+        return False
+
+    progress = read_progress(job_id)
+
+    if not progress:
+        return False
+
+    return (
+        progress.get("cancel_requested") is True
+        or progress.get("status") == "cancelled"
+    )
+
+
+def check_cancelled(job_id):
+    if is_cancel_requested(job_id):
+        raise AnalysisCancelled("분석이 취소되었습니다.")
+
+
+def write_cancelled_progress(
+        job_id,
+        audio_files=None,
+        current_index=0,
+        processed_count=0,
+        reason="user_navigation"
+    ):
+    if not job_id:
+        return
+
+    audio_files = audio_files or []
+    files = []
+
+    for i, file in enumerate(audio_files, start=1):
+        if i <= processed_count:
+            status = "done"
+            percent = 100
+        elif current_index and i == current_index:
+            status = "failed"
+            percent = 100
+        else:
+            status = "waiting"
+            percent = 0
+
+        files.append({
+            "index": i,
+            "file_name": Path(file).name,
+            "status": status,
+            "percent": percent
+        })
+
+    write_progress(job_id, {
+        "status": "cancelled",
+        "total_files": len(audio_files),
+        "current_file_index": current_index,
+        "processed_count": processed_count,
+        "current_step": "사용자 이동으로 분석이 취소되었습니다.",
+        "files": files,
+        "result": None,
+        "error": None,
+        "cancel_requested": True,
+        "cancel_reason": reason
     })
 
 
@@ -635,7 +796,7 @@ def print_single_line_progress(label, percent):
     )
 
 
-def run_demucs_with_percent_bar(command, env, log_path, progress_callback=None):
+def run_demucs_with_percent_bar(command, env, log_path, progress_callback=None, job_id=None):
     """
     Demucs 출력은 로그 파일에 저장하고,
     터미널에는 한 줄짜리 퍼센트 진행 막대만 표시한다.
@@ -667,8 +828,13 @@ def run_demucs_with_percent_bar(command, env, log_path, progress_callback=None):
             text=True,
             encoding="utf-8",
             errors="replace",
-            bufsize=1
+            bufsize=1,
+            start_new_session=True
         )
+
+        if job_id:
+            with _CURRENT_DEMUCS_PROCESSES_LOCK:
+                _CURRENT_DEMUCS_PROCESSES[job_id] = process
 
         def read_demucs_output():
             try:
@@ -698,6 +864,23 @@ def run_demucs_with_percent_bar(command, env, log_path, progress_callback=None):
         print_single_line_progress("보컬 분리", 0)
 
         while process.poll() is None:
+            if is_cancel_requested(job_id):
+                print()
+                print("=" * 100)
+                print(f"Demucs 취소 요청 감지: job_id={job_id}")
+                print("=" * 100)
+
+                terminate_process_tree(process)
+
+                reader_thread.join(timeout=2)
+
+                if job_id:
+                    with _CURRENT_DEMUCS_PROCESSES_LOCK:
+                        if _CURRENT_DEMUCS_PROCESSES.get(job_id) is process:
+                            _CURRENT_DEMUCS_PROCESSES.pop(job_id, None)
+
+                raise AnalysisCancelled("분석이 취소되었습니다.")
+
             with lock:
                 real_percent = state["percent"]
 
@@ -721,6 +904,14 @@ def run_demucs_with_percent_bar(command, env, log_path, progress_callback=None):
 
         reader_thread.join(timeout=2)
 
+        if job_id:
+            with _CURRENT_DEMUCS_PROCESSES_LOCK:
+                if _CURRENT_DEMUCS_PROCESSES.get(job_id) is process:
+                    _CURRENT_DEMUCS_PROCESSES.pop(job_id, None)
+
+        if is_cancel_requested(job_id):
+            raise AnalysisCancelled("분석이 취소되었습니다.")
+
         if process.returncode != 0:
             print_single_line_progress("보컬 분리 실패", 100)
             print()
@@ -738,11 +929,13 @@ def run_demucs_with_percent_bar(command, env, log_path, progress_callback=None):
             progress_callback(100)
 
 
-def separate_vocals(audio_file, progress_callback=None):
+def separate_vocals(audio_file, progress_callback=None, job_id=None):
     audio_path = Path(audio_file)
 
     if not audio_path.exists():
         raise FileNotFoundError(f"Not found: {audio_file}")
+
+    check_cancelled(job_id)
 
     output_dir = SEPARATED_DIR
     song_name = audio_path.stem
@@ -756,6 +949,8 @@ def separate_vocals(audio_file, progress_callback=None):
 
         if progress_callback:
             progress_callback(100)
+
+        check_cancelled(job_id)
 
         return {
             "vocals_path": str(vocals_path),
@@ -782,7 +977,8 @@ def separate_vocals(audio_file, progress_callback=None):
         command=command,
         env=env,
         log_path=log_path,
-        progress_callback=progress_callback
+        progress_callback=progress_callback,
+        job_id=job_id
     )
 
     print("_" * 100)
@@ -796,6 +992,8 @@ def separate_vocals(audio_file, progress_callback=None):
         raise FileNotFoundError(
             f"Demucs 배경음악 파일을 찾을 수 없습니다: {no_vocals_path}"
         )
+
+    check_cancelled(job_id)
 
     return {
         "vocals_path": str(vocals_path),
@@ -1005,6 +1203,8 @@ def analyze_one_music_file(
 
     total_start = time.perf_counter()
 
+    check_cancelled(job_id)
+
     def update_step(percent, step):
         if progress_callback:
             progress_callback(percent, step)
@@ -1014,6 +1214,8 @@ def analyze_one_music_file(
     start = time.perf_counter()
     original_info = analyze_original_audio_librosa(audio_file, sample_rate)
     original_time = time.perf_counter() - start
+
+    check_cancelled(job_id)
 
     update_step(25, f"{file_index}번째 음악 오디오 원곡 분석 완료")
 
@@ -1065,8 +1267,11 @@ def analyze_one_music_file(
     start = time.perf_counter()
     separated_files = separate_vocals(
         audio_file,
-        progress_callback=demucs_progress_callback
+        progress_callback=demucs_progress_callback,
+        job_id=job_id
     )
+
+    check_cancelled(job_id)
 
     vocal_file = separated_files["vocals_path"]
     background_file = separated_files["no_vocals_path"]
@@ -1080,6 +1285,8 @@ def analyze_one_music_file(
     start = time.perf_counter()
     pitch_range = analyze_pitch_torchcrepe(vocal_file)
     pitch_time = time.perf_counter() - start
+
+    check_cancelled(job_id)
 
     update_step(75, f"{file_index}번째 음악 오디오 보컬 피치 분석 완료")
 
@@ -1106,6 +1313,8 @@ def analyze_one_music_file(
         top_n=10
     )
     instrument_time = time.perf_counter() - start
+
+    check_cancelled(job_id)
 
     update_step(95, f"{file_index}번째 음악 오디오 결과 저장 중")
 
@@ -1188,6 +1397,8 @@ def analyze_one_music_file(
     json_file_name = Path(audio_file).stem + "_analysis.json"
     json_path = result_dir / json_file_name
 
+    check_cancelled(job_id)
+
     save_json_result(result, json_path)
 
     track_id = save_music_analysis_to_db(result)
@@ -1249,11 +1460,17 @@ def music_audio_analysis(audio_files, sample_rate=44100, job_id=None):
     processed_count = 0
 
     init_progress(job_id, audio_files)
+    check_cancelled(job_id)
 
     for index, audio_file in enumerate(audio_files, start=1):
+        check_cancelled(job_id)
+
         result = None
+        was_cancelled = False
 
         def update_current_file(percent, step):
+            check_cancelled(job_id)
+
             write_progress(job_id, {
                 "status": "running",
                 "total_files": total_files,
@@ -1268,7 +1485,9 @@ def music_audio_analysis(audio_files, sample_rate=44100, job_id=None):
                     failed_indexes=failed_indexes
                 ),
                 "result": None,
-                "error": None
+                "error": None,
+                "cancel_requested": False,
+                "cancel_reason": None
             })
 
         try:
@@ -1288,6 +1507,28 @@ def music_audio_analysis(audio_files, sample_rate=44100, job_id=None):
             )
 
             all_results.append(result)
+
+        except AnalysisCancelled:
+            was_cancelled = True
+
+            write_cancelled_progress(
+                job_id,
+                audio_files=audio_files,
+                current_index=index,
+                processed_count=processed_count
+            )
+
+            print()
+            print("=" * 100)
+            print(f"분석이 취소되었습니다. job_id={job_id}")
+            print("=" * 100)
+
+            return {
+                "cancelled": True,
+                "job_id": job_id,
+                "total_file_count": len(all_results),
+                "results": all_results
+            }
 
         except Exception as e:
             failed_indexes.add(index)
@@ -1314,46 +1555,66 @@ def music_audio_analysis(audio_files, sample_rate=44100, job_id=None):
                     failed_indexes=failed_indexes
                 ),
                 "result": None,
-                "error": str(e)
+                "error": str(e),
+                "cancel_requested": False,
+                "cancel_reason": None
             })
 
         finally:
-            processed_count += 1
+            if not was_cancelled:
+                processed_count += 1
 
-            write_progress(job_id, {
-                "status": "running",
-                "total_files": total_files,
-                "current_file_index": 0,
-                "processed_count": processed_count,
-                "current_step": f"{index}번째 음악 오디오 분석 완료"
-                if result is not None
-                else f"{index}번째 음악 오디오 분석 실패",
-                "files": make_progress_files(
-                    audio_files,
-                    current_index=0,
-                    current_percent=0,
-                    processed_count=processed_count,
-                    failed_indexes=failed_indexes
-                ),
-                "result": None,
-                "error": None if result is not None else "일부 파일 분석 실패"
-            })
+                write_progress(job_id, {
+                    "status": "running",
+                    "total_files": total_files,
+                    "current_file_index": 0,
+                    "processed_count": processed_count,
+                    "current_step": f"{index}번째 음악 오디오 분석 완료"
+                    if result is not None
+                    else f"{index}번째 음악 오디오 분석 실패",
+                    "files": make_progress_files(
+                        audio_files,
+                        current_index=0,
+                        current_percent=0,
+                        processed_count=processed_count,
+                        failed_indexes=failed_indexes
+                    ),
+                    "result": None,
+                    "error": None if result is not None else "일부 파일 분석 실패",
+                    "cancel_requested": False,
+                    "cancel_reason": None
+                })
 
-            print("\n" + "=" * 100)
-            print("Progress Summary")
-            print("-" * 100)
-            print(f"Progress: {processed_count}/{total_files}")
+                print("\n" + "=" * 100)
+                print("Progress Summary")
+                print("-" * 100)
+                print(f"Progress: {processed_count}/{total_files}")
 
-            if result is not None:
-                time_info = result["analysis_time_summary"]
+                if result is not None:
+                    time_info = result["analysis_time_summary"]
 
-                print(f"Original Audio Analysis: {time_info['original_audio_analysis_time']} sec")
-                print(f"Vocal Separation: {time_info['vocal_separation_time']} sec")
-                print(f"Vocal Pitch Analysis: {time_info['vocal_pitch_analysis_time']} sec")
-                print(f"Background Instrument Analysis: {time_info['background_instrument_analysis_time']} sec")
-                print(f"Current File Total Analysis Time: {time_info['total_analysis_time']} sec")
-            else:
-                print("Analysis Time Summary: 분석 실패로 표시할 수 없습니다.")
+                    print(f"Original Audio Analysis: {time_info['original_audio_analysis_time']} sec")
+                    print(f"Vocal Separation: {time_info['vocal_separation_time']} sec")
+                    print(f"Vocal Pitch Analysis: {time_info['vocal_pitch_analysis_time']} sec")
+                    print(f"Background Instrument Analysis: {time_info['background_instrument_analysis_time']} sec")
+                    print(f"Current File Total Analysis Time: {time_info['total_analysis_time']} sec")
+                else:
+                    print("Analysis Time Summary: 분석 실패로 표시할 수 없습니다.")
+
+    if is_cancel_requested(job_id):
+        write_cancelled_progress(
+            job_id,
+            audio_files=audio_files,
+            current_index=0,
+            processed_count=processed_count
+        )
+
+        return {
+            "cancelled": True,
+            "job_id": job_id,
+            "total_file_count": len(all_results),
+            "results": all_results
+        }
 
     total_music_duration = sum(
         result["file_info"]["duration"]
@@ -1400,7 +1661,9 @@ def music_audio_analysis(audio_files, sample_rate=44100, job_id=None):
             failed_indexes=failed_indexes
         ),
         "result": summary_result,
-        "error": None
+        "error": None,
+        "cancel_requested": False,
+        "cancel_reason": None
     })
 
     print("\n" + "=" * 100)

@@ -2,7 +2,6 @@ from flask import Blueprint, render_template, jsonify, request, current_app
 from werkzeug.utils import secure_filename
 from pathlib import Path
 import time
-import uuid
 import threading
 import traceback
 
@@ -95,18 +94,23 @@ def start_analysis():
 
         flask_app = current_app._get_current_object()
 
-        # 중요:
-        # background thread 안에서 DB를 사용하려면 Flask app_context가 필요함
-        flask_app = current_app._get_current_object()
-
         def background_analysis():
             with flask_app.app_context():
                 try:
-                    run_uploaded_analysis(
+                    result = run_uploaded_analysis(
                         saved_paths,
                         sample_rate=44100,
                         job_id=job_id
                     )
+
+                    # 취소된 작업은 service_musicAI.py에서 cancelled로 처리함.
+                    # 여기서 error로 다시 덮어쓰면 안 됨.
+                    if isinstance(result, dict) and result.get("cancelled"):
+                        print("\n" + "=" * 100)
+                        print("Background Analysis Cancelled")
+                        print(f"job_id: {job_id}")
+                        print("=" * 100)
+                        return
 
                 except Exception as e:
                     from .music_db_service import mark_analysis_job_failed
@@ -133,7 +137,9 @@ def start_analysis():
                             for i, path in enumerate(saved_paths)
                         ],
                         "result": None,
-                        "error": str(e)
+                        "error": str(e),
+                        "cancel_requested": False,
+                        "cancel_reason": None
                     })
 
         thread = threading.Thread(target=background_analysis, daemon=True)
@@ -145,6 +151,53 @@ def start_analysis():
         })
 
     except Exception as e:
+        print("\n" + "!" * 100)
+        print("Start Analysis Error")
+        print(traceback.format_exc())
+        print("!" * 100)
+
+        return jsonify({
+            "ok": False,
+            "error": str(e)
+        }), 500
+
+
+@bp.post("/analysis/<job_id>/cancel", endpoint="cancel_analysis")
+def cancel_analysis(job_id):
+    """
+    분석 취소 API.
+
+    프론트에서 Home 클릭, 페이지 이동, 새로고침, 닫기 등이 발생하면 호출된다.
+    service_musicAI.py의 request_cancel_analysis()가
+    progress JSON에 cancel_requested=True를 저장하고,
+    실행 중인 Demucs subprocess가 있으면 terminate/kill 처리한다.
+    """
+    try:
+        payload = request.get_json(silent=True) or {}
+        reason = payload.get("reason") or "user_navigation"
+
+        from .service_musicAI import request_cancel_analysis
+
+        cancelled = request_cancel_analysis(job_id, reason=reason)
+
+        if not cancelled:
+            return jsonify({
+                "ok": False,
+                "error": "취소할 분석 작업을 찾을 수 없습니다."
+            }), 404
+
+        return jsonify({
+            "ok": True,
+            "status": "cancelled",
+            "job_id": job_id
+        })
+
+    except Exception as e:
+        print("\n" + "!" * 100)
+        print("Cancel Analysis Error")
+        print(traceback.format_exc())
+        print("!" * 100)
+
         return jsonify({
             "ok": False,
             "error": str(e)
@@ -233,7 +286,7 @@ def analyze_music():
 
     except Exception as e:
         print("\n" + "!" * 100)
-        print("Start Analysis Error")
+        print("Analyze Music Error")
         print(traceback.format_exc())
         print("!" * 100)
 

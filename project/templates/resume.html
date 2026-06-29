@@ -1,0 +1,450 @@
+{% extends "base.html" %}
+
+{% block header %}
+  {% include "components/header.html" %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/resume.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<main class="resume-page" data-current-lang="{{ current_lang }}">
+
+    <div class="resume-actions no-print">
+        <button type="button" class="resume-action-btn" id="resumeEditBtn">
+            {{ t('resume_action_edit') }}
+        </button>
+
+        <button type="button" class="resume-action-btn" id="resumeSaveBtn">
+            {{ t('resume_action_save') }}
+        </button>
+
+        <button type="button" class="resume-action-btn" id="resumePdfBtn">
+            {{ t('resume_action_download') }}
+        </button>
+    </div>
+
+  <article class="resume-paper">
+
+    <!-- =========================
+         Header
+    ========================== -->
+    <header class="resume-hero">
+
+      <div class="resume-photo-wrap">
+        <div class="resume-photo">
+          <img
+            src="{{ resume_map.get('resume_profile_image', {}).get('link_url') or url_for('static', filename='image/profile/jeea-profile.jpeg') }}"
+            alt="{{ resume_map.get('resume_name', {}).get('content', 'Jeea You') }} profile photo"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          >
+          <span class="resume-photo-fallback">JY</span>
+        </div>
+      </div>
+
+      <div class="resume-identity">
+        <h1 data-key="resume_name">
+          {{ resume_map.get('resume_name', {}).get('content', 'JEEA YOU') }}
+        </h1>
+
+        <p data-key="resume_job_title">
+          {{ resume_map.get('resume_job_title', {}).get('content', 'Backend Developer | AI & Automation') }}
+        </p>
+      </div>
+
+      <ul class="resume-contact" aria-label="Contact information">
+
+        <li>
+          <span class="contact-icon">
+            {{ resume_map.get('resume_email', {}).get('icon', '✉') }}
+          </span>
+
+          <a
+            href="{{ resume_map.get('resume_email', {}).get('link_url', '#') }}"
+            data-key="resume_email"
+          >
+            {{ resume_map.get('resume_email', {}).get('content', '') }}
+          </a>
+        </li>
+
+        <li>
+          <span class="contact-icon">
+            {{ resume_map.get('resume_phone', {}).get('icon', '☎') }}
+          </span>
+
+          <span data-key="resume_phone">
+            {{ resume_map.get('resume_phone', {}).get('content', '') }}
+          </span>
+        </li>
+
+        <li>
+          <span class="contact-icon">
+            {{ resume_map.get('resume_location', {}).get('icon', '⌖') }}
+          </span>
+
+          <span data-key="resume_location">
+            {{ resume_map.get('resume_location', {}).get('content', '') }}
+          </span>
+        </li>
+
+        <li>
+          <span class="contact-icon">
+            {{ resume_map.get('resume_github', {}).get('icon', '⌘') }}
+          </span>
+
+          <a
+            href="{{ resume_map.get('resume_github', {}).get('link_url', '#') }}"
+            target="_blank"
+            rel="noopener"
+            data-key="resume_github"
+          >
+            {{ resume_map.get('resume_github', {}).get('content', '') }}
+          </a>
+        </li>
+
+        <li>
+          <span class="contact-icon">
+            {{ resume_map.get('resume_linkedin', {}).get('icon', 'in') }}
+          </span>
+
+          <a
+            href="{{ resume_map.get('resume_linkedin', {}).get('link_url', '#') }}"
+            target="_blank"
+            rel="noopener"
+            data-key="resume_linkedin"
+          >
+            {{ resume_map.get('resume_linkedin', {}).get('content', '') }}
+          </a>
+        </li>
+
+      </ul>
+    </header>
+
+    <div class="resume-line"></div>
+
+    <!-- =========================
+         Summary
+    ========================== -->
+    <section class="resume-section">
+      <div class="resume-section-title">
+        <span class="section-icon">
+          {{ resume_map.get('section_summary_title', {}).get('icon', '●') }}
+        </span>
+
+        <h2 data-key="section_summary_title">
+          {{ resume_map.get('section_summary_title', {}).get('content', 'About Me / Summary') }}
+        </h2>
+      </div>
+
+      <div class="resume-section-body">
+        <p data-key="summary_main">
+          {{ resume_map.get('summary_main', {}).get('content', '') }}
+        </p>
+      </div>
+    </section>
+
+    <div class="resume-line"></div>
+
+    <!-- =========================
+         Experience
+    ========================== -->
+    <section class="resume-section">
+      <div class="resume-section-title">
+        <span class="section-icon">
+          {{ resume_map.get('section_experience_title', {}).get('icon', '▣') }}
+        </span>
+
+        <h2 data-key="section_experience_title">
+          {{ resume_map.get('section_experience_title', {}).get('content', 'Experience') }}
+        </h2>
+      </div>
+
+      <div class="resume-section-body">
+
+        <div class="resume-experience">
+          <aside class="resume-experience-meta">
+            <p data-key="exp_goodinvent_period">
+              {{ resume_map.get('exp_goodinvent_period', {}).get('content', '') }}
+            </p>
+
+            <strong data-key="exp_goodinvent_company">
+              {{ resume_map.get('exp_goodinvent_company', {}).get('content', '') }}
+            </strong>
+
+            <em data-key="exp_goodinvent_role">
+              {{ resume_map.get('exp_goodinvent_role', {}).get('content', '') }}
+            </em>
+          </aside>
+
+          <div class="resume-experience-content">
+
+            <div class="resume-experience-item">
+              <h3 data-key="exp_samsung_title">
+                {{ resume_map.get('exp_samsung_title', {}).get('content', '') }}
+              </h3>
+
+              <ul>
+                <li data-key="exp_samsung_bullet_1">
+                  {{ resume_map.get('exp_samsung_bullet_1', {}).get('content', '') }}
+                </li>
+
+                <li data-key="exp_samsung_bullet_2">
+                  {{ resume_map.get('exp_samsung_bullet_2', {}).get('content', '') }}
+                </li>
+
+                <li data-key="exp_samsung_bullet_3">
+                  {{ resume_map.get('exp_samsung_bullet_3', {}).get('content', '') }}
+                </li>
+              </ul>
+            </div>
+
+            <div class="resume-experience-divider"></div>
+
+            <div class="resume-experience-item">
+              <h3 data-key="exp_teatree_title">
+                {{ resume_map.get('exp_teatree_title', {}).get('content', '') }}
+              </h3>
+
+              <ul>
+                <li data-key="exp_teatree_bullet_1">
+                  {{ resume_map.get('exp_teatree_bullet_1', {}).get('content', '') }}
+                </li>
+
+                <li data-key="exp_teatree_bullet_2">
+                  {{ resume_map.get('exp_teatree_bullet_2', {}).get('content', '') }}
+                </li>
+
+                <li data-key="exp_teatree_bullet_3">
+                  {{ resume_map.get('exp_teatree_bullet_3', {}).get('content', '') }}
+                </li>
+
+                <li data-key="exp_teatree_bullet_4">
+                  {{ resume_map.get('exp_teatree_bullet_4', {}).get('content', '') }}
+                </li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="resume-line"></div>
+
+    <!-- =========================
+         Education
+    ========================== -->
+    <section class="resume-section resume-two-col">
+      <div class="resume-section-title">
+        <span class="section-icon">
+          {{ resume_map.get('section_education_title', {}).get('icon', '◆') }}
+        </span>
+
+        <h2 data-key="section_education_title">
+          {{ resume_map.get('section_education_title', {}).get('content', 'Education') }}
+        </h2>
+      </div>
+
+      <div class="resume-section-body">
+        <div class="resume-row">
+          <div>
+            <strong data-key="edu_university">
+              {{ resume_map.get('edu_university', {}).get('content', '') }}
+            </strong>
+
+            <p data-key="edu_major">
+              {{ resume_map.get('edu_major', {}).get('content', '') }}
+            </p>
+          </div>
+
+          <span data-key="edu_period">
+            {{ resume_map.get('edu_period', {}).get('content', '') }}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <div class="resume-line"></div>
+
+    <!-- =========================
+         Skills
+    ========================== -->
+    <section class="resume-section resume-two-col">
+      <div class="resume-section-title">
+        <span class="section-icon">
+          {{ resume_map.get('section_skills_title', {}).get('icon', '</>') }}
+        </span>
+
+        <h2 data-key="section_skills_title">
+          {{ resume_map.get('section_skills_title', {}).get('content', 'Skills') }}
+        </h2>
+      </div>
+
+      <div class="resume-section-body">
+        <div class="skills-table">
+          {% for skill in skills %}
+            <div class="skill-row">
+              <strong data-key="{{ skill.label_key }}">
+                {{ skill.label }}
+              </strong>
+
+              <p data-key="{{ skill.value_key }}">
+                {{ skill.value }}
+              </p>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <div class="resume-line"></div>
+
+    <!-- =========================
+         Tools
+    ========================== -->
+    <section class="resume-section resume-two-col">
+      <div class="resume-section-title">
+        <span class="section-icon">
+          {{ resume_map.get('section_tools_title', {}).get('icon', '⚙') }}
+        </span>
+
+        <h2 data-key="section_tools_title">
+          {{ resume_map.get('section_tools_title', {}).get('content', 'Tools') }}
+        </h2>
+      </div>
+
+      <div class="resume-section-body">
+        <p data-key="tools_main">
+          {{ resume_map.get('tools_main', {}).get('content', '') }}
+        </p>
+      </div>
+    </section>
+
+    <div class="resume-line"></div>
+
+    <!-- =========================
+         Projects
+    ========================== -->
+    <section class="resume-section resume-two-col">
+      <div class="resume-section-title">
+        <span class="section-icon">
+          {{ resume_map.get('section_projects_title', {}).get('icon', '▤') }}
+        </span>
+
+        <h2 data-key="section_projects_title">
+          {{ resume_map.get('section_projects_title', {}).get('content', 'Projects') }}
+        </h2>
+      </div>
+
+      <div class="resume-section-body">
+        {% for project in projects %}
+          <div class="project-row">
+            <strong data-key="{{ project.label_key }}">
+              {{ project.label }}
+            </strong>
+
+            <p data-key="{{ project.value_key }}">
+              {{ project.value }}
+            </p>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <div class="resume-line"></div>
+
+    <!-- =========================
+         Languages
+    ========================== -->
+    <section class="resume-section resume-two-col">
+      <div class="resume-section-title">
+        <span class="section-icon">
+          {{ resume_map.get('section_languages_title', {}).get('icon', '◎') }}
+        </span>
+
+        <h2 data-key="section_languages_title">
+          {{ resume_map.get('section_languages_title', {}).get('content', 'Languages') }}
+        </h2>
+      </div>
+
+      <div class="resume-section-body">
+        <div class="language-list">
+          {% for lang in languages %}
+            <div>
+              <strong data-key="{{ lang.label_key }}">
+                {{ lang.label }}
+              </strong>
+
+              <span data-key="{{ lang.value_key }}">
+                {{ lang.value }}
+              </span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <div class="resume-line"></div>
+
+    <!-- =========================
+         Certifications
+    ========================== -->
+    <section class="resume-section resume-two-col">
+      <div class="resume-section-title">
+        <span class="section-icon">
+          {{ resume_map.get('section_certifications_title', {}).get('icon', '✦') }}
+        </span>
+
+        <h2 data-key="section_certifications_title">
+          {{ resume_map.get('section_certifications_title', {}).get('content', 'Certifications') }}
+        </h2>
+      </div>
+
+      <div class="resume-section-body">
+        <ul class="cert-list">
+          {% for cert in certifications %}
+            {% if cert.content %}
+              <li data-key="{{ cert.key }}">
+                {{ cert.content }}
+              </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+    </section>
+
+  </article>
+
+
+    <form
+    class="resume-send-form no-print"
+    id="resumeSendForm"
+    method="post"
+    action="/resume/send"
+    >
+        <div class="resume-send-head">
+            <strong>{{ t('resume_send_title') }}</strong>
+            <p>{{ t('resume_send_desc') }}</p>
+        </div>
+
+        <div class="resume-send-row">
+            <input
+            type="email"
+            id="resumeEmail"
+            name="email"
+            placeholder="{{ t('recipient@example.com') }}"
+            required
+            >
+
+            <button type="submit" class="resume-send-btn">
+            {{ t('resume_send_button') }}
+            </button>
+        </div>
+
+        <p class="resume-send-message" id="resumeSendMessage"></p>
+    </form>
+</main>
+
+<script src="{{ url_for('static', filename='assets/js/resume.js') }}"></script>
+
+{% endblock %}

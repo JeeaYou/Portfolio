@@ -68,28 +68,34 @@ def overlay_jpg(image, def_img, img_x, img_y):
     image[y1:y2, x1:x2] = def_img
     
 # 텍스트 박스
-def text_box(image, x=None, y=None, text="", font=None, color=(0, 0, 0)):
-    img_pil = Image.fromarray(image)
+def text_box(frame, x, y, text, font, color=(255, 255, 255)):
+    from PIL import Image, ImageDraw
+    import numpy as np
+
+    if text is None:
+        text = ""
+
+    text = str(text)
+
+    # OpenCV BGR 이미지를 PIL RGB 이미지로 변환
+    img_pil = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
     draw = ImageDraw.Draw(img_pil)
-    
-    img_w, img_h = image.shape[1], image.shape[0]
-    text_w, text_h = draw.textsize(text, font=font)
 
-    if x is None and y is None:
-        # 중앙 정렬
-        xy = ((img_w - text_w) // 2, (img_h - text_h) // 2)
-    elif x is None:
-        # y만 지정 → x는 중앙
-        xy = ((img_w - text_w) // 2, y)
-    elif y is None:
-        # x만 지정 → y는 중앙
-        xy = (x, (img_h - text_h) // 2)
-    else:
-        # x, y 둘 다 지정
-        xy = (x, y)
+    # Pillow 최신 버전 대응: textsize 대신 textbbox 사용
+    bbox = draw.textbbox((0, 0), text, font=font)
+    text_w = bbox[2] - bbox[0]
+    text_h = bbox[3] - bbox[1]
 
-    draw.text(xy=xy, text=text, font=font, fill=color)
-    image[:] = np.array(img_pil)
+    # x가 None이면 가운데 정렬
+    if x is None:
+        x = (frame.shape[1] - text_w) // 2
+
+    draw.text((int(x), int(y)), text, font=font, fill=color)
+
+    # PIL RGB 이미지를 다시 OpenCV BGR로 변환
+    frame[:] = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
+
+    return frame
     
 # 파일 저장
 def save_results(userID, nowDatetime, eye, answer, List, disease_name, eyecarex_static):

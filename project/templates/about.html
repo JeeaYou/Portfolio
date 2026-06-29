@@ -1,0 +1,354 @@
+{% extends "base.html" %}
+
+{% block header %}
+  {% include "components/header.html" %}
+{% endblock %}
+
+{% block content %}
+
+<main class="portfolio-main about-portfolio-page">
+
+  <!-- =========================
+       Hero / About Main
+  ========================== -->
+  <section id="about" class="about-hero-section">
+    <div class="about-hero-text">
+      <p class="section-label">{{ t('about_hero_label') }}</p>
+
+      <h1>
+        {{ t('about_hero_title') }}
+      </h1>
+
+      <p class="about-hero-desc">
+        {{ t('about_hero_desc') }}
+      </p>
+
+      <div class="about-hero-tags">
+        <span>{{ t('about_tag_ai_application') }}</span>
+        <span>{{ t('about_tag_backend') }}</span>
+        <span>{{ t('about_tag_data_automation') }}</span>
+        <span>{{ t('about_tag_hr_customizing') }}</span>
+        <span>{{ t('about_tag_music_tech') }}</span>
+      </div>
+
+      <div class="about-hero-info">
+        <span class="about-info-item">
+          <span class="about-info-icon">✉</span>
+          jeea.you@gmail.com
+        </span>
+
+        <span class="about-info-divider"></span>
+
+        <span class="about-info-item">
+          <span class="about-info-icon">⌖</span>
+          {{ t('about_location') }}
+        </span>
+      </div>
+    </div>
+
+    <div class="about-hero-visual">
+      <div class="about-hero-circle"></div>
+      <div class="about-dot-pattern"></div>
+
+      <img
+        class="about-profile-img"
+        src="{{ url_for('static', filename='image/profile.png') }}"
+        alt="Jeea You Profile"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+      >
+
+      <div class="about-profile-fallback">
+        J.A<span>.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================
+       Focus
+  ========================== -->
+  <section id="focus" class="content-section focus-section">
+    <div class="center-section-title">
+      <h2>{{ t('about_focus_title') }}</h2>
+      <p>{{ t('about_focus_subtitle') }}</p>
+    </div>
+
+    <div class="focus-grid">
+      <article class="focus-card">
+        <div class="focus-icon">🧠</div>
+        <h3>{{ t('about_focus_ai_service_title') }}</h3>
+        <p>
+          {{ t('about_focus_ai_service_desc') }}
+        </p>
+      </article>
+
+      <article class="focus-card">
+        <div class="focus-icon">⚙</div>
+        <h3>{{ t('about_focus_backend_title') }}</h3>
+        <p>
+          {{ t('about_focus_backend_desc') }}
+        </p>
+      </article>
+
+      <article class="focus-card">
+        <div class="focus-icon">📊</div>
+        <h3>{{ t('about_focus_data_title') }}</h3>
+        <p>
+          {{ t('about_focus_data_desc') }}
+        </p>
+      </article>
+
+      <article class="focus-card">
+        <div class="focus-icon">♫</div>
+        <h3>{{ t('about_focus_music_title') }}</h3>
+        <p>
+          {{ t('about_focus_music_desc') }}
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <!-- =========================
+       Experience
+  ========================== -->
+  <section id="experience" class="content-section experience-section">
+    <div class="center-section-title">
+      <h2>{{ t('about_experience_title') }}</h2>
+      <p>{{ t('about_experience_subtitle') }}</p>
+    </div>
+
+    <div class="experience-timeline">
+
+      <div class="experience-item">
+        <div class="experience-date">{{ t('about_exp_background_date') }}</div>
+
+        <div class="experience-dot"></div>
+
+        <div class="experience-icon">🎵</div>
+
+        <div class="experience-content">
+          <h3>{{ t('about_exp_music_ai_title') }}</h3>
+          <strong>{{ t('about_exp_music_ai_summary') }}</strong>
+          <p>
+            {{ t('about_exp_music_ai_desc') }}
+          </p>
+        </div>
+      </div>
+
+      <div class="experience-item">
+        <div class="experience-date">{{ t('about_exp_before_it_date') }}</div>
+
+        <div class="experience-dot"></div>
+
+        <div class="experience-icon">🌐</div>
+
+        <div class="experience-content">
+          <h3>{{ t('about_exp_previous_title') }}</h3>
+          <strong>{{ t('about_exp_previous_summary') }}</strong>
+          <p>
+            {{ t('about_exp_previous_desc') }}
+          </p>
+        </div>
+      </div>
+
+      <div class="experience-item">
+        <div class="experience-date">{{ t('about_exp_samsung_date') }}</div>
+
+        <div class="experience-dot"></div>
+
+        <div class="experience-icon">👥</div>
+
+        <div class="experience-content">
+          <h3>{{ t('about_exp_samsung_title') }}</h3>
+          <strong>{{ t('about_exp_samsung_summary') }}</strong>
+          <p>
+            {{ t('about_exp_samsung_desc') }}
+          </p>
+        </div>
+      </div>
+
+      <div class="experience-item">
+        <div class="experience-date">{{ t('about_exp_teatree_date') }}</div>
+
+        <div class="experience-dot"></div>
+
+        <div class="experience-icon">💼</div>
+
+        <div class="experience-content">
+          <h3>{{ t('about_exp_teatree_title') }}</h3>
+          <strong>{{ t('about_exp_teatree_summary') }}</strong>
+          <p>
+            {{ t('about_exp_teatree_desc') }}
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =========================
+       Strengths
+  ========================== -->
+  <section id="strengths" class="content-section strengths-section">
+    <div class="center-section-title">
+      <h2>{{ t('about_strengths_title') }}</h2>
+      <p>{{ t('about_strengths_subtitle') }}</p>
+    </div>
+
+    <div class="strength-grid">
+      <article class="strength-card">
+        <div class="strength-icon">🧠</div>
+        <h3>{{ t('about_strength_ai_title') }}</h3>
+        <p>
+          {{ t('about_strength_ai_desc') }}
+        </p>
+      </article>
+
+      <article class="strength-card">
+        <div class="strength-icon">⚙</div>
+        <h3>{{ t('about_strength_system_title') }}</h3>
+        <p>
+          {{ t('about_strength_system_desc') }}
+        </p>
+      </article>
+
+      <article class="strength-card">
+        <div class="strength-icon">📊</div>
+        <h3>{{ t('about_strength_automation_title') }}</h3>
+        <p>
+          {{ t('about_strength_automation_desc') }}
+        </p>
+      </article>
+
+      <article class="strength-card">
+        <div class="strength-icon">♫</div>
+        <h3>{{ t('about_strength_domain_title') }}</h3>
+        <p>
+          {{ t('about_strength_domain_desc') }}
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <!-- =========================
+       Projects
+  ========================== -->
+  <section id="projects" class="content-section projects-section">
+    <div class="section-title-row">
+      <div>
+        <p class="section-label">{{ t('about_projects_label') }}</p>
+        <h2>{{ t('about_projects_title') }}</h2>
+      </div>
+
+      <a href="/" class="view-all-link">{{ t('about_projects_view_all') }}</a>
+    </div>
+
+    <div class="project-grid">
+      <article class="project-card is-featured">
+        <div class="project-icon">
+          <img
+            src="{{ url_for('static', filename='image/musicAI.png') }}"
+            alt="MusicAI Logo"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
+          >
+          <span class="project-icon-fallback">♫</span>
+        </div>
+
+        <h3>MusicAI</h3>
+
+        <p>
+          {{ t('about_project_musicai_desc') }}
+        </p>
+
+        <div class="project-tags">
+          <span>Python</span>
+          <span>Flask</span>
+          <span>Librosa</span>
+          <span>Demucs</span>
+          <span>torch</span>
+        </div>
+
+        <a href="/musicAI">{{ t('about_project_view_button') }}</a>
+      </article>
+
+      <article class="project-card">
+        <div class="project-icon">
+          <img
+            src="{{ url_for('static', filename='image/eyecarex.png') }}"
+            alt="EyeCareX Logo"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
+          >
+          <span class="project-icon-fallback">👁</span>
+        </div>
+
+        <h3>EyeCareX</h3>
+
+        <p>
+          {{ t('about_project_eyecarex_desc') }}
+        </p>
+
+        <div class="project-tags">
+          <span>Python</span>
+          <span>Flask</span>
+          <span>CVZone</span>
+          <span>Mediapipe</span>
+          <span>Pandas</span>
+        </div>
+
+        <a href="/eyecarex">{{ t('about_project_view_button') }}</a>
+      </article>
+
+      <article class="project-card">
+        <div class="project-icon">
+          <img
+            src="{{ url_for('static', filename='image/handemote.png') }}"
+            alt="HandEmote Logo"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
+          >
+          <span class="project-icon-fallback">✋</span>
+        </div>
+
+        <h3>HandEmote</h3>
+
+        <p>
+          {{ t('about_project_handemote_desc') }}
+        </p>
+
+        <div class="project-tags">
+          <span>Python</span>
+          <span>OpenCV</span>
+          <span>Pandas</span>
+          <span>TensorFlow</span>
+          <span>Scikit-learn</span>
+        </div>
+
+        <a href="/handemote">{{ t('about_project_view_button') }}</a>
+      </article>
+    </div>
+  </section>
+
+  <!-- =========================
+       CTA
+  ========================== -->
+  <section class="portfolio-cta">
+    <div class="cta-icon">🚀</div>
+
+    <div class="cta-text">
+      <h2>{{ t('about_cta_title') }}</h2>
+      <p>
+        {{ t('about_cta_desc') }}
+      </p>
+    </div>
+
+    <div class="cta-actions">
+      <a href="/project" class="primary-btn">{{ t('about_cta_project_button') }}</a>
+      <a href="/resume" class="outline-btn">{{ t('about_cta_resume_button') }}</a>
+    </div>
+  </section>
+
+</main>
+
+{% endblock %}
+
+{% block footer %}
+  {% include "components/footer.html" %}
+{% endblock %}

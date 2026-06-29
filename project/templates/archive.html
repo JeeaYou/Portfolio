@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+
+{% block header %}
+  {% include "components/header.html" %}
+{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/archive.css') }}">
+
+{% if current_lang == "en" %}
+  {% set page_eyebrow = "Development Records" %}
+  {% set page_title = "Archive" %}
+  {% set page_desc = "A collection of development records, experiments, troubleshooting notes, and technical improvements." %}
+
+  {% set filter_all = "All" %}
+  {% set filter_ai = "AI Experiments" %}
+  {% set filter_backend = "Backend" %}
+  {% set filter_database = "Database" %}
+  {% set filter_ui = "UI / Design" %}
+  {% set filter_automation = "Automation" %}
+  {% set filter_trouble = "Troubleshooting" %}
+
+  {% set sort_label = "Sort" %}
+  {% set sort_latest = "Latest" %}
+  {% set sort_oldest = "Oldest" %}
+  {% set empty_text = "There are no archive records in this category." %}
+
+{% elif current_lang == "zh" %}
+  {% set page_eyebrow = "开发记录" %}
+  {% set page_title = "Archive" %}
+  {% set page_desc = "整理开发过程中积累的实验、问题解决记录、技术笔记和功能改进。" %}
+
+  {% set filter_all = "全部" %}
+  {% set filter_ai = "AI 实验" %}
+  {% set filter_backend = "后端" %}
+  {% set filter_database = "数据库" %}
+  {% set filter_ui = "UI / 设计" %}
+  {% set filter_automation = "自动化" %}
+  {% set filter_trouble = "问题解决" %}
+
+  {% set sort_label = "排序" %}
+  {% set sort_latest = "最新" %}
+  {% set sort_oldest = "最旧" %}
+  {% set empty_text = "该分类下没有 Archive 记录。" %}
+
+{% else %}
+  {% set page_eyebrow = "Development Records" %}
+  {% set page_title = "Archive" %}
+  {% set page_desc = "개발 과정에서 쌓아온 실험, 문제 해결 기록, 기술 노트를 정리한 공간입니다." %}
+
+  {% set filter_all = "전체" %}
+  {% set filter_ai = "AI 실험" %}
+  {% set filter_backend = "Backend" %}
+  {% set filter_database = "데이터베이스" %}
+  {% set filter_ui = "UI / 디자인" %}
+  {% set filter_automation = "업무 자동화" %}
+  {% set filter_trouble = "문제 해결" %}
+
+  {% set sort_label = "정렬" %}
+  {% set sort_latest = "최신순" %}
+  {% set sort_oldest = "오래된순" %}
+  {% set empty_text = "선택한 카테고리에 해당하는 기록이 없습니다." %}
+{% endif %}
+
+<main class="archive-page">
+
+  <!-- =========================
+       Archive Hero
+  ========================== -->
+  <section class="archive-hero">
+    <div class="archive-hero-bg">
+      <div class="archive-orbit orbit-1"></div>
+      <div class="archive-orbit orbit-2"></div>
+      <div class="archive-orbit orbit-3"></div>
+    </div>
+
+    <div class="archive-container">
+      <div class="archive-hero-content">
+        <span class="archive-eyebrow">{{ page_eyebrow }}</span>
+
+        <h1>{{ page_title }}</h1>
+
+        <p>{{ page_desc }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================
+       Archive Body
+  ========================== -->
+  <section class="archive-section">
+    <div class="archive-container">
+
+      <!-- Filter / Sort -->
+      <div class="archive-toolbar">
+        <div class="archive-filter" aria-label="Archive category filter">
+          <button type="button" class="archive-filter-btn is-active" data-filter="all">
+            {{ filter_all }}
+          </button>
+
+          <button type="button" class="archive-filter-btn" data-filter="ai">
+            {{ filter_ai }}
+          </button>
+
+          <button type="button" class="archive-filter-btn" data-filter="backend">
+            {{ filter_backend }}
+          </button>
+
+          <button type="button" class="archive-filter-btn" data-filter="database">
+            {{ filter_database }}
+          </button>
+
+          <button type="button" class="archive-filter-btn" data-filter="ui">
+            {{ filter_ui }}
+          </button>
+
+          <button type="button" class="archive-filter-btn" data-filter="automation">
+            {{ filter_automation }}
+          </button>
+
+          <button type="button" class="archive-filter-btn" data-filter="trouble">
+            {{ filter_trouble }}
+          </button>
+        </div>
+
+        <label class="archive-sort">
+          <span class="sr-only">{{ sort_label }}</span>
+
+          <select id="archiveSort">
+            <option value="latest">{{ sort_latest }}</option>
+            <option value="oldest">{{ sort_oldest }}</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- Archive Cards -->
+      <div class="archive-grid" id="archiveGrid">
+
+        {% for item in archive_items %}
+
+          {% if current_lang == "en" %}
+            {% set display_category = item.en_category or item.ko_category %}
+            {% set display_title = item.en_title or item.ko_title %}
+            {% set display_desc = item.en_description or item.ko_description %}
+          {% elif current_lang == "zh" %}
+            {% set display_category = item.zh_category or item.ko_category %}
+            {% set display_title = item.zh_title or item.ko_title %}
+            {% set display_desc = item.zh_description or item.ko_description %}
+          {% else %}
+            {% set display_category = item.ko_category %}
+            {% set display_title = item.ko_title %}
+            {% set display_desc = item.ko_description %}
+          {% endif %}
+
+          {% set status_key = (item.status or 'Completed')|lower|replace(' ', '-') %}
+
+          {% if current_lang == "ko" %}
+            {% if item.status == "Completed" %}
+              {% set status_text = "완료" %}
+            {% elif item.status == "Solved" %}
+              {% set status_text = "해결" %}
+            {% elif item.status == "Work Experience" %}
+              {% set status_text = "실무 경험" %}
+            {% elif item.status == "In Progress" %}
+              {% set status_text = "진행 중" %}
+            {% elif item.status == "Planned" %}
+              {% set status_text = "예정" %}
+            {% else %}
+              {% set status_text = item.status %}
+            {% endif %}
+          {% elif current_lang == "zh" %}
+            {% if item.status == "Completed" %}
+              {% set status_text = "已完成" %}
+            {% elif item.status == "Solved" %}
+              {% set status_text = "已解决" %}
+            {% elif item.status == "Work Experience" %}
+              {% set status_text = "工作经验" %}
+            {% elif item.status == "In Progress" %}
+              {% set status_text = "进行中" %}
+            {% elif item.status == "Planned" %}
+              {% set status_text = "计划中" %}
+            {% else %}
+              {% set status_text = item.status %}
+            {% endif %}
+          {% else %}
+            {% set status_text = item.status %}
+          {% endif %}
+
+          <article
+            class="archive-card"
+            data-category="{{ item.category_key }}"
+            data-date="{{ item.archive_date }}"
+            data-featured="{{ item.featured }}"
+            >
+            <div class="archive-card-body">
+
+                {% if item.category_key == "ai" %}
+                {% set card_icon = "AI" %}
+                {% elif item.category_key == "backend" %}
+                {% set card_icon = "</>" %}
+                {% elif item.category_key == "database" %}
+                {% set card_icon = "DB" %}
+                {% elif item.category_key == "ui" %}
+                {% set card_icon = "UI" %}
+                {% elif item.category_key == "automation" %}
+                {% set card_icon = "RPA" %}
+                {% elif item.category_key == "trouble" %}
+                {% set card_icon = "!" %}
+                {% else %}
+                {% set card_icon = "DEV" %}
+                {% endif %}
+
+                <div class="archive-card-head">
+                <span class="archive-card-icon icon-{{ item.category_key }}">
+                    {{ card_icon }}
+                </span>
+
+                <div class="archive-card-head-text">
+                    <span class="archive-project">
+                    {{ item.project_name }}
+                    </span>
+
+                    <span class="archive-category category-{{ item.category_key }}">
+                    {{ display_category }}
+                    </span>
+                </div>
+                </div>
+
+                <h2>{{ display_title }}</h2>
+
+                <p>{{ display_desc }}</p>
+
+                {% if item.tech_stack %}
+                <div class="archive-tags">
+                    {% for tech in item.tech_stack.split(",") %}
+                    {% set tech_name = tech.strip() %}
+                    {% if tech_name %}
+                        <span>{{ tech_name }}</span>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="archive-card-footer">
+                <time datetime="{{ item.archive_date or '' }}">
+                    {{ item.archive_date }}
+                </time>
+
+                <span class="archive-status status-{{ status_key }}">
+                    {{ status_text }}
+                </span>
+                </div>
+
+            </div>
+            </article>
+
+        {% endfor %}
+      </div>
+
+      <div class="archive-empty" id="archiveEmpty">
+        {{ empty_text }}
+      </div>
+      <div class="archive-pagination" id="archivePagination" aria-label="Archive pagination"></div>
+    </div>
+  </section>
+
+</main>
+
+<script src="{{ url_for('static', filename='assets/js/archive.js') }}"></script>
+
+{% endblock %}

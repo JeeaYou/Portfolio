@@ -1,43 +1,43 @@
 
 ====================================================================================================
-Demucs started: 2026-06-13 22:20:56
+Demucs started: 2026-06-16 16:27:24
 Command:
-/Users/jeea/Documents/프로그래밍/Python File/portfolio/.venv/bin/python -m demucs --two-stems=vocals -o /Users/jeea/Documents/프로그래밍/Python File/portfolio/project/musicAI/separated /Users/jeea/Documents/프로그래밍/Python File/portfolio/project/musicAI/uploads/City Of Stars.mp3
+/Users/jeea/Documents/Portfolio/.venv/bin/python3 -m demucs --two-stems=vocals -o /Users/jeea/Documents/Portfolio/project/musicAI/separated /Users/jeea/Documents/Portfolio/project/musicAI/uploads/City Of Stars.mp3
 ====================================================================================================
 [1mImportant: the default model was recently changed to `htdemucs`[0m the latest Hybrid Transformer Demucs model. In some cases, this model can actually perform worse than previous models. To get back the old default model use `-n mdx_extra_q`.
 Selected model is a bag of 1 models. You will see that many progress bars per track.
-Separated tracks will be stored in /Users/jeea/Documents/프로그래밍/Python File/portfolio/project/musicAI/separated/htdemucs
-Separating track /Users/jeea/Documents/프로그래밍/Python File/portfolio/project/musicAI/uploads/City Of Stars.mp3
+Separated tracks will be stored in /Users/jeea/Documents/Portfolio/project/musicAI/separated/htdemucs
+Separating track /Users/jeea/Documents/Portfolio/project/musicAI/uploads/City Of Stars.mp3
 
   0%|                                                                                  | 0.0/152.1 [00:00<?, ?seconds/s]
-  4%|██▊                                                                      | 5.85/152.1 [00:01<00:35,  4.15seconds/s]
-  8%|█████▌                                                                   | 11.7/152.1 [00:02<00:32,  4.31seconds/s]
- 12%|██████▊                                                    | 17.549999999999997/152.1 [00:04<00:31,  4.29seconds/s]
- 15%|███████████▏                                                             | 23.4/152.1 [00:05<00:29,  4.31seconds/s]
- 19%|█████████████▊                                                          | 29.25/152.1 [00:06<00:28,  4.24seconds/s]
- 23%|█████████████▌                                             | 35.099999999999994/152.1 [00:08<00:28,  4.12seconds/s]
- 27%|███████████████▉                                           | 40.949999999999996/152.1 [00:09<00:27,  4.04seconds/s]
- 31%|██████████████████████▍                                                  | 46.8/152.1 [00:11<00:25,  4.09seconds/s]
- 35%|████████████████████████▉                                               | 52.65/152.1 [00:12<00:23,  4.15seconds/s]
- 38%|████████████████████████████                                             | 58.5/152.1 [00:14<00:22,  4.19seconds/s]
- 42%|██████████████████████████████▍                                         | 64.35/152.1 [00:15<00:20,  4.22seconds/s]
- 46%|███████████████████████████▋                                | 70.19999999999999/152.1 [00:16<00:19,  4.25seconds/s]
- 50%|████████████████████████████████████                                    | 76.05/152.1 [00:18<00:17,  4.28seconds/s]
- 54%|████████████████████████████████▎                           | 81.89999999999999/152.1 [00:19<00:16,  4.26seconds/s]
- 58%|█████████████████████████████████████████▌                              | 87.75/152.1 [00:20<00:15,  4.29seconds/s]
- 62%|████████████████████████████████████████████▉                            | 93.6/152.1 [00:22<00:13,  4.30seconds/s]
- 65%|███████████████████████████████████████▏                    | 99.44999999999999/152.1 [00:23<00:12,  4.28seconds/s]
- 69%|█████████████████████████████████████████████████▊                      | 105.3/152.1 [00:24<00:10,  4.30seconds/s]
- 73%|███████████████████████████████████████████                | 111.14999999999999/152.1 [00:26<00:09,  4.30seconds/s]
- 77%|███████████████████████████████████████████████████████▍                | 117.0/152.1 [00:27<00:08,  4.31seconds/s]
- 81%|█████████████████████████████████████████████████████████▎             | 122.85/152.1 [00:28<00:06,  4.27seconds/s]
- 85%|████████████████████████████████████████████████████████████▉           | 128.7/152.1 [00:30<00:05,  4.25seconds/s]
- 88%|████████████████████████████████████████████████████▏      | 134.54999999999998/152.1 [00:31<00:04,  4.25seconds/s]
- 92%|██████████████████████████████████████████████████████▍    | 140.39999999999998/152.1 [00:33<00:02,  4.29seconds/s]
- 96%|████████████████████████████████████████████████████████████████████▎  | 146.25/152.1 [00:34<00:01,  4.31seconds/s]
-100%|████████████████████████████████████████████████████████████████████████| 152.1/152.1 [00:35<00:00,  4.32seconds/s]
-100%|████████████████████████████████████████████████████████████████████████| 152.1/152.1 [00:35<00:00,  4.25seconds/s]
-/Users/jeea/Documents/프로그래밍/Python File/portfolio/.venv/lib/python3.14/site-packages/torchaudio/__init__.py:178: UserWarning: The 'encoding' parameter is not fully supported by TorchCodec AudioEncoder.
+  4%|██▊                                                                      | 5.85/152.1 [00:01<00:28,  5.13seconds/s]
+  8%|█████▌                                                                   | 11.7/152.1 [00:02<00:26,  5.31seconds/s]
+ 12%|██████▊                                                    | 17.549999999999997/152.1 [00:03<00:25,  5.36seconds/s]
+ 15%|███████████▏                                                             | 23.4/152.1 [00:04<00:25,  5.05seconds/s]
+ 19%|█████████████▊                                                          | 29.25/152.1 [00:05<00:24,  4.98seconds/s]
+ 23%|█████████████▌                                             | 35.099999999999994/152.1 [00:06<00:23,  5.06seconds/s]
+ 27%|███████████████▉                                           | 40.949999999999996/152.1 [00:08<00:21,  5.11seconds/s]
+ 31%|██████████████████████▍                                                  | 46.8/152.1 [00:09<00:20,  5.08seconds/s]
+ 35%|████████████████████████▉                                               | 52.65/152.1 [00:10<00:20,  4.88seconds/s]
+ 38%|████████████████████████████                                             | 58.5/152.1 [00:11<00:18,  4.99seconds/s]
+ 42%|██████████████████████████████▍                                         | 64.35/152.1 [00:12<00:17,  5.05seconds/s]
+ 46%|███████████████████████████▋                                | 70.19999999999999/152.1 [00:13<00:16,  5.10seconds/s]
+ 50%|████████████████████████████████████                                    | 76.05/152.1 [00:15<00:15,  4.94seconds/s]
+ 54%|████████████████████████████████▎                           | 81.89999999999999/152.1 [00:16<00:14,  4.93seconds/s]
+ 58%|█████████████████████████████████████████▌                              | 87.75/152.1 [00:17<00:12,  4.96seconds/s]
+ 62%|████████████████████████████████████████████▉                            | 93.6/152.1 [00:18<00:11,  5.04seconds/s]
+ 65%|███████████████████████████████████████▏                    | 99.44999999999999/152.1 [00:19<00:10,  4.98seconds/s]
+ 69%|█████████████████████████████████████████████████▊                      | 105.3/152.1 [00:21<00:09,  4.88seconds/s]
+ 73%|███████████████████████████████████████████                | 111.14999999999999/152.1 [00:22<00:08,  4.95seconds/s]
+ 77%|███████████████████████████████████████████████████████▍                | 117.0/152.1 [00:23<00:06,  5.03seconds/s]
+ 81%|█████████████████████████████████████████████████████████▎             | 122.85/152.1 [00:24<00:05,  5.03seconds/s]
+ 85%|████████████████████████████████████████████████████████████▉           | 128.7/152.1 [00:25<00:04,  4.87seconds/s]
+ 88%|████████████████████████████████████████████████████▏      | 134.54999999999998/152.1 [00:26<00:03,  4.94seconds/s]
+ 92%|██████████████████████████████████████████████████████▍    | 140.39999999999998/152.1 [00:28<00:02,  5.00seconds/s]
+ 96%|████████████████████████████████████████████████████████████████████▎  | 146.25/152.1 [00:29<00:01,  5.07seconds/s]
+100%|████████████████████████████████████████████████████████████████████████| 152.1/152.1 [00:30<00:00,  4.89seconds/s]
+100%|████████████████████████████████████████████████████████████████████████| 152.1/152.1 [00:30<00:00,  5.00seconds/s]
+/Users/jeea/Documents/Portfolio/.venv/lib/python3.14/site-packages/torchaudio/__init__.py:178: UserWarning: The 'encoding' parameter is not fully supported by TorchCodec AudioEncoder.
   return save_with_torchcodec(
-/Users/jeea/Documents/프로그래밍/Python File/portfolio/.venv/lib/python3.14/site-packages/torchaudio/__init__.py:178: UserWarning: The 'bits_per_sample' parameter is not directly supported by TorchCodec AudioEncoder.
+/Users/jeea/Documents/Portfolio/.venv/lib/python3.14/site-packages/torchaudio/__init__.py:178: UserWarning: The 'bits_per_sample' parameter is not directly supported by TorchCodec AudioEncoder.
   return save_with_torchcodec(
