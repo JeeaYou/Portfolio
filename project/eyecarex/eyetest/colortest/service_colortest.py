@@ -13,6 +13,7 @@ from cvzone.HandTrackingModule import HandDetector
 from PIL import ImageFont
 
 from ...common.services import (
+    get_lang,
     overlay_png,
     overlay_jpg,
     text_box,
@@ -22,10 +23,11 @@ from ...common.services import (
     draw_banner_with_text
 )
 
+lang = get_lang()
 
 @bp.get("/", endpoint="show")
 def show():
-    return render_template("colortest.html")
+    return render_template("colortest.html", lang=lang)
 
 
 # ---------- 헬퍼 ----------
@@ -33,22 +35,22 @@ def hit(pt, center, half):
     return abs(pt[0] - center[0]) < half and abs(pt[1] - center[1]) < half
 
 
-def decide_answer(seq3):
+def decide_answer(seq3, lang="ko"):
     a, b, btn = seq3
 
     if (a, b, btn) == (97, 74, 26):
-        return "정상"
+        return "정상" if lang == "ko" else "Normal"
 
     if btn == 2:
-        return "녹색맹"
+        return "녹색맹" if lang == "ko" else "Deuteranopia"
 
     if btn == 6:
-        return "적색맹"
+        return "적색맹" if lang == "ko" else "Protanopia"
 
     if b != 74 or btn != 26:
-        return "적녹색맹"
+        return "적녹색맹" if lang == "ko" else "Red-Green Color Blindness"
 
-    return "색각이상"
+    return "색각이상" if lang == "ko" else "Color Vision Deficiency"
 
 
 def read_image(path, flag=cv2.IMREAD_UNCHANGED, name="이미지"):
@@ -62,6 +64,10 @@ def read_image(path, flag=cv2.IMREAD_UNCHANGED, name="이미지"):
 
 @bp.get("/cam")
 def cam():
+
+    lang = get_lang()
+
+
     # project/eyecarex/static
     eyecarex_dir = current_app.blueprints["eyecarex"].static_folder
 
@@ -74,7 +80,7 @@ def cam():
         cap = cv2.VideoCapture(0)
 
         if not cap.isOpened():
-            raise RuntimeError("카메라를 열 수 없습니다.")
+            raise RuntimeError("Can't open camera.")
 
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -109,7 +115,7 @@ def cam():
 
         # ---------- 리소스 로드 ----------
         if not os.path.exists(font_path):
-            raise FileNotFoundError(f"폰트 파일을 찾을 수 없습니다: {font_path}")
+            raise FileNotFoundError(f"Can't find font file: {font_path}")
 
         font = ImageFont.truetype(font_path, 20)
 
@@ -169,13 +175,16 @@ def cam():
         next_test = False
         testEnd = False
 
-        eye = "오른쪽눈"
+        eye = '오른쪽눈' if lang == 'ko'  else 'Left Eye'
         timeStart = time.time()
 
-        disease_name = "색각"
+        disease_name = "색각" if lang == 'ko' else "Color Vision"
         guide_message = (
             "제시된 그림 3개를 각각 보시고,\n"
             "각 그림 속 숫자가 무엇인지 짚어주세요."
+        ) if lang == 'ko' else (
+            "Look at the 3 presented pictures,\n"
+            "and point out what number you see in each picture."
         )
 
         selectionSpeed = 8
@@ -263,7 +272,7 @@ def cam():
 
                             timeStart = time.time()
 
-                            if len(result_list) == 1 and eye == "오른쪽눈":
+                            if len(result_list) == 1 and (eye == "오른쪽눈" or eye == "Left Eye"):
                                 next_test = True
 
                             elif len(result_list) == 2:
@@ -396,7 +405,7 @@ def cam():
 
                     if should_next:
                         next_test = False
-                        eye = "왼쪽눈"
+                        eye = "왼쪽눈" if lang == "ko" else "Right Eye"
                         selected_btns = []
                         seq = []
                         counter = 0

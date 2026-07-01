@@ -12,7 +12,7 @@ from PIL import ImageFont
 
 # 공용/eyevision 모듈들
 from ...common.services import (
-    get_lang, load_texts, overlay_png, overlay_jpg, text_box, save_results,
+    get_lang, overlay_png, overlay_jpg, text_box, save_results,
     overlay_next_test_screen, overlay_test_result_screen, draw_banner_with_text
 )
 from .eyeVision_Module import (

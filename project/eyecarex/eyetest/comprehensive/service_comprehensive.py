@@ -14,6 +14,7 @@ from cvzone.HandTrackingModule import HandDetector
 from PIL import ImageFont
 
 from ...common.services import (
+    get_lang,
     overlay_png,
     overlay_jpg,
     text_box,
@@ -22,6 +23,8 @@ from ...common.services import (
     overlay_test_result_screen,
     draw_banner_with_text
 )
+
+lang = get_lang()
 
 
 TEMPLATES = {
@@ -33,22 +36,22 @@ TEMPLATES = {
 
 TESTS = {
     "astigmatism": {
-        "name": "난시",
+        "name": "난시" if lang == "ko" else "Astigmatism",
         "img_rel": ("image", "astigmatism", "pikacyu.jpg"),
         "window": "Astigmatism Test",
-        "guide": lambda ds, de: f"{ds}~{de}cm 거리에서 피카츄가 또렷하게 보이십니까?"
+        "guide": lambda ds, de: f"{ds}~{de}cm 거리에서 피카츄가 또렷하게 보이십니까?" if lang == "ko" else f"Can you see Pikachu clearly at a distance of {ds}~{de}cm?"
     },
     "glaucoma": {
-        "name": "녹내장",
+        "name": "녹내장" if lang == "ko" else "Glaucoma",
         "img_rel": ("image", "glaucoma", "glaucoma.jpg"),
         "window": "Glaucoma Test",
-        "guide": lambda ds, de: "이미지와 같은 자세로 정면을 바라보고 손이 보이나요?\n보이면 V, 보이지 않으면 X를 선택하세요."
+        "guide": lambda ds, de: "이미지와 같은 자세로 정면을 바라보고 손이 보이나요?\n보이면 V, 보이지 않으면 X를 선택하세요." if lang == "ko" else "Do you see your hand in the same position as the image?\nSelect V if you can see it, X if you cannot."
     },
     "maculopathy": {
-        "name": "황반변성",
+        "name": "황반변성" if lang == "ko" else "Macular degeneration",
         "img_rel": ("image", "maculopathy", "baduk.jpg"),
         "window": "Macular degeneration Test",
-        "guide": lambda ds, de: "격자가 휘어지거나 일그러져 보이거나,\n중앙에 검은 점이 보이십니까?"
+        "guide": lambda ds, de: "격자가 휘어지거나 일그러져 보이거나,\n중앙에 검은 점이 보이십니까?" if lang == "ko" else "Do you see the grid distorted or warped,\nor a black dot in the center?"
     },
 }
 
@@ -56,7 +59,7 @@ TESTS = {
 @bp.get("/<disease>", endpoint="show")
 def show(disease):
     tpl = TEMPLATES.get(disease) or abort(404)
-    return render_template(tpl, disease=disease)
+    return render_template(tpl, disease=disease, lang=lang)
 
 
 def read_image(path, flag=cv2.IMREAD_UNCHANGED, name="이미지"):
@@ -95,7 +98,7 @@ def cam(disease):
         cap = cv2.VideoCapture(0)
 
         if not cap.isOpened():
-            raise RuntimeError("카메라를 열 수 없습니다.")
+            raise RuntimeError("Can't open camera.")
 
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)) or 1280
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)) or 720
@@ -124,7 +127,7 @@ def cam(disease):
 
         # ---------- 리소스 ----------
         if not os.path.exists(font_path):
-            raise FileNotFoundError(f"폰트 파일을 찾을 수 없습니다: {font_path}")
+            raise FileNotFoundError(f"Font file not found: {font_path}")
 
         font = ImageFont.truetype(font_path, 20)
 
@@ -157,7 +160,7 @@ def cam(disease):
                 "img": yes_img
             },
             {
-                "val": "정상",
+                "val": "정상" if lang == "ko" else "Normal",
                 "pos": (btnR_x, btn_y),
                 "img": no_img
             },
@@ -170,7 +173,7 @@ def cam(disease):
         testEnd = False
         next_test = False
 
-        eye = "오른쪽눈"
+        eye = "오른쪽눈" if lang == "ko" else "Left eye"
         timeStart = time.time()
 
         selectionSpeed = 8
@@ -274,7 +277,7 @@ def cam(disease):
 
                                             counter = 0
 
-                                            if len(result_list) == 1 and eye == "오른쪽눈":
+                                            if len(result_list) == 1 and (eye == "오른쪽눈" or eye == "Left eye"):
                                                 next_test = True
 
                                             elif len(result_list) >= 2:
@@ -402,7 +405,7 @@ def cam(disease):
 
                     if should_next:
                         next_test = False
-                        eye = "왼쪽눈"
+                        eye = "왼쪽눈" if lang == "ko" else "Right eye"
                         counter = 0
                         timeStart = time.time()
 

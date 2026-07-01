@@ -174,25 +174,28 @@ def overlay_next_test_screen(image, background, timeStart, height , width_h, hei
 
 # 검사 결과 창
 def overlay_test_result_screen(image, background, disease_name, List, timeStart, height, width_h, height_h, font, eyecarex_static):
+    
+    lang = get_lang()
+    
     font_dir = str(Path(eyecarex_static) / "fonts" / "H2GSRB.TTF")
     overlay_jpg(image, background, width_h, height_h)
     # Display the test result title
     text_box(image, None, int(height * 0.3), 
-             f"{disease_name} 검사 결과", 
+             f"{disease_name} 검사 결과" if lang == "ko" else f"{disease_name} Test Result", 
              ImageFont.truetype(font_dir, height // 10),  (0, 0, 0))
     
     # Display results for each eye
     text_box(image, None, int(height * 0.5), 
-             f"{List[0]['눈']}: {List[0]['여부']} ", 
+             f"{List[0]['eye']}: {List[0]['tf']} ", 
              font,  (0, 0, 0))
     text_box(image, None, int(height * 0.5) + 30, 
-             f"{List[1]['눈']}: {List[1]['여부']} ", 
+             f"{List[1]['eye']}: {List[1]['tf']} ", 
              font,  (0, 0, 0))
     
     # Countdown for test end
     text_box(image, None, int(height * 0.7), 
             #  f'{int(11-(time.time()-timeStart))} 초 후 검사 종료합니다.',
-            '재검사시 다시하기 버튼을 클릭하시오.',
+            '재검사시 다시하기 버튼을 클릭하시오.' if lang == "ko" else f'Click the "Retry" button to retake the test.',
              ImageFont.truetype(font_dir, height_h // 10), (0, 0, 0))
     
     # # If 10 seconds have passed, end the test

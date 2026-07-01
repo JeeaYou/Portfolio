@@ -15,6 +15,7 @@ from cvzone.HandTrackingModule import HandDetector
 from PIL import ImageFont
 
 from ...common.services import (
+    get_lang,
     overlay_png,
     text_box,
     overlay_test_result_screen,
@@ -23,17 +24,18 @@ from ...common.services import (
 
 from .static.models.cataract_predict import image_test
 
+lang = get_lang()
 
 @bp.get("/", endpoint="show")
 def show():
-    return render_template("cataract.html")
+    return render_template("cataract.html", lang=lang)
 
 
 def read_image(path, flag=cv2.IMREAD_UNCHANGED, name="이미지"):
     img = cv2.imread(path, flag)
 
     if img is None:
-        raise FileNotFoundError(f"{name}를 읽을 수 없습니다: {path}")
+        raise FileNotFoundError(f"Can't read {name}: {path}")
 
     return img
 
@@ -68,7 +70,7 @@ def cam():
         cap = cv2.VideoCapture(0)
 
         if not cap.isOpened():
-            raise RuntimeError("카메라를 열 수 없습니다.")
+            raise RuntimeError("Can't open camera.")
 
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -98,7 +100,7 @@ def cam():
 
         # ---------- 리소스 ----------
         if not os.path.exists(font_path):
-            raise FileNotFoundError(f"폰트 파일을 찾을 수 없습니다: {font_path}")
+            raise FileNotFoundError(f"Can't find font file: {font_path}")
 
         font = ImageFont.truetype(font_path, 20)
 
@@ -212,20 +214,20 @@ def cam():
                                 right_class_name, right_score = image_test(right_name)
 
                                 result_list.append({
-                                    "눈": "오른쪽눈",
-                                    "여부": right_class_name,
-                                    "확률": f"{right_score}%",
-                                    "이미지": right_name
+                                    "eye": "오른쪽눈" if lang == "ko" else "Right Eye",
+                                    "tf": right_class_name,
+                                    "pecent": f"{right_score}%",
+                                    "image": right_name
                                 })
 
                                 cv2.imwrite(left_name, left)
                                 left_class_name, left_score = image_test(left_name)
 
                                 result_list.append({
-                                    "눈": "왼쪽눈",
-                                    "여부": left_class_name,
-                                    "확률": f"{left_score}%",
-                                    "이미지": left_name
+                                    "eye": "왼쪽눈" if lang == "ko" else "Left Eye",
+                                    "tf": left_class_name,
+                                    "percent": f"{left_score}%",
+                                    "image": left_name
                                 })
 
                                 csv_dir = os.path.join(eyecarex_dir, "csv_file")
@@ -246,7 +248,7 @@ def cam():
                     width,
                     height,
                     font,
-                    "카메라를 보고 손을 펼친 뒤, 주먹을 쥐면 촬영됩니다."
+                    "카메라를 보고 손을 펼친 뒤, 주먹을 쥐면 촬영됩니다." if lang == "ko" else "Look at the camera, open your hand, and make a fist to take a picture."
                 )
 
                 overlay_png(

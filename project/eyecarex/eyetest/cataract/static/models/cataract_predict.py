@@ -7,6 +7,9 @@ plt.rc('font', family='NanumGothic')  # For Windows
 import warnings
 warnings.filterwarnings('ignore')
 import os
+from common.services import get_lang
+
+lang = get_lang()
 
 def image_test(image):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")  # device 객체
@@ -38,10 +41,10 @@ def image_test(image):
         if score > 100:
             score = 100
         if torch.max(outputs) == list(outputs[0])[0]:
-            class_name = '백내장'
+            class_name = '백내장' if lang == 'ko' else 'Cataract'
 
         elif torch.max(outputs) == list(outputs[0])[1]:
-            class_name = '정상'
+            class_name = '정상' if lang == 'ko' else 'Normal'
 
         return class_name, score
 
