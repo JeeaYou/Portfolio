@@ -5,6 +5,41 @@ import pandas as pd
 import time
 import os
 from pathlib import Path
+from flask import request
+from project.models import Translate
+
+def get_lang():
+    lang = request.args.get("lang", "ko")
+
+    if lang not in ("ko", "en", "zh"):
+        lang = "ko"
+
+    return lang
+
+def load_texts(lang,texts):
+    texts = texts.copy()
+
+    try:
+        rows = Translate.query.filter(
+            Translate.content_key.in_(texts.keys()),
+            Translate.is_active == 1
+        ).all()
+
+        for row in rows:
+            if lang == "en":
+                value = row.en_content
+            elif lang == "zh":
+                value = row.zh_content
+            else:
+                value = row.ko_content
+
+            if value:
+                texts[row.content_key] = value
+
+    except Exception:
+        pass
+
+    return texts
 
 # 안내 문구
 def draw_banner_with_text(frame, width, height, font, text):
@@ -67,32 +102,32 @@ def overlay_jpg(image, def_img, img_x, img_y):
 
     image[y1:y2, x1:x2] = def_img
     
-# 텍스트 박스
-def text_box(frame, x, y, text, font, color=(255, 255, 255)):
+def text_box(frame, x, y, text, font, color=(0, 0, 0)):
     from PIL import Image, ImageDraw
-    import numpy as np
+    import cv2
 
-    if text is None:
-        text = ""
-
-    text = str(text)
-
-    # OpenCV BGR 이미지를 PIL RGB 이미지로 변환
     img_pil = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
     draw = ImageDraw.Draw(img_pil)
 
-    # Pillow 최신 버전 대응: textsize 대신 textbbox 사용
+    text = str(text)
+
+    # 텍스트 크기 계산
     bbox = draw.textbbox((0, 0), text, font=font)
     text_w = bbox[2] - bbox[0]
     text_h = bbox[3] - bbox[1]
 
-    # x가 None이면 가운데 정렬
+    frame_h, frame_w = frame.shape[:2]
+
+    # x가 None이면 가로 중앙 정렬
     if x is None:
-        x = (frame.shape[1] - text_w) // 2
+        x = (frame_w - text_w) // 2
+
+    # y가 None이면 세로 중앙 정렬
+    if y is None:
+        y = (frame_h - text_h) // 2
 
     draw.text((int(x), int(y)), text, font=font, fill=color)
 
-    # PIL RGB 이미지를 다시 OpenCV BGR로 변환
     frame[:] = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
 
     return frame
@@ -101,9 +136,9 @@ def text_box(frame, x, y, text, font, color=(255, 255, 255)):
 def save_results(userID, nowDatetime, eye, answer, List, disease_name, eyecarex_static):
     List.append({
         'ID':userID,
-        '시간':nowDatetime,
-        '눈':eye,
-        '여부':answer
+        'time':nowDatetime,
+        'eye':eye,
+        'tf':answer
     })  
     df = pd.DataFrame(List)
     out_dir = eyecarex_static + 'csv_file'
@@ -113,7 +148,12 @@ def save_results(userID, nowDatetime, eye, answer, List, disease_name, eyecarex_
 
 # 계속 검사 창
 def overlay_next_test_screen(image, background, timeStart, height , width_h, height_h, eye, eyecarex_static):
+    lang = get_lang()
+
     font_dir = str(Path(eyecarex_static) / "fonts" / "H2GSRB.TTF")
+    text = (f'{int(6-(time.time()-timeStart))}초후 {eye} 검사 시작합니다.'
+            if lang == "ko"
+            else f'The {eye} test will start in {int(6-(time.time()-timeStart))} seconds.')
     overlay_jpg(image, background, width_h, height_h)
     
     # Display "continue the test" message
@@ -123,7 +163,7 @@ def overlay_next_test_screen(image, background, timeStart, height , width_h, hei
     
     # Countdown for the next test
     text_box(image, None, int(height * 0.6), 
-             f'{int(6-(time.time()-timeStart))}초후 {eye} 검사 시작합니다.',
+             text,
              ImageFont.truetype(font_dir, height_h // 10), (0, 0, 0))
     
     # If 6 seconds have passed, start the left-eye test

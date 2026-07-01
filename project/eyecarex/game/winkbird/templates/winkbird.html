@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+
 {% block header %}
   {% include "components/header.html" %}
 {% endblock %}
@@ -8,25 +9,44 @@
 
 <div id="main">
   <article id="eyetest" class="testbody" style="text-align:center;">
-    <h2 class="major" style="color:#000;">Wink Bird</h2>
+    <h2 class="major" style="color:#000;">
+      {{ t('winkbird_title') }}
+    </h2>
 
     <p style="color:#000;">
-		새가 떨어지기 전에 눈을 깜빡하면 새를 잡게 됩니다.
+      {{ t('winkbird_desc') }}
     </p>
-	<div class="screenshot" style="padding:10px; text-align:center;">
-		<div class="cam-wrap">
-			<div class="img_frame">
-				<img class="cam-stream"
-						src="{{ url_for('eyecarex.game.winkbird.cam')}}"
-					alt="위크버드 실시간 화면">
-			</div>
 
-			<div class="cam-actions">
-				<a class="c-btn c-btn--ghost" href="{{ url_for('eyecarex.eyecarex') }}">← 돌아가기</a>
-				<button class="c-btn" type="button" onclick="location.reload()">다시하기 ↺</button>
-			</div>
-		</div>
-	</div>
+    <div class="screenshot" style="padding:10px; text-align:center;">
+      <div class="cam-wrap">
+        <div class="img_frame">
+          <img class="cam-stream"
+          src="{{ url_for('eyecarex.game.winkbird.cam', lang=current_lang) }}"
+          alt="{{ t('winkbird_cam_alt') }}">
+        </div>
+
+        <div class="cam-actions">
+          {% if current_lang == "en" %}
+            {% set back_text = "← Back" %}
+            {% set retry_text = "Retry ↺" %}
+          {% elif current_lang == "zh" %}
+            {% set back_text = "← 返回" %}
+            {% set retry_text = "重新开始 ↺" %}
+          {% else %}
+            {% set back_text = "← 돌아가기" %}
+            {% set retry_text = "다시하기 ↺" %}
+          {% endif %}
+
+          <a class="c-btn c-btn--ghost" href="{{ url_for('eyecarex.eyecarex') }}">
+            {{ back_text }}
+          </a>
+
+          <button class="c-btn" type="button" onclick="location.reload()">
+            {{ retry_text }}
+          </button>
+        </div>
+      </div>
+    </div>
 
   </article>
 </div>

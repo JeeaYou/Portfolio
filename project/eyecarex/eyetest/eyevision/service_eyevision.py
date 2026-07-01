@@ -1,11 +1,6 @@
 # project/eyecarex/eyetest/eyevision/service_eyevision.py
-from flask import Blueprint, render_template, request, Response, current_app, url_for, redirect
+from flask import Blueprint, render_template, Response, current_app, url_for, redirect
 from . import bp  # ← __init__.py의 bp를 가져옴 (중요)
-
-@bp.get("/", endpoint="show")  # 최종 이름: eyetest.eyevision.show
-def show():
-    return render_template("eyevision.html")
-
 import os, cv2, time, datetime
 import urllib.request
 
@@ -17,12 +12,21 @@ from PIL import ImageFont
 
 # 공용/eyevision 모듈들
 from ...common.services import (
-    overlay_png, overlay_jpg, text_box, save_results,
+    get_lang, load_texts, overlay_png, overlay_jpg, text_box, save_results,
     overlay_next_test_screen, overlay_test_result_screen, draw_banner_with_text
 )
 from .eyeVision_Module import (
     make_eyeChart, get_eyeImg, answer_true_false, load_next_image, result_checking
 )
+
+@bp.get("/", endpoint="show")  # 최종 이름: eyetest.eyevision.show
+def show():
+    
+    lang = get_lang()
+
+    return render_template("eyevision.html",
+                           lang = lang)
+
 
 def hit(p, center, half):
     x, y = p; cx, cy = center
@@ -49,6 +53,8 @@ def ensure_hand_landmarker_model(eyecarex_dir):
 
 @bp.get("/cam")   # 최종 스트림 URL: /eyetest/eyevision/cam
 def cam():
+
+    lang = get_lang()
 
     eyecarex_dir = current_app.blueprints['eyecarex'].static_folder
     curr_dir = bp.static_folder
@@ -81,12 +87,12 @@ def cam():
         # 2) 경로 만들기 + 검증해서 읽기
         font_path = os.path.join(eyecarex_dir, "fonts", "H2GSRB.TTF")
         bg_path   = os.path.join(eyecarex_dir, "image", "background.jpg")
-        logo_path = os.path.join(eyecarex_dir, "button", "logo.png")
+        logo_path = os.path.join(eyecarex_dir, "image", "logo.png")
         tbx_path  = os.path.join(eyecarex_dir, "image", "textbox.png")
         left_path = os.path.join(eyecarex_dir, "button", "left.png")
         
         # 리소스(파일 경로는 전부 static_dir 기준)
-        font = ImageFont.truetype(font_path, 20)
+        font = ImageFont.truetype(font_path, 40)
         background  = cv2.resize(cv2.imread(bg_path,  cv2.IMREAD_COLOR), (width, height))
         logo        = cv2.imread(logo_path, cv2.IMREAD_UNCHANGED)
         img_textbox = cv2.imread(tbx_path,  cv2.IMREAD_UNCHANGED)
@@ -106,15 +112,15 @@ def cam():
 
         # 시력도표/상태
         dataList = make_eyeChart(curr_dir)
-        level, max_level = int(dataList['등급'].min()), int(dataList['등급'].max())
+        level, max_level = int(dataList['level'].min()), int(dataList['level'].max())
         answer_list, test_count, wrong_cnt = [], 0, 0
         mode, finish, next_test, testEnd = 'normal', False, False, False
-        eye = '오른쪽눈'
+        eye = '오른쪽눈' if lang is 'ko'  else 'Left Eye'
         img_name, img_level, img_eyelevel, img_url = get_eyeImg(level, dataList)
         img_raw = cv2.imread(img_url)
 
         if img_raw is None:
-            raise FileNotFoundError(f"시력표 이미지를 읽을 수 없습니다: {img_url}")
+            raise FileNotFoundError(f"Can't read image file : {img_url}")
 
         img_test = cv2.resize(img_raw, (h2, h2))
         
@@ -124,18 +130,25 @@ def cam():
         timeStart = time.time()
         distance, d_color = 0, (200,200,200)
         
-        d_start = 40
-        d_end = 100
+        d_start = 0
+        d_end = 40
         selectionSpeed = 8
         userID = "000000001"
         max_test_count = 15
-        name = '시력'
+        name = '시력' if lang == 'ko'  else 'Visual Acuity'
+        print(lang)
+        dict_text = (
+            f"{d_start}~{d_end}cm 거리에서 보이는 글자의 방향은 어디인가요?"
+            if lang == "ko"
+            else f"Which direction is the letter facing at a distance of {d_start}~{d_end} cm?"
+        )
 
         while True:
             ok, frame = cap.read()
             if not ok:
                 break
 
+            frame = cv2.flip(frame, 1)
             frame, faces = detector.findFaceMesh(frame, draw=False)
 
             rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -203,9 +216,8 @@ def cam():
             cv2.rectangle(frame, (cx-8, cy-th-8), (cx+tw+8, cy+8), (0,0,0), -1)
             cv2.putText(frame, txt, (cx, cy), cv2.FONT_HERSHEY_PLAIN, 2, d_color, 2, cv2.LINE_AA)
 
-            draw_banner_with_text(frame, width, height, font,
-                                  f"{d_start}~{d_end}cm 거리에서 보이는 글자의 방향은 어디인가요?")
-            overlay_png(frame, *(20, 20), half//2, half//2, logo)
+            draw_banner_with_text(frame, width, height, font, dict_text)
+            overlay_png(frame, *(60, 60), half//2, half//2, logo)
 
             for label, center in buttons:
                 overlay_png(frame, *center, half, half, icons[label])
@@ -220,7 +232,7 @@ def cam():
             elif next_test:
                 if overlay_next_test_screen(frame, background, timeStart, height, w2, h2, eye, eyecarex_dir):
                     next_test = False
-                    eye = '왼쪽눈'
+                    eye = '왼쪽눈' if lang is 'ko'  else 'Right Eye'
                     level, wrong_cnt, test_count, mode, counter = 1, 0, 0, 'normal', 0
                     answer_list = []
                     img_name, img_level, img_eyelevel, img_url, img_test = \

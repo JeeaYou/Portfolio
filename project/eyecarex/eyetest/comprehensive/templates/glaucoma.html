@@ -23,8 +23,24 @@
 			</div>
 
 			<div class="cam-actions">
-				<a class="c-btn c-btn--ghost" href="{{ url_for('eyecarex.eyecarex') }}">← 돌아가기</a>
-				<button class="c-btn" type="button" onclick="location.reload()">다시하기 ↺</button>
+				{% if current_lang == "en" %}
+					{% set back_text = "← Back" %}
+					{% set retry_text = "Retry ↺" %}
+				{% elif current_lang == "zh" %}
+					{% set back_text = "← 返回" %}
+					{% set retry_text = "重新开始 ↺" %}
+				{% else %}
+					{% set back_text = "← 돌아가기" %}
+					{% set retry_text = "다시하기 ↺" %}
+				{% endif %}
+
+				<a class="c-btn c-btn--ghost" href="{{ url_for('eyecarex.eyecarex') }}">
+					{{ back_text }}
+				</a>
+
+				<button class="c-btn" type="button" onclick="location.reload()">
+					{{ retry_text }}
+				</button>
 			</div>
 		</div>
 	</div>

@@ -1,154 +1,296 @@
-
 # project/eyecarex/eyetest/cataract/service_cataract.py
-from flask import Blueprint, render_template, request, Response, current_app, url_for, redirect
-from . import bp  # ← __init__.py의 bp를 가져옴 (중요)
+
+from flask import render_template, Response, current_app
+from . import bp
+
+import cv2
+import time
+import datetime
+import os
+import pandas as pd
+import shutil
+
+from cvzone.FaceMeshModule import FaceMeshDetector
+from cvzone.HandTrackingModule import HandDetector
+from PIL import ImageFont
+
+from ...common.services import (
+    overlay_png,
+    text_box,
+    overlay_test_result_screen,
+    draw_banner_with_text
+)
+
+from .static.models.cataract_predict import image_test
+
+
 @bp.get("/", endpoint="show")
 def show():
     return render_template("cataract.html")
 
-import cv2, time, datetime, os
-from cvzone.FaceMeshModule import FaceMeshDetector
-import mediapipe as mp
-from PIL import ImageFont
-import pandas as pd
-import shutil
-from ...common.services import (
-    overlay_png, overlay_jpg, text_box, save_results, 
-    overlay_next_test_screen, overlay_test_result_screen, draw_banner_with_text
-)
-from .static.models.cataract_predict import image_test
 
-@bp.get("/cam")   # 최종 스트림 URL: /eyetest/colortest/cam
+def read_image(path, flag=cv2.IMREAD_UNCHANGED, name="이미지"):
+    img = cv2.imread(path, flag)
+
+    if img is None:
+        raise FileNotFoundError(f"{name}를 읽을 수 없습니다: {path}")
+
+    return img
+
+
+def crop_safe(frame, x1, y1, x2, y2):
+    h, w = frame.shape[:2]
+
+    x1 = max(0, min(x1, w))
+    x2 = max(0, min(x2, w))
+    y1 = max(0, min(y1, h))
+    y2 = max(0, min(y2, h))
+
+    if x2 <= x1 or y2 <= y1:
+        return None
+
+    return frame[y1:y2, x1:x2]
+
+
+@bp.get("/cam")
 def cam():
-    eyecarex_dir = current_app.blueprints['eyecarex'].static_folder
+    eyecarex_dir = current_app.blueprints["eyecarex"].static_folder
     curr_dir = bp.static_folder
 
     def gen():
         image_dir = os.path.join(curr_dir, "image")
+
         if os.path.exists(image_dir):
-            shutil.rmtree(image_dir)   # 폴더 전체 삭제
-        os.makedirs(image_dir, exist_ok=True)  # 새로 생성
-            
+            shutil.rmtree(image_dir)
+
+        os.makedirs(image_dir, exist_ok=True)
+
         cap = cv2.VideoCapture(0)
-        width  = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+
+        if not cap.isOpened():
+            raise RuntimeError("카메라를 열 수 없습니다.")
+
+        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        w2, h2 = width//2, height//2
 
-        btn_size  = width // 10
-        half      = int(btn_size * 0.4)
+        if width <= 0 or height <= 0:
+            width, height = 1280, 720
 
-        detector = FaceMeshDetector(maxFaces=1)
-        face = mp.solutions.face_detection.FaceDetection(
-            model_selection=0, min_detection_confidence=0.5
-        )
-        hands = mp.solutions.hands.Hands(
-            max_num_hands=1, min_detection_confidence=0.5, min_tracking_confidence=0.5
-        )
-        
-        # 경로 만들기 + 검증해서 읽기
+        w2, h2 = width // 2, height // 2
+
+        btn_size = width // 10
+        half = int(btn_size * 0.4)
+
+        # MediaPipe 직접 사용 금지
+        # 기존 mp.solutions.face_detection / mp.solutions.hands 대신 cvzone 사용
+        face_detector = FaceMeshDetector(maxFaces=1)
+        hand_detector = HandDetector(maxHands=1, detectionCon=0.5)
+
+        # ---------- 경로 ----------
         font_path = os.path.join(eyecarex_dir, "fonts", "H2GSRB.TTF")
-        bg_path   = os.path.join(eyecarex_dir, "image", "background.jpg")
-        logo_path = os.path.join(eyecarex_dir, "button", "logo.png")
-        face_path = os.path.join(eyecarex_dir, "button", "face.png")
-        
-        # 리소스(파일 경로는 전부 static_dir 기준)
-        font = ImageFont.truetype(font_path, 20)
-        background  = cv2.resize(cv2.imread(bg_path,  cv2.IMREAD_COLOR), (width, height))
-        logo        = cv2.imread(logo_path, cv2.IMREAD_UNCHANGED)
-        face_img    = cv2.imread(face_path, cv2.IMREAD_UNCHANGED)
+        bg_path = os.path.join(eyecarex_dir, "image", "background.jpg")
 
-        name = '백내장'
-        List = []
+        # 기존 button/logo.png 아님
+        # project/eyecarex/static/image/logo.png
+        logo_path = os.path.join(eyecarex_dir, "image", "logo.png")
+
+        face_path = os.path.join(eyecarex_dir, "button", "face.png")
+
+        # ---------- 리소스 ----------
+        if not os.path.exists(font_path):
+            raise FileNotFoundError(f"폰트 파일을 찾을 수 없습니다: {font_path}")
+
+        font = ImageFont.truetype(font_path, 20)
+
+        background_raw = read_image(bg_path, cv2.IMREAD_COLOR, "background 이미지")
+        logo = read_image(logo_path, cv2.IMREAD_UNCHANGED, "logo 이미지")
+        face_img = read_image(face_path, cv2.IMREAD_UNCHANGED, "face 이미지")
+
+        background = cv2.resize(background_raw, (width, height))
+
+        name = "백내장"
+        result_list = []
+
         timeStart = time.time()
         testEnd = False
-        captured = False  # ← 한 번만 캡쳐하기 위한 플래그
+        captured = False
 
-        while True:
-            ok, frame = cap.read()
-            if not ok:
-                break
-            
-            frame, faces = detector.findFaceMesh(frame, draw=False)
-            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        try:
+            while True:
+                ok, frame = cap.read()
 
-            # ✅ 각각 따로 처리
-            face_res  = face.process(rgb)    # 얼굴(eye keypoints: detections)
-            hands_res = hands.process(rgb)       # 손(landmarks)
+                if not ok:
+                    break
 
-            if face_res.detections:
-                det = face_res.detections[0]
-                kps = det.location_data.relative_keypoints
-                # kps[0]=right eye, kps[1]=left eye (미디어파이프 정의)
-                r_eye = kps[0]
-                l_eye = kps[1]
+                frame = cv2.flip(frame, 1)
+                frame, faces = face_detector.findFaceMesh(frame, draw=False)
 
-                h, w, _ = frame.shape
-                rx1 = max(int(r_eye.x * w - 60), 0); ry1 = max(int(r_eye.y * h - 40), 0)
-                rx2 = min(int(r_eye.x * w + 40), w);  ry2 = min(int(r_eye.y * h + 40), h)
-                lx1 = max(int(l_eye.x * w - 40), 0);  ly1 = max(int(l_eye.y * h - 40), 0)
-                lx2 = min(int(l_eye.x * w + 40), w);  ly2 = min(int(l_eye.y * h + 40), h)
+                hands, frame = hand_detector.findHands(
+                    frame,
+                    draw=False,
+                    flipType=False
+                )
 
-                right = frame[ry1:ry2, rx1:rx2]
-                left  = frame[ly1:ly2, lx1:lx2]
+                # 얼굴이 감지되면 FaceMesh 좌표로 양쪽 눈 영역 추출
+                if faces:
+                    face_lm = faces[0]
 
-                now = datetime.datetime.now().strftime("%d_%H-%M-%S")
-                right_name = os.path.join(curr_dir, "image", 'right_image' + str(now) + ".jpg")
-                left_name = os.path.join(curr_dir, "image", 'left_image' + str(now) + ".jpg")
+                    # MediaPipe FaceMesh 기준 눈 주변 대표 인덱스
+                    # 오른쪽 눈: 33, 133
+                    # 왼쪽 눈: 362, 263
+                    try:
+                        r1 = face_lm[33]
+                        r2 = face_lm[133]
+                        l1 = face_lm[362]
+                        l2 = face_lm[263]
 
-                overlay_png(frame, *(w2,h2), int(h2//2), int(h2//2), face_img)
+                        r_cx = int((r1[0] + r2[0]) / 2)
+                        r_cy = int((r1[1] + r2[1]) / 2)
 
-                if hands_res.multi_hand_landmarks:
-                    for hand_landmarks in hands_res.multi_hand_landmarks:
-                        finger1 = int(hand_landmarks.landmark[8].y * 100)
-                        finger2 = int(hand_landmarks.landmark[5].y * 100)
-                        hand_y  = int(hand_landmarks.landmark[0].y * 100)
-                        dist = abs(finger1 - hand_y)
-                        dist2 = abs(finger2 - hand_y)
+                        l_cx = int((l1[0] + l2[0]) / 2)
+                        l_cy = int((l1[1] + l2[1]) / 2)
 
-                        if dist == dist2 and captured is False:
-                            cv2.imwrite(left_name, left)
-                            class_name, score = image_test(left_name)
-                            score_str = str(score) + '%'
-                            List.append({
-                                        '눈':'오른쪽눈',
-                                        '여부': class_name,
-                                        '확률': score_str,
-                                        '이미지': right_name
-                                    })
-                            cv2.imwrite(right_name, right)
-                            class_name, score = image_test(right_name)
-                            score_str = str(score) + '%'
-                            List.append({
-                                        '눈':'왼쪽눈',
-                                        '여부': class_name,
-                                        '확률': score_str,
-                                        '이미지': right_name
-                                    })
-                            df = pd.DataFrame(List)
-                            df.to_csv(eyecarex_dir + f'/csv_file/{name}.csv')
-                            captured = True
-                            testEnd = True                
-                            
-            # 공통 UI            
-            draw_banner_with_text(frame, width, height, font, '카메라를 보고 손을 펼친 뒤, 주먹을 쥐면 촬영됩니다.')
-            overlay_png(frame, *(20, 20), half//2, half//2, logo)
+                        right = crop_safe(
+                            frame,
+                            r_cx - 60,
+                            r_cy - 45,
+                            r_cx + 60,
+                            r_cy + 45
+                        )
 
-            if testEnd:
-                # 결과 화면까지 프레임에 그려서 보여주고 루프 종료
-                if overlay_test_result_screen(frame, background, name, List, timeStart, height, w2, h2, font, eyecarex_dir):
-                    List = []
-                    pass
-                
-            # 인코딩 & 전송
-            ok2, buf = cv2.imencode(".jpg", frame)
-            if not ok2:
-                continue
-            yield (b"--frame\r\n"
-                   b"Content-Type: image/jpeg\r\n\r\n" + buf.tobytes() + b"\r\n")
+                        left = crop_safe(
+                            frame,
+                            l_cx - 60,
+                            l_cy - 45,
+                            l_cx + 60,
+                            l_cy + 45
+                        )
 
-        cap.release()
+                        overlay_png(
+                            frame,
+                            w2,
+                            h2,
+                            int(h2 // 2),
+                            int(h2 // 2),
+                            face_img
+                        )
 
+                    except Exception:
+                        right = None
+                        left = None
 
-    return Response(gen(), mimetype="multipart/x-mixed-replace; boundary=frame")
+                    # 손 감지 후 주먹 동작 비슷한 조건이면 촬영
+                    if hands and not captured and right is not None and left is not None:
+                        hand = hands[0]
+                        lmList = hand.get("lmList", [])
 
+                        if len(lmList) > 8:
+                            # 손가락 끝과 손바닥 기준점 거리로 주먹 여부 판단
+                            index_tip_y = lmList[8][1]
+                            index_base_y = lmList[5][1]
+                            wrist_y = lmList[0][1]
 
+                            dist_tip = abs(index_tip_y - wrist_y)
+                            dist_base = abs(index_base_y - wrist_y)
+
+                            # 기존 코드의 dist == dist2는 너무 엄격해서 거의 안 맞을 수 있음
+                            # 그래서 약간의 허용 범위를 둠
+                            if abs(dist_tip - dist_base) <= 10:
+                                now = datetime.datetime.now().strftime("%d_%H-%M-%S")
+
+                                right_name = os.path.join(
+                                    image_dir,
+                                    f"right_image_{now}.jpg"
+                                )
+
+                                left_name = os.path.join(
+                                    image_dir,
+                                    f"left_image_{now}.jpg"
+                                )
+
+                                cv2.imwrite(right_name, right)
+                                right_class_name, right_score = image_test(right_name)
+
+                                result_list.append({
+                                    "눈": "오른쪽눈",
+                                    "여부": right_class_name,
+                                    "확률": f"{right_score}%",
+                                    "이미지": right_name
+                                })
+
+                                cv2.imwrite(left_name, left)
+                                left_class_name, left_score = image_test(left_name)
+
+                                result_list.append({
+                                    "눈": "왼쪽눈",
+                                    "여부": left_class_name,
+                                    "확률": f"{left_score}%",
+                                    "이미지": left_name
+                                })
+
+                                csv_dir = os.path.join(eyecarex_dir, "csv_file")
+                                os.makedirs(csv_dir, exist_ok=True)
+
+                                csv_path = os.path.join(csv_dir, f"{name}.csv")
+
+                                df = pd.DataFrame(result_list)
+                                df.to_csv(csv_path, index=False)
+
+                                captured = True
+                                testEnd = True
+                                timeStart = time.time()
+
+                # ---------- 공통 UI ----------
+                draw_banner_with_text(
+                    frame,
+                    width,
+                    height,
+                    font,
+                    "카메라를 보고 손을 펼친 뒤, 주먹을 쥐면 촬영됩니다."
+                )
+
+                overlay_png(
+                    frame,
+                    20,
+                    20,
+                    half // 2,
+                    half // 2,
+                    logo
+                )
+
+                if testEnd:
+                    should_break = overlay_test_result_screen(
+                        frame,
+                        background,
+                        name,
+                        result_list,
+                        timeStart,
+                        height,
+                        w2,
+                        h2,
+                        font,
+                        eyecarex_dir
+                    )
+
+                    if should_break:
+                        break
+
+                ok2, buf = cv2.imencode(".jpg", frame)
+
+                if not ok2:
+                    continue
+
+                yield (
+                    b"--frame\r\n"
+                    b"Content-Type: image/jpeg\r\n\r\n"
+                    + buf.tobytes()
+                    + b"\r\n"
+                )
+
+        finally:
+            cap.release()
+
+    return Response(
+        gen(),
+        mimetype="multipart/x-mixed-replace; boundary=frame"
+    )

@@ -1,183 +1,515 @@
 {
-    "total_file_count": 1,
+    "total_file_count": 3,
     "total_music_duration": {
-        "seconds": 149.71,
-        "text": "2 min 29 sec"
+        "seconds": 998.86,
+        "text": "16 min 38 sec"
     },
     "total_program_execution_time": {
-        "seconds": 24.83,
-        "text": "0 min 24 sec"
+        "seconds": 312.53,
+        "text": "5 min 12 sec"
     },
     "results": [
         {
             "file_info": {
-                "file_name": "City Of Stars.mp3",
-                "file_path": "/Users/jeea/Documents/Portfolio/project/musicAI/uploads/City Of Stars.mp3",
-                "duration": 149.71,
-                "duration_text": "2:29"
+                "file_name": "02 I.D.G.A.F.A.Y.mp3",
+                "file_path": "/Users/jeea/Documents/Portfolio/project/musicAI/uploads/02 I.D.G.A.F.A.Y.mp3",
+                "duration": 266.0,
+                "duration_text": "4:25"
             },
             "original_audio_analysis": {
-                "key": "D minor",
-                "key_confidence": 0.983,
+                "key": "G minor",
+                "key_confidence": 0.978,
                 "key_method": "librosa",
-                "tempo": 110,
-                "tempo_name": "Moderato",
-                "tempo_category": "Medium",
-                "tempo_description": "보통 빠르기",
-                "rhythm_pattern": "Steady rhythm",
-                "beat_count": 230,
-                "beat_strength": 0.83587,
-                "beat_regularity": 0.2742,
-                "energy_score": 64.11,
-                "energy_level": "Medium Energy",
-                "rms": 0.0838,
-                "genre": "Pop-like",
-                "mood": "Dramatic / Emotional",
-                "spectral_centroid": 1668.29,
-                "spectral_bandwidth": 2323.95,
-                "spectral_rolloff": 3080.55,
-                "spectral_flatness": 4.9e-05,
-                "spectral_flux": 0.04746,
-                "zero_crossing_rate": 0.034402,
+                "tempo": 161,
+                "tempo_name": "Vivace",
+                "tempo_category": "Very Fast",
+                "tempo_description": "생기 있고 아주 빠르게",
+                "rhythm_pattern": "Strong and steady beat",
+                "beat_count": 690,
+                "beat_strength": 1.55919,
+                "beat_regularity": 1.17528,
+                "energy_score": 75.71,
+                "energy_level": "High Energy",
+                "rms": 0.18674,
+                "genre": "Dance / EDM-like",
+                "mood": "Powerful / Intense",
+                "spectral_centroid": 3417.51,
+                "spectral_bandwidth": 3702.7,
+                "spectral_rolloff": 7365.32,
+                "spectral_flatness": 0.000904,
+                "spectral_flux": 0.04702,
+                "zero_crossing_rate": 0.064886,
                 "mfcc_mean": [
-                    -276.30591,
-                    166.3046,
-                    14.04396,
-                    14.66852,
-                    -5.74933,
-                    12.92001,
-                    -4.7966,
-                    1.30007,
-                    -4.62177,
-                    -5.40843,
-                    -1.15588,
-                    -2.27845,
-                    -8.30589,
-                    -4.91763,
-                    -8.53724,
-                    -7.84571,
-                    -2.59462,
-                    -5.74406,
-                    -5.50953,
-                    -5.8877
+                    -147.82187,
+                    119.0722,
+                    -5.14798,
+                    38.42812,
+                    -10.26479,
+                    19.68406,
+                    -14.28203,
+                    19.38724,
+                    -8.04622,
+                    9.23411,
+                    -5.32519,
+                    4.0604,
+                    0.65611,
+                    -0.55875,
+                    1.74822,
+                    6.72794,
+                    2.80748,
+                    6.2234,
+                    5.2219,
+                    3.86466
                 ],
                 "mfcc_std": [
-                    81.82875,
-                    34.13213,
-                    32.37048,
-                    25.68939,
-                    17.17609,
-                    13.5192,
-                    14.97974,
-                    13.10449,
-                    11.84724,
-                    10.8567,
-                    9.45963,
-                    9.0325,
-                    9.23557,
-                    8.60595,
-                    7.91515,
-                    7.21921,
-                    8.53182,
-                    7.76246,
-                    7.28538,
-                    7.78361
+                    98.93965,
+                    37.76217,
+                    30.50221,
+                    27.17746,
+                    20.98058,
+                    20.47418,
+                    15.4093,
+                    16.20114,
+                    11.58383,
+                    12.67362,
+                    10.11797,
+                    11.12851,
+                    9.78282,
+                    8.8732,
+                    9.06141,
+                    9.22423,
+                    8.25528,
+                    8.11839,
+                    8.70374,
+                    7.7747
                 ],
                 "spectral_contrast_mean": [
-                    18.39352,
-                    13.42484,
-                    17.88116,
-                    20.31712,
-                    20.54724,
-                    20.67857,
-                    57.26302
+                    13.99045,
+                    12.09422,
+                    16.17843,
+                    17.73761,
+                    15.796,
+                    16.64091,
+                    55.04616
                 ],
                 "chroma_mean": [
-                    0.3303,
-                    0.19733,
-                    0.42661,
-                    0.17963,
-                    0.32279,
-                    0.30813,
-                    0.13755,
-                    0.27226,
-                    0.17019,
-                    0.43619,
-                    0.30448,
-                    0.18326
+                    0.21373,
+                    0.17111,
+                    0.28412,
+                    0.3914,
+                    0.24173,
+                    0.2946,
+                    0.2752,
+                    0.42048,
+                    0.29384,
+                    0.27537,
+                    0.29714,
+                    0.20711
                 ],
                 "tonnetz_mean": [
-                    0.18611,
-                    0.18436,
-                    -0.11977,
-                    -0.01272,
-                    -0.00668,
-                    0.00289
+                    -0.04221,
+                    0.11593,
+                    0.12917,
+                    -0.0599,
+                    0.01598,
+                    0.01074
                 ],
-                "dynamic_range": 16.38,
-                "harmonic_to_noise_ratio": 5.62,
-                "danceability": 42.5
+                "dynamic_range": 22.45,
+                "harmonic_to_noise_ratio": 4.65,
+                "danceability": 39.21
             },
             "vocal_pitch_analysis": {
-                "lowest_pitch_hz": 130.81,
-                "lowest_note": "C3",
-                "highest_pitch_hz": 440.0,
-                "highest_note": "A4",
-                "pitch_range_semitones": 21,
-                "pitch_range_octaves": 1.75
+                "lowest_pitch_hz": 174.61,
+                "lowest_note": "F3",
+                "highest_pitch_hz": 293.66,
+                "highest_note": "D4",
+                "pitch_range_semitones": 9,
+                "pitch_range_octaves": 0.75
             },
             "background_instrument_analysis": {
-                "instrument_count": 4,
+                "instrument_count": 2,
                 "instruments": [
                     {
-                        "instrument": "Piano / Keyboard",
-                        "score": 0.4402586817741394,
-                        "percentage": 44.0,
+                        "instrument": "Drums / Percussion",
+                        "score": 0.06536240875720978,
+                        "percentage": 6.5,
                         "matched_labels": [
-                            "Piano",
-                            "Electric piano",
-                            "Keyboard (musical)"
+                            "Wood block",
+                            "Percussion",
+                            "Cowbell",
+                            "Drum",
+                            "Drum machine",
+                            "Bass drum"
                         ]
                     },
                     {
                         "instrument": "Electronic Instruments",
-                        "score": 0.3663526177406311,
-                        "percentage": 36.6,
+                        "score": 0.010818392969667912,
+                        "percentage": 1.1,
+                        "matched_labels": [
+                            "Drum machine",
+                            "Sampler",
+                            "Synthesizer"
+                        ]
+                    }
+                ]
+            },
+            "analysis_time_summary": {
+                "original_audio_analysis_time": 21.09,
+                "vocal_separation_time": 53.19,
+                "vocal_pitch_analysis_time": 8.33,
+                "background_instrument_analysis_time": 0.99,
+                "total_analysis_time": 83.61
+            },
+            "db_track_id": "track_0000208"
+        },
+        {
+            "file_info": {
+                "file_name": "04 The Sting (C.Rizzo).mp3",
+                "file_path": "/Users/jeea/Documents/Portfolio/project/musicAI/uploads/04 The Sting (C.Rizzo).mp3",
+                "duration": 388.0,
+                "duration_text": "6:27"
+            },
+            "original_audio_analysis": {
+                "key": "C major",
+                "key_confidence": 0.99,
+                "key_method": "librosa",
+                "tempo": 120,
+                "tempo_name": "Moderato",
+                "tempo_category": "Medium",
+                "tempo_description": "보통 빠르기",
+                "rhythm_pattern": "Steady rhythm",
+                "beat_count": 767,
+                "beat_strength": 0.99165,
+                "beat_regularity": 0.90866,
+                "energy_score": 68.65,
+                "energy_level": "Medium Energy",
+                "rms": 0.11471,
+                "genre": "Pop-like",
+                "mood": "Bright / Energetic",
+                "spectral_centroid": 3063.1,
+                "spectral_bandwidth": 3751.32,
+                "spectral_rolloff": 6742.17,
+                "spectral_flatness": 0.000769,
+                "spectral_flux": 0.03947,
+                "zero_crossing_rate": 0.054172,
+                "mfcc_mean": [
+                    -195.38629,
+                    129.97482,
+                    0.42611,
+                    32.04034,
+                    1.40953,
+                    17.01432,
+                    -9.7086,
+                    11.63714,
+                    -6.14228,
+                    2.08935,
+                    -3.77982,
+                    5.36425,
+                    -8.5996,
+                    4.3915,
+                    -9.36839,
+                    2.64529,
+                    -4.92866,
+                    1.09941,
+                    -6.74982,
+                    -1.27817
+                ],
+                "mfcc_std": [
+                    86.81556,
+                    33.71304,
+                    24.66821,
+                    16.89868,
+                    16.07686,
+                    14.73881,
+                    15.68509,
+                    13.84579,
+                    9.52245,
+                    13.28618,
+                    9.59286,
+                    11.13535,
+                    9.05584,
+                    9.99928,
+                    7.78039,
+                    9.42823,
+                    7.16244,
+                    9.16873,
+                    6.99379,
+                    8.52758
+                ],
+                "spectral_contrast_mean": [
+                    21.58999,
+                    12.79843,
+                    16.7333,
+                    18.60412,
+                    17.80029,
+                    19.57562,
+                    54.30165
+                ],
+                "chroma_mean": [
+                    0.42667,
+                    0.1827,
+                    0.25875,
+                    0.1855,
+                    0.36442,
+                    0.33417,
+                    0.21616,
+                    0.34538,
+                    0.19453,
+                    0.38297,
+                    0.17689,
+                    0.23859
+                ],
+                "tonnetz_mean": [
+                    0.17599,
+                    0.14415,
+                    -0.04547,
+                    0.15061,
+                    0.01146,
+                    0.03232
+                ],
+                "dynamic_range": 18.23,
+                "harmonic_to_noise_ratio": 4.08,
+                "danceability": 48.68
+            },
+            "vocal_pitch_analysis": {
+                "lowest_pitch_hz": 196.0,
+                "lowest_note": "G3",
+                "highest_pitch_hz": 440.0,
+                "highest_note": "A4",
+                "pitch_range_semitones": 14,
+                "pitch_range_octaves": 1.17
+            },
+            "background_instrument_analysis": {
+                "instrument_count": 6,
+                "instruments": [
+                    {
+                        "instrument": "Strings",
+                        "score": 0.13231441378593445,
+                        "percentage": 13.2,
+                        "matched_labels": [
+                            "Harpsichord",
+                            "Plucked string instrument"
+                        ]
+                    },
+                    {
+                        "instrument": "Guitar",
+                        "score": 0.10019081085920334,
+                        "percentage": 10.0,
+                        "matched_labels": [
+                            "Guitar",
+                            "Acoustic guitar",
+                            "Steel guitar, slide guitar"
+                        ]
+                    },
+                    {
+                        "instrument": "Electronic Instruments",
+                        "score": 0.05728357285261154,
+                        "percentage": 5.7,
                         "matched_labels": [
                             "Keyboard (musical)",
                             "Synthesizer"
                         ]
                     },
                     {
-                        "instrument": "Strings",
-                        "score": 0.021151766180992126,
-                        "percentage": 2.1,
+                        "instrument": "Piano / Keyboard",
+                        "score": 0.05728357285261154,
+                        "percentage": 5.7,
                         "matched_labels": [
-                            "Harpsichord",
-                            "Plucked string instrument",
-                            "Cello",
-                            "Bowed string instrument"
+                            "Keyboard (musical)",
+                            "Piano",
+                            "Electric piano"
                         ]
                     },
                     {
-                        "instrument": "Guitar",
-                        "score": 0.017239447683095932,
-                        "percentage": 1.7,
+                        "instrument": "Brass",
+                        "score": 0.02356558106839657,
+                        "percentage": 2.4,
                         "matched_labels": [
-                            "Guitar",
-                            "Acoustic guitar"
+                            "Foghorn",
+                            "Brass instrument",
+                            "French horn"
+                        ]
+                    },
+                    {
+                        "instrument": "Organ / Accordion",
+                        "score": 0.02030511572957039,
+                        "percentage": 2.0,
+                        "matched_labels": [
+                            "Organ"
                         ]
                     }
                 ]
             },
             "analysis_time_summary": {
-                "original_audio_analysis_time": 11.8,
-                "vocal_separation_time": 0.0,
-                "vocal_pitch_analysis_time": 4.83,
-                "background_instrument_analysis_time": 0.9,
-                "total_analysis_time": 17.54
+                "original_audio_analysis_time": 28.3,
+                "vocal_separation_time": 76.79,
+                "vocal_pitch_analysis_time": 10.43,
+                "background_instrument_analysis_time": 0.51,
+                "total_analysis_time": 116.03
             },
-            "db_track_id": "track_0000207"
+            "db_track_id": "track_0000209"
+        },
+        {
+            "file_info": {
+                "file_name": "08 The Short Night-Strangers on a Train.mp3",
+                "file_path": "/Users/jeea/Documents/Portfolio/project/musicAI/uploads/08 The Short Night-Strangers on a Train.mp3",
+                "duration": 344.86,
+                "duration_text": "5:44"
+            },
+            "original_audio_analysis": {
+                "key": "G major",
+                "key_confidence": 0.972,
+                "key_method": "librosa",
+                "tempo": 144,
+                "tempo_name": "Allegro",
+                "tempo_category": "Fast",
+                "tempo_description": "빠르고 경쾌하게",
+                "rhythm_pattern": "Steady rhythm",
+                "beat_count": 703,
+                "beat_strength": 1.02565,
+                "beat_regularity": 0.67515,
+                "energy_score": 73.85,
+                "energy_level": "High Energy",
+                "rms": 0.16424,
+                "genre": "Dance / EDM-like",
+                "mood": "Bright / Energetic",
+                "spectral_centroid": 2670.65,
+                "spectral_bandwidth": 2891.99,
+                "spectral_rolloff": 5297.14,
+                "spectral_flatness": 0.000594,
+                "spectral_flux": 0.03959,
+                "zero_crossing_rate": 0.070372,
+                "mfcc_mean": [
+                    -122.2026,
+                    159.98163,
+                    -52.97874,
+                    13.07266,
+                    6.89274,
+                    10.42424,
+                    -7.03939,
+                    8.68868,
+                    -3.415,
+                    11.3499,
+                    -1.62375,
+                    5.5164,
+                    -4.31744,
+                    3.66809,
+                    -4.53249,
+                    6.66996,
+                    -0.48786,
+                    4.32274,
+                    -0.04708,
+                    0.05697
+                ],
+                "mfcc_std": [
+                    67.87669,
+                    35.0828,
+                    40.62726,
+                    22.53844,
+                    18.93338,
+                    14.43214,
+                    12.13097,
+                    12.04804,
+                    10.08665,
+                    8.4225,
+                    8.64603,
+                    11.65691,
+                    7.10665,
+                    8.81144,
+                    8.95179,
+                    7.93408,
+                    7.58185,
+                    7.86092,
+                    6.34103,
+                    8.87686
+                ],
+                "spectral_contrast_mean": [
+                    15.37183,
+                    9.87844,
+                    13.62716,
+                    16.42595,
+                    16.28007,
+                    18.58622,
+                    50.25839
+                ],
+                "chroma_mean": [
+                    0.31448,
+                    0.26744,
+                    0.28409,
+                    0.23816,
+                    0.2687,
+                    0.23941,
+                    0.29588,
+                    0.40892,
+                    0.27285,
+                    0.28862,
+                    0.25537,
+                    0.2914
+                ],
+                "tonnetz_mean": [
+                    0.06961,
+                    0.05417,
+                    0.06746,
+                    0.0088,
+                    0.0221,
+                    0.00077
+                ],
+                "dynamic_range": 12.52,
+                "harmonic_to_noise_ratio": 0.02,
+                "danceability": 40.18
+            },
+            "vocal_pitch_analysis": {
+                "lowest_pitch_hz": 196.0,
+                "lowest_note": "G3",
+                "highest_pitch_hz": 1046.5,
+                "highest_note": "C6",
+                "pitch_range_semitones": 29,
+                "pitch_range_octaves": 2.42
+            },
+            "background_instrument_analysis": {
+                "instrument_count": 3,
+                "instruments": [
+                    {
+                        "instrument": "Drums / Percussion",
+                        "score": 0.034778714179992676,
+                        "percentage": 3.5,
+                        "matched_labels": [
+                            "Drum kit",
+                            "Drum",
+                            "Percussion",
+                            "Bass drum",
+                            "Snare drum",
+                            "Drum roll"
+                        ]
+                    },
+                    {
+                        "instrument": "Guitar",
+                        "score": 0.031928885728120804,
+                        "percentage": 3.2,
+                        "matched_labels": [
+                            "Guitar",
+                            "Electric guitar"
+                        ]
+                    },
+                    {
+                        "instrument": "Strings",
+                        "score": 0.02072492241859436,
+                        "percentage": 2.1,
+                        "matched_labels": [
+                            "Plucked string instrument"
+                        ]
+                    }
+                ]
+            },
+            "analysis_time_summary": {
+                "original_audio_analysis_time": 25.81,
+                "vocal_separation_time": 69.37,
+                "vocal_pitch_analysis_time": 9.58,
+                "background_instrument_analysis_time": 0.42,
+                "total_analysis_time": 105.19
+            },
+            "db_track_id": "track_0000210"
         }
     ]
 }
