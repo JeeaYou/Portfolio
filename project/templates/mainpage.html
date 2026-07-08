@@ -5,14 +5,32 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/mainstyle.css') }}">
+  </head>
 
   <body class="is-preload home-page">
-    <div id="wrapper">
+    <div id="bg" aria-hidden="true"></div>
 
+    <div id="wrapper">
       <main class="home-main">
 
         <div class="home-top-actions">
-          <div class="language-switch">
+          <a
+            href="https://github.com/JeeaYou/Portfolio"
+            class="brand-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub portfolio repository"
+          >
+            <span class="brand-mark" aria-hidden="true">
+              <i></i><i></i><i></i><i></i>
+            </span>
+            <span class="brand-copy">
+              <strong>Christina</strong>
+              <small>Backend Developer · Audio AI</small>
+            </span>
+          </a>
+
+          <div class="language-switch" aria-label="Language switcher">
             <button
               type="button"
               class="lang-btn {% if current_lang == 'en' %}is-active{% endif %}"
@@ -37,76 +55,178 @@
               中文
             </button>
           </div>
-
-          <a
-            href="https://github.com/JeeaYou/Portfolio"
-            class="github-link"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="GitHub profile"
-          >
-            <span class="github-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" role="img">
-                <path
-                  d="M12 0.5C5.65 0.5 0.5 5.65 0.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2.02c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.75 2.69 1.25 3.35.95.1-.74.4-1.25.73-1.54-2.55-.29-5.23-1.28-5.23-5.68 0-1.25.45-2.28 1.18-3.08-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18.92-.26 1.9-.38 2.88-.39.98.01 1.96.13 2.88.39 2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.73.8 1.18 1.83 1.18 3.08 0 4.42-2.69 5.39-5.25 5.67.41.35.78 1.05.78 2.12v3.08c0 .31.21.68.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35 0.5 12 0.5Z"
-                />
-              </svg>
-            </span>
-
-            <span class="github-copy">
-              <span class="github-title">GitHub</span>
-              <span class="github-subtitle">
-                {{ t('github_view_code') }}
-              </span>
-            </span>
-          </a>
         </div>
 
         <section class="home-hero">
-          <div class="home-badge">
-            {{ t('hero_badge') }}
+          <div class="hero-copy">
+            <div class="home-badge">
+              AUDIO AI · SPEECH RECOGNITION · BACKEND
+            </div>
+
+            <h1>
+              {% if current_lang == 'ko' %}
+                오디오 AI와 음성인식을<br>
+                서비스로 구현하는<br>
+                <span>백엔드 개발자</span>
+              {% elif current_lang == 'zh' %}
+                将音频 AI 与语音识别<br>
+                落地为真实服务的<br>
+                <span>后端开发者</span>
+              {% else %}
+                Backend Developer<br>
+                focused on<br>
+                <span>Audio AI & Speech Recognition</span>
+              {% endif %}
+            </h1>
+
+            <p class="home-subtitle">
+              {% if current_lang == 'ko' %}
+                음악 분석, 보컬 분리, 피치 감지, 가사/음성 텍스트 변환까지 연결하는 AI 웹 서비스를 만듭니다.
+              {% elif current_lang == 'zh' %}
+                Building AI web services for music analysis, vocal separation, pitch detection, and lyric transcription.
+              {% else %}
+                Building AI-powered music analysis, vocal separation, pitch detection, and lyric transcription services.
+              {% endif %}
+            </p>
+
+            <div class="home-stack">
+              <span>Python</span>
+              <span>Flask</span>
+              <span>REST API</span>
+              <span>Demucs</span>
+              <span>Librosa</span>
+              <span>PyTorch</span>
+              <span>Whisper / ASR</span>
+              <span>PostgreSQL</span>
+            </div>
+
+            <div class="home-cta-row">
+              <a href="/musicAI/" class="primary-cta">
+                View MusicAI Demo
+                <span aria-hidden="true">→</span>
+              </a>
+              <a href="https://github.com/JeeaYou/Portfolio" class="secondary-cta" target="_blank" rel="noopener noreferrer">
+                GitHub Code
+              </a>
+            </div>
           </div>
 
-          <h1>
-            {{ t('hero_title') }}
-          </h1>
+          <aside class="audio-demo-panel" aria-label="MusicAI demo preview">
+            <div class="demo-panel-header">
+              <div>
+                <span class="demo-kicker">LIVE DEMO PREVIEW</span>
+                <strong>MusicAI Pipeline</strong>
+              </div>
+              <span class="demo-status">Ready</span>
+            </div>
 
-          <p class="home-subtitle">
-            {{ t('hero_subtitle') }}
-          </p>
+            <div class="wave-card" aria-hidden="true">
+              <div class="waveform">
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+              </div>
+            </div>
 
-          <p class="home-description">
-            {{ t('hero_description') }}
-          </p>
+            <div class="demo-grid">
+              <div class="demo-card separation-card">
+                <h3>Vocal Separation</h3>
 
-          <div class="home-stack">
-            <span>Java</span>
-            <span>Spring Boot</span>
-            <span>Python</span>
-            <span>Flask</span>
-            <span>REST API</span>
-            <span>JavaScript</span>
-            <span>HTML/CSS</span>
-            <span>MySQL/PostgreSQL</span>
-            <span>PyTorch</span>
-            <span>Audio Analysis</span>
-            <span>OpenCV/MediaPipe</span>
-            <span>Git/GitHub</span>
+                <div class="audio-row">
+                  <button type="button" aria-label="Play vocals">▶</button>
+                  <span>Vocals</span>
+                  <div class="mini-wave purple"><i></i><i></i><i></i><i></i><i></i></div>
+                </div>
+
+                <div class="audio-row">
+                  <button type="button" aria-label="Play instrumental">▶</button>
+                  <span>Instrumental</span>
+                  <div class="mini-wave blue"><i></i><i></i><i></i><i></i><i></i></div>
+                </div>
+              </div>
+
+              <div class="demo-card analysis-card">
+                <h3>Analysis</h3>
+
+                <dl>
+                  <div><dt>Key</dt><dd>C Major</dd></div>
+                  <div><dt>Tempo</dt><dd>128 BPM</dd></div>
+                  <div><dt>Genre</dt><dd>Pop</dd></div>
+                  <div><dt>Mood</dt><dd>Bright</dd></div>
+                </dl>
+              </div>
+            </div>
+
+            <div class="lyrics-demo-card">
+              <div>
+                <h3>Lyric Transcription</h3>
+                <p>Separated vocals → ASR → timestamped lyrics</p>
+              </div>
+              <span>Coming next</span>
+            </div>
+          </aside>
+        </section>
+
+        <section class="featured-project-showcase" id="musicai-demo">
+          <div class="featured-copy">
+            <span class="section-eyebrow">FEATURED PROJECT</span>
+            <h2>MusicAI — Audio Intelligence Platform</h2>
+            <p>
+              Upload music files and automatically analyze key, tempo, genre, mood, vocal pitch range,
+              background instruments, and separated vocals. The next demo step adds ASR-based lyric transcription.
+            </p>
+
+            <div class="feature-list">
+              <span>✓ Vocal & instrumental separation</span>
+              <span>✓ Pitch and vocal range analysis</span>
+              <span>✓ Instrument classification with AST</span>
+              <span>✓ Async backend pipeline and progress tracking</span>
+              <span>✓ Lyric transcription demo area</span>
+            </div>
+
+            <a href="/musicAI/" class="primary-cta compact">
+              Open MusicAI
+              <span aria-hidden="true">→</span>
+            </a>
+          </div>
+
+          <div class="product-demo-card">
+            <div class="product-bar">
+              <strong>♪ MusicAI</strong>
+              <small>Demo Dashboard</small>
+            </div>
+
+            <div class="upload-mock">
+              <span>Upload your music file</span>
+              <strong>Drag & drop MP3/WAV</strong>
+            </div>
+
+            <div class="progress-mock">
+              <div>
+                <span>Analysis Progress</span>
+                <strong>73%</strong>
+              </div>
+              <div class="progress-track"><i></i></div>
+            </div>
+
+            <div class="result-mock">
+              <span>Results</span>
+              <div class="metric-row">
+                <strong>C Major</strong>
+                <strong>128 BPM</strong>
+                <strong>Pop</strong>
+                <strong>Bright</strong>
+              </div>
+            </div>
           </div>
         </section>
 
         <section class="project-section">
           <div class="section-heading">
-            <span>
-              {{ t('project_section_label') }}
-            </span>
-
-            <h2>
-              {{ t('project_section_title') }}
-            </h2>
-
+            <span>OTHER AI PROJECTS</span>
+            <h2>Computer Vision & Backend Work</h2>
             <p>
-              {{ t('project_section_description') }}
+              Additional projects are kept as supporting proof of AI application development and backend implementation skills.
             </p>
           </div>
 
@@ -114,56 +234,53 @@
             {% if projects %}
               <ul>
                 {% for p in projects %}
-
                   {% set is_music_project =
                     'musicAI' in p.url
                     or 'music' in p.raw_name|lower
+                    or 'music' in p.name|lower
                   %}
 
                   {% set is_eye_project =
                     'eyecare' in p.url|lower
                     or 'eye' in p.raw_name|lower
+                    or 'eye' in p.name|lower
                   %}
 
                   {% set is_hand_project =
                     'hand' in p.url|lower
                     or 'hand' in p.raw_name|lower
+                    or 'hand' in p.name|lower
                   %}
 
-                  <li>
-                    <a
-                      href="{{ p.url }}"
-                      class="project-card is-featured-project
-                        {% if is_music_project %}is-music-project{% endif %}
-                        {% if is_eye_project %}is-eye-project{% endif %}
-                        {% if is_hand_project %}is-hand-project{% endif %}
-                      "
-                    >
-                      <span class="project-number">
-                        {{ "%02d"|format(loop.index) }}
-                      </span>
-
-                      {% if is_music_project %}
-                        <span class="featured-label">
-                          {{ t('featured_project_label') }}
+                  {% if not is_music_project %}
+                    <li>
+                      <a
+                        href="{{ p.url }}"
+                        class="project-card
+                          {% if is_eye_project %}is-eye-project{% endif %}
+                          {% if is_hand_project %}is-hand-project{% endif %}
+                        "
+                      >
+                        <span class="project-number">
+                          {{ "%02d"|format(loop.index) }}
                         </span>
-                      {% endif %}
 
-                      <span class="project-content">
-                        <strong class="project-title">
-                          {{ p.name }}
-                        </strong>
+                        <span class="project-content">
+                          <strong class="project-title">
+                            {{ p.name }}
+                          </strong>
 
-                        <span class="project-subtitle">
-                          {{ p.des }}
+                          <span class="project-subtitle">
+                            {{ p.des }}
+                          </span>
                         </span>
-                      </span>
 
-                      <span class="project-link-text">
-                        {{ t('project_view_button') }}
-                      </span>
-                    </a>
-                  </li>
+                        <span class="project-link-text">
+                          {{ t('project_view_button') }}
+                        </span>
+                      </a>
+                    </li>
+                  {% endif %}
                 {% endfor %}
               </ul>
             {% else %}
@@ -175,7 +292,6 @@
         </section>
 
       </main>
-
     </div>
 
     <script>
