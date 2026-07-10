@@ -1,5 +1,5 @@
 # project/eyecarex/eyetest/eyevision/service_eyevision.py
-from flask import Blueprint, render_template, Response, current_app, url_for, redirect
+from flask import render_template, Response, current_app, url_for, redirect
 from . import bp  # ← __init__.py의 bp를 가져옴 (중요)
 import os, cv2, time, datetime
 import urllib.request

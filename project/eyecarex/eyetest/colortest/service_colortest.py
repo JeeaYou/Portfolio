@@ -23,10 +23,11 @@ from ...common.services import (
     draw_banner_with_text
 )
 
-lang = get_lang()
-
 @bp.get("/", endpoint="show")
 def show():
+
+    lang = get_lang()
+
     return render_template("colortest.html", lang=lang)
 
 

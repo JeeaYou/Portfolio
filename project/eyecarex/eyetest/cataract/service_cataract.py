@@ -1,6 +1,6 @@
 # project/eyecarex/eyetest/cataract/service_cataract.py
 
-from flask import render_template, Response, current_app
+from flask import render_template, Response, current_app, redirect, request
 from . import bp
 
 import cv2
@@ -17,17 +17,17 @@ from PIL import ImageFont
 from ...common.services import (
     get_lang,
     overlay_png,
-    text_box,
     overlay_test_result_screen,
     draw_banner_with_text
 )
 
 from .static.models.cataract_predict import image_test
 
-lang = get_lang()
 
 @bp.get("/", endpoint="show")
 def show():
+    lang = get_lang()
+
     return render_template("cataract.html", lang=lang)
 
 
@@ -56,6 +56,8 @@ def crop_safe(frame, x1, y1, x2, y2):
 
 @bp.get("/cam")
 def cam():
+    lang = get_lang()
+
     eyecarex_dir = current_app.blueprints["eyecarex"].static_folder
     curr_dir = bp.static_folder
 

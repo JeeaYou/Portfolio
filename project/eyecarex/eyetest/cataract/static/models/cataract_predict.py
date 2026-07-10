@@ -7,11 +7,11 @@ plt.rc('font', family='NanumGothic')  # For Windows
 import warnings
 warnings.filterwarnings('ignore')
 import os
-from common.services import get_lang
-
-lang = get_lang()
+from .....common.services import get_lang
 
 def image_test(image):
+
+    lang = get_lang()
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")  # device 객체
 
     transforms_test = transforms.Compose([
