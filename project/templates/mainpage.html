@@ -1,313 +1,316 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="{{ current_lang }}">
   <head>
     <title>{{ t('page_title') }}</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff">
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/mainstyle.css') }}">
   </head>
 
-  <body class="is-preload home-page">
-    <div id="bg" aria-hidden="true"></div>
+  <body class="home-page" id="top">
+    <header class="site-header">
+      <div class="page-shell nav-shell">
+        <a href="#top" class="brand" aria-label="Christina portfolio home">
+          <span class="brand-wave" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i>
+          </span>
+          <span class="brand-copy">
+            <strong>Christina</strong>
+            <small>Backend Developer</small>
+          </span>
+        </a>
 
-    <div id="wrapper">
-      <main class="home-main">
+        <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
 
-        <div class="home-top-actions">
-          <a
-            href="https://github.com/JeeaYou/Portfolio"
-            class="brand-link"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="GitHub portfolio repository"
-          >
-            <span class="brand-mark" aria-hidden="true">
-              <i></i><i></i><i></i><i></i>
-            </span>
-            <span class="brand-copy">
-              <strong>Christina</strong>
-              <small>Backend Developer · Audio AI</small>
-            </span>
-          </a>
+        <div class="nav-area">
+          <nav class="site-nav" aria-label="Main navigation">
+            <a href="#top" class="is-active">Home</a>
+            <a href="#projects">Projects</a>
+            <a href="/about">About</a>
+            <a href="/skills">Skills</a>
+            <a href="/archive">Archive</a>
+            <a href="#contact">Contact</a>
+          </nav>
 
           <div class="language-switch" aria-label="Language switcher">
-            <button
-              type="button"
-              class="lang-btn {% if current_lang == 'en' %}is-active{% endif %}"
-              data-lang="en"
-            >
-              ENG
-            </button>
+            <button type="button" class="lang-btn {% if current_lang == 'en' %}is-active{% endif %}" data-lang="en">EN</button>
+            <button type="button" class="lang-btn {% if current_lang == 'ko' %}is-active{% endif %}" data-lang="ko">KO</button>
+            <button type="button" class="lang-btn {% if current_lang == 'zh' %}is-active{% endif %}" data-lang="zh">中</button>
+          </div>
+        </div>
+      </div>
+    </header>
 
-            <button
-              type="button"
-              class="lang-btn {% if current_lang == 'ko' %}is-active{% endif %}"
-              data-lang="ko"
-            >
-              한글
-            </button>
+    <main>
+      <section class="hero-section page-shell">
+        <div class="hero-copy">
+          <span class="eyebrow">BACKEND · AUDIO AI · SPEECH RECOGNITION</span>
 
-            <button
-              type="button"
-              class="lang-btn {% if current_lang == 'zh' %}is-active{% endif %}"
-              data-lang="zh"
-            >
-              中文
-            </button>
+          <h1>
+            {% if current_lang == 'ko' %}
+              AI 기능을 실제 서비스로 만드는<br>
+              <span>백엔드 개발자</span>
+            {% elif current_lang == 'zh' %}
+              将 AI 功能落地为真实服务的<br>
+              <span>后端开发者</span>
+            {% else %}
+              Backend Developer<br>
+              focused on<br>
+              <span>Audio AI &amp; Speech Recognition</span>
+            {% endif %}
+          </h1>
+
+          <p class="hero-description">
+            {% if current_lang == 'ko' %}
+              음악 분석, 보컬 분리, 피치 감지, 비동기 처리와 REST API를 연결해 사용 가능한 AI 웹 서비스를 만듭니다.
+            {% elif current_lang == 'zh' %}
+              I build practical AI web services that connect music analysis, vocal separation, pitch detection, asynchronous processing, and REST APIs.
+            {% else %}
+              Building practical AI web services for music analysis, vocal separation, pitch detection, asynchronous processing, and REST APIs.
+            {% endif %}
+          </p>
+
+          <div class="hero-actions">
+            <a href="/musicAI/" class="button button-primary">
+              View MusicAI Project
+              <span aria-hidden="true">→</span>
+            </a>
+            <a href="#projects" class="button button-secondary">View All Projects</a>
+          </div>
+
+          <div class="social-links" aria-label="Portfolio links">
+            <a href="https://github.com/JeeaYou/Portfolio" target="_blank" rel="noopener noreferrer" aria-label="GitHub repository">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.58 2 12.23c0 4.52 2.87 8.35 6.84 9.7.5.1.68-.22.68-.49v-1.9c-2.78.62-3.37-1.21-3.37-1.21-.46-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.9 1.56 2.35 1.11 2.92.85.09-.66.35-1.11.64-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05A9.3 9.3 0 0 1 12 6.92a9.3 9.3 0 0 1 2.5.35c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9v2.81c0 .27.18.59.69.49A10.25 10.25 0 0 0 22 12.23C22 6.58 17.52 2 12 2Z"></path></svg>
+            </a>
+            <a href="/resume" aria-label="View resume">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l3 3v15H6V3Z"></path><path d="M15 3v4h4M9 11h6M9 15h6M9 19h4"></path></svg>
+            </a>
+            <a href="#contact" aria-label="Contact section">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4V5Z"></path><path d="m4 7 8 6 8-6"></path></svg>
+            </a>
           </div>
         </div>
 
-        <section class="home-hero">
-          <div class="hero-copy">
-            <div class="home-badge">
-              AUDIO AI · SPEECH RECOGNITION · BACKEND
-            </div>
-
-            <h1>
-              {% if current_lang == 'ko' %}
-                오디오 AI와 음성인식을<br>
-                서비스로 구현하는<br>
-                <span>백엔드 개발자</span>
-              {% elif current_lang == 'zh' %}
-                将音频 AI 与语音识别<br>
-                落地为真实服务的<br>
-                <span>后端开发者</span>
-              {% else %}
-                Backend Developer<br>
-                focused on<br>
-                <span>Audio AI & Speech Recognition</span>
-              {% endif %}
-            </h1>
-
-            <p class="home-subtitle">
-              {% if current_lang == 'ko' %}
-                음악 분석, 보컬 분리, 피치 감지, 가사/음성 텍스트 변환까지 연결하는 AI 웹 서비스를 만듭니다.
-              {% elif current_lang == 'zh' %}
-                Building AI web services for music analysis, vocal separation, pitch detection, and lyric transcription.
-              {% else %}
-                Building AI-powered music analysis, vocal separation, pitch detection, and lyric transcription services.
-              {% endif %}
-            </p>
-
-            <div class="home-stack">
-              <span>Python</span>
-              <span>Flask</span>
-              <span>REST API</span>
-              <span>Demucs</span>
-              <span>Librosa</span>
-              <span>PyTorch</span>
-              <span>Whisper / ASR</span>
-              <span>PostgreSQL</span>
-            </div>
-
-            <div class="home-cta-row">
-              <a href="/musicAI/" class="primary-cta">
-                Open MusicAI Upload
-                <span aria-hidden="true">→</span>
-              </a>
-              <a href="https://github.com/JeeaYou/Portfolio" class="secondary-cta" target="_blank" rel="noopener noreferrer">
-                GitHub Code
-              </a>
-            </div>
+        <div class="hero-visual" aria-label="MusicAI interface preview">
+          <div class="wave-visual" aria-hidden="true">
+            {% for i in range(62) %}<i></i>{% endfor %}
           </div>
 
-          <aside class="audio-demo-panel" aria-label="MusicAI sample UI preview">
-            <div class="demo-panel-header">
-              <div>
-                <span class="demo-kicker">SAMPLE UI PREVIEW</span>
-                <strong>MusicAI Pipeline</strong>
+          <div class="preview-grid">
+            <article class="preview-card separation-preview">
+              <h2>Vocal Separation</h2>
+              <div class="track-row">
+                <span class="play-icon">▶</span>
+                <span>Vocals</span>
+                <span class="mini-track purple-track"><i></i><i></i><i></i><i></i><i></i><i></i></span>
               </div>
-              <span class="demo-status">Open upload page</span>
+              <div class="track-row">
+                <span class="play-icon">▶</span>
+                <span>Instrumental</span>
+                <span class="mini-track blue-track"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+              </div>
+            </article>
+
+            <article class="preview-card analysis-preview">
+              <h2>Analysis</h2>
+              <dl>
+                <div><dt>Key</dt><dd>C Major</dd></div>
+                <div><dt>Tempo</dt><dd>128 BPM</dd></div>
+                <div><dt>Genre</dt><dd>Pop</dd></div>
+                <div><dt>Mood</dt><dd>Happy</dd></div>
+              </dl>
+              <span class="result-ring" aria-hidden="true"></span>
+            </article>
+          </div>
+
+          <article class="lyrics-preview">
+            <div>
+              <h2>Lyric Transcription</h2>
+              <p>AI-based transcription from separated vocals</p>
             </div>
+            <span>Coming soon</span>
+          </article>
+        </div>
+      </section>
 
-            <div class="wave-card" aria-hidden="true">
-              <div class="waveform">
-                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-              </div>
-            </div>
-
-            <div class="demo-grid">
-              <div class="demo-card separation-card">
-                <h3>Vocal Separation</h3>
-
-                <div class="audio-row">
-                  <button type="button" aria-label="Sample vocals preview">▶</button>
-                  <span>Vocals</span>
-                  <div class="mini-wave purple"><i></i><i></i><i></i><i></i><i></i></div>
-                </div>
-
-                <div class="audio-row">
-                  <button type="button" aria-label="Sample instrumental preview">▶</button>
-                  <span>Instrumental</span>
-                  <div class="mini-wave blue"><i></i><i></i><i></i><i></i><i></i></div>
-                </div>
-              </div>
-
-              <div class="demo-card analysis-card">
-                <h3>Analysis</h3>
-
-                <dl>
-                  <div><dt>Key</dt><dd>After upload</dd></div>
-                  <div><dt>Tempo</dt><dd>After analysis</dd></div>
-                  <div><dt>Genre</dt><dd>Generated</dd></div>
-                  <div><dt>Mood</dt><dd>Generated</dd></div>
-                </dl>
-              </div>
-            </div>
-
-            <div class="lyrics-demo-card">
-              <div>
-                <h3>Lyric Transcription</h3>
-                <p>Separated vocals → ASR → timestamped lyrics</p>
-              </div>
-              <span>Coming next</span>
-            </div>
-          </aside>
-        </section>
-
-        <section class="featured-project-showcase" id="musicai-demo">
+      <section class="featured-section" id="projects">
+        <div class="page-shell featured-layout">
           <div class="featured-copy">
-            <span class="section-eyebrow">FEATURED PROJECT</span>
+            <span class="section-label">FEATURED PROJECT</span>
             <h2>MusicAI — Audio Intelligence Platform</h2>
             <p>
-              Upload music files and automatically analyze key, tempo, genre, mood, vocal pitch range,
-              background instruments, and separated vocals. The homepage preview uses placeholders; real uploads run on the MusicAI page.
+              Upload music files and automatically analyse key, tempo, genre, mood, vocal pitch range,
+              background instruments, and separated vocals through one integrated workflow.
             </p>
 
-            <div class="feature-list">
-              <span>✓ Vocal & instrumental separation</span>
-              <span>✓ Pitch and vocal range analysis</span>
-              <span>✓ Instrument classification with AST</span>
-              <span>✓ Async backend pipeline and progress tracking</span>
-              <span>✓ Lyric transcription demo area</span>
+            <h3>Tech Stack</h3>
+            <div class="tech-tags">
+              <span>Python</span><span>Flask</span><span>PostgreSQL</span><span>Redis</span>
+              <span>Celery</span><span>Docker</span><span>Librosa</span><span>PyTorch</span>
             </div>
 
-            <a href="/musicAI/" class="primary-cta compact">
-              Open MusicAI Upload
-              <span aria-hidden="true">→</span>
+            <ul class="feature-list">
+              <li>Vocal and instrumental separation with Demucs</li>
+              <li>Vocal pitch analysis with torchcrepe</li>
+              <li>Instrument classification with AST</li>
+              <li>Music information retrieval for key, tempo, genre, and mood</li>
+              <li>REST API, background tasks, and progress tracking</li>
+            </ul>
+
+            <a href="/musicAI/" class="button button-primary compact">
+              View Project <span aria-hidden="true">→</span>
             </a>
           </div>
 
-          <div class="product-demo-card">
-            <div class="product-bar">
-              <strong>♪ MusicAI</strong>
-              <small>Sample dashboard UI</small>
+          <div class="dashboard-card" aria-label="MusicAI dashboard preview">
+            <div class="dashboard-header">
+              <strong><span>♫</span> MusicAI</strong>
+              <small>Upload History</small>
             </div>
 
-            <div class="upload-mock">
-              <span>Real upload is available on the MusicAI page</span>
-              <strong>Open MusicAI to upload MP3/WAV</strong>
-            </div>
-
-            <div class="progress-mock">
-              <div>
-                <span>Analysis Progress</span>
-                <strong>After upload</strong>
+            <div class="dashboard-panel upload-panel">
+              <div class="panel-title">
+                <strong>Upload your music file</strong>
+                <small>Supports MP3, WAV, FLAC</small>
               </div>
-              <div class="progress-track"><i></i></div>
+              <div class="drop-zone">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V5M8 9l4-4 4 4"></path><path d="M5 16.5A3.5 3.5 0 0 1 6.2 9.7 6 6 0 0 1 17.7 8 4 4 0 0 1 18 16H5Z"></path></svg>
+                <span>Drag &amp; drop a file here or click to upload</span>
+              </div>
             </div>
 
-            <div class="result-mock">
-              <span>Results generated from uploaded audio</span>
-              <div class="metric-row">
-                <strong>Key</strong>
-                <strong>Tempo</strong>
-                <strong>Genre</strong>
-                <strong>Mood</strong>
+            <div class="dashboard-panel progress-panel">
+              <div class="progress-heading"><strong>Analysis Progress</strong><span>73%</span></div>
+              <div class="progress-bar"><i></i></div>
+            </div>
+
+            <div class="dashboard-panel results-panel">
+              <strong>Analysis Results</strong>
+              <div class="result-tabs"><span class="is-active">Overview</span><span>Vocal</span><span>Instruments</span><span>Lyrics</span></div>
+              <div class="result-content">
+                <dl>
+                  <div><dt>Key</dt><dd>C Major</dd></div>
+                  <div><dt>Tempo</dt><dd>128 BPM</dd></div>
+                  <div><dt>Genre</dt><dd>Pop</dd></div>
+                  <div><dt>Mood</dt><dd>Happy</dd></div>
+                </dl>
+                <span class="large-result-ring" aria-hidden="true"></span>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section class="project-section">
+      <section class="projects-section">
+        <div class="page-shell">
           <div class="section-heading">
-            <span>OTHER AI PROJECTS</span>
-            <h2>Computer Vision & Backend Work</h2>
-            <p>
-              Additional projects are kept as supporting proof of AI application development and backend implementation skills.
-            </p>
+            <span class="section-label">OTHER PROJECTS</span>
+            <h2>AI Applications &amp; Backend Work</h2>
+            <p>Projects that show my experience in computer vision, backend development, APIs, and multilingual web services.</p>
           </div>
 
-          <nav class="project-nav">
+          <div class="project-grid">
             {% if projects %}
-              <ul>
-                {% for p in projects %}
-                  {% set is_music_project =
-                    'musicAI' in p.url
-                    or 'music' in p.raw_name|lower
-                    or 'music' in p.name|lower
-                  %}
+              {% for p in projects %}
+                {% set is_music_project = 'musicAI' in p.url or 'music' in p.raw_name|lower or 'music' in p.name|lower %}
+                {% set is_eye_project = 'eyecare' in p.url|lower or 'eye' in p.raw_name|lower or 'eye' in p.name|lower %}
+                {% set is_hand_project = 'hand' in p.url|lower or 'hand' in p.raw_name|lower or 'hand' in p.name|lower %}
 
-                  {% set is_eye_project =
-                    'eyecare' in p.url|lower
-                    or 'eye' in p.raw_name|lower
-                    or 'eye' in p.name|lower
-                  %}
+                {% if not is_music_project %}
+                  <article class="project-card {% if is_eye_project %}eye-card{% elif is_hand_project %}hand-card{% else %}backend-card{% endif %}">
+                    <div class="project-icon" aria-hidden="true">
+                      {% if is_eye_project %}◉{% elif is_hand_project %}✦{% else %}&lt;/&gt;{% endif %}
+                    </div>
+                    <div class="project-card-copy">
+                      <h3>{{ p.name }}</h3>
+                      <p>{{ p.des }}</p>
+                    </div>
 
-                  {% set is_hand_project =
-                    'hand' in p.url|lower
-                    or 'hand' in p.raw_name|lower
-                    or 'hand' in p.name|lower
-                  %}
+                    <div class="project-tags">
+                      {% if is_eye_project %}
+                        <span>Python</span><span>OpenCV</span><span>MediaPipe</span>
+                      {% elif is_hand_project %}
+                        <span>Python</span><span>Computer Vision</span><span>Flask</span>
+                      {% else %}
+                        <span>Backend</span><span>REST API</span><span>Database</span>
+                      {% endif %}
+                    </div>
 
-                  {% if not is_music_project %}
-                    <li>
-                      <a
-                        href="{{ p.url }}"
-                        class="project-card
-                          {% if is_eye_project %}is-eye-project{% endif %}
-                          {% if is_hand_project %}is-hand-project{% endif %}
-                        "
-                      >
-                        <span class="project-number">
-                          {{ "%02d"|format(loop.index) }}
-                        </span>
-
-                        <span class="project-content">
-                          <strong class="project-title">
-                            {{ p.name }}
-                          </strong>
-
-                          <span class="project-subtitle">
-                            {{ p.des }}
-                          </span>
-                        </span>
-
-                        <span class="project-link-text">
-                          {{ t('project_view_button') }}
-                        </span>
-                      </a>
-                    </li>
-                  {% endif %}
-                {% endfor %}
-              </ul>
+                    <a href="{{ p.url }}" class="project-link">
+                      {{ t('project_view_button') }} <span aria-hidden="true">→</span>
+                    </a>
+                  </article>
+                {% endif %}
+              {% endfor %}
             {% else %}
-              <p class="empty-project-message">
-                {{ t('empty_project_message') }}
-              </p>
+              <article class="project-card backend-card empty-card">
+                <div class="project-icon" aria-hidden="true">&lt;/&gt;</div>
+                <div class="project-card-copy">
+                  <h3>Backend Portfolio</h3>
+                  <p>{{ t('empty_project_message') }}</p>
+                </div>
+                <a href="https://github.com/JeeaYou/Portfolio" target="_blank" rel="noopener noreferrer" class="project-link">View GitHub →</a>
+              </article>
             {% endif %}
-          </nav>
-        </section>
+          </div>
+        </div>
+      </section>
 
-      </main>
-    </div>
+      <section class="contact-section" id="contact">
+        <div class="page-shell contact-card">
+          <div class="contact-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 5h16v14H4V5Z"></path><path d="m4 7 8 6 8-6"></path></svg>
+          </div>
+          <div class="contact-copy">
+            <h2>Let’s build something useful together.</h2>
+            <p>I’m open to junior backend opportunities, AI application projects, and conversations about practical software development.</p>
+          </div>
+          <a href="/resume" class="button button-primary">View Resume</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="page-shell footer-content">
+        <p>© 2026 Christina. All rights reserved.</p>
+        <nav aria-label="Footer navigation">
+          <a href="https://github.com/JeeaYou/Portfolio" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="/about">About</a>
+          <a href="/resume">Resume</a>
+        </nav>
+      </div>
+    </footer>
 
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const langButtons = document.querySelectorAll(".lang-btn");
+      document.addEventListener('DOMContentLoaded', function () {
+        const langButtons = document.querySelectorAll('.lang-btn');
+        const navToggle = document.querySelector('.nav-toggle');
+        const navArea = document.querySelector('.nav-area');
+        const navLinks = document.querySelectorAll('.site-nav a');
 
         langButtons.forEach(function (button) {
-          button.addEventListener("click", function () {
-            const lang = button.dataset.lang;
-
-            document.cookie =
-              "lang=" + lang + "; path=/; max-age=" + 60 * 60 * 24 * 365;
-
+          button.addEventListener('click', function () {
+            document.cookie = 'lang=' + button.dataset.lang + '; path=/; max-age=' + 60 * 60 * 24 * 365;
             window.location.reload();
           });
         });
+
+        if (navToggle && navArea) {
+          navToggle.addEventListener('click', function () {
+            const isOpen = navArea.classList.toggle('is-open');
+            navToggle.setAttribute('aria-expanded', String(isOpen));
+          });
+
+          navLinks.forEach(function (link) {
+            link.addEventListener('click', function () {
+              navArea.classList.remove('is-open');
+              navToggle.setAttribute('aria-expanded', 'false');
+            });
+          });
+        }
       });
     </script>
   </body>
