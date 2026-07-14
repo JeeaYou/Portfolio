@@ -41,13 +41,13 @@
         </li>
 
         <li>
-          <a href="/about">
+          <a class="{% if request.path.startswith('/about') %}is-active{% endif %}"  href="/about">
             {{ t('header_nav_about') }}
           </a>
         </li>
 
         <li>
-          <a href="/skills">
+          <a class="{% if request.path.startswith('/skills') %}is-active{% endif %}"  href="/skills">
             {{ t('header_nav_skills') }}
           </a>
         </li>
