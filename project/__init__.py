@@ -29,8 +29,12 @@ def _get_database_uri():
     if database_url:
         return database_url
 
-    mysql_user = os.getenv("MYSQL_USER", "root")
-    mysql_password = os.getenv("MYSQL_PASSWORD", "1q2w3e4r!")
+    mysql_user = os.getenv("MYSQL_USER")
+    mysql_password = os.getenv("MYSQL_PASSWORD")
+    if not mysql_password:
+        raise RuntimeError(
+            "MYSQL_PASSWORD environment variable is required."
+        )
     mysql_host = os.getenv("MYSQL_HOST", "127.0.0.1")
     mysql_port = os.getenv("MYSQL_PORT", "3306")
     mysql_database = os.getenv("MYSQL_DATABASE", "project")

@@ -1,88 +1,131 @@
-# Portfolio
+# Jeea You — Backend & AI Portfolio
 
-개인 포트폴리오 웹사이트입니다.
-백엔드 개발 경험과 AI 기반 프로젝트를 정리하고, 각 프로젝트의 기능과 기술 스택을 소개하기 위해 제작했습니다.
+A multilingual portfolio web application showcasing my backend development experience and AI-based application projects.
 
-## 주요 프로젝트
+The portfolio combines Java/Spring backend experience with Python-based AI services, including music analysis, audio source separation, computer vision, and interactive web applications.
 
-### 1. Music AI Analysis
+## Main Projects
 
-음악 파일을 업로드하면 오디오 특징을 분석하는 AI 기반 음악 분석 시스템입니다.
+### 1. MusicAI — Music Analysis Platform
 
-주요 기능:
+MusicAI is an AI-powered web application that analyses uploaded music files and presents audio information through an interactive interface.
 
-* 음악 파일 업로드
-* Key 분석
-* Tempo 분석
-* Energy 분석
-* 보컬 음역대 분석
-* 배경 악기 분석
-* 분석 결과 시각화
+#### Main Features
 
-사용 기술:
+* MP3 and WAV file upload
+* Vocal and instrumental separation using Demucs
+* Musical key and scale analysis
+* Tempo and rhythm analysis
+* Energy and dynamic-range analysis
+* Vocal pitch and vocal-range analysis
+* Instrument classification
+* Genre and mood estimation
+* Audio-feature visualisation
+* Background analysis processing
+* Per-file progress tracking
+* Analysis cancellation
+* Analysis result storage
+
+#### Technologies
 
 * Python
 * Flask
+* Flask-SQLAlchemy
+* MySQL
 * Librosa
-* Essentia
 * Demucs
+* PyTorch
+* torchcrepe
+* Hugging Face Transformers
+* Praat-Parselmouth
 * HTML
 * CSS
 * JavaScript
 
 ---
 
-### 2. Eye Health Check
+### 2. EyeCareX — Interactive Eye Health Tests
 
-사용자가 간단한 눈 건강 테스트를 진행할 수 있는 웹 기반 시스템입니다.
+EyeCareX is a web-based application that provides several interactive eye-health tests using camera input and computer-vision technology.
 
-주요 기능:
+#### Main Features
 
-* 시력 테스트
-* 색각 테스트
-* 난시 테스트
-* 백내장 테스트
-* 녹내장 테스트
-* 황반 테스트
+* Visual acuity test
+* Colour-vision test
+* Astigmatism test
+* Cataract test
+* Glaucoma test
+* Macular-health test
+* Face and hand tracking
+* Camera-based user interaction
+* Multilingual interface
 
-사용 기술:
+#### Technologies
 
 * Python
 * Flask
-* HTML
-* CSS
-* JavaScript
-
----
-
-### 3. Hand Gesture Recognition
-
-손 제스처를 인식하여 동작을 분석하는 프로젝트입니다.
-
-주요 기능:
-
-* 손 인식
-* 제스처 분석
-* 실시간 카메라 입력 처리
-* 결과 화면 출력
-
-사용 기술:
-
-* Python
 * OpenCV
 * MediaPipe
-* Flask
+* cvzone
+* HTML
+* CSS
+* JavaScript
+
+> EyeCareX is a portfolio demonstration project and is not intended to provide medical diagnoses.
 
 ---
 
-## 기술 스택
+### 3. HandEmote — Hand Gesture Recognition
+
+HandEmote is a computer-vision project that detects hand landmarks and recognises user gestures through a live camera feed.
+
+#### Main Features
+
+* Real-time hand detection
+* Hand-landmark tracking
+* Gesture recognition
+* Camera-based interaction
+* Responsive result display
+
+#### Technologies
+
+* Python
+* Flask
+* OpenCV
+* MediaPipe
+* cvzone
+* HTML
+* CSS
+* JavaScript
+
+---
+
+## Portfolio Features
+
+* Korean, English, and Chinese language support
+* Database-driven translation content
+* Dynamic project and feature navigation
+* Responsive desktop and mobile interface
+* Editable multilingual résumé
+* PDF résumé generation
+* Résumé email delivery
+* Music-analysis progress tracking
+* Modular Flask Blueprint architecture
+
+## Technical Skills
 
 ### Backend
 
+* Java
+* Spring
+* Spring Boot
 * Python
 * Flask
-* Java
-* Spring Boot
+* REST API
+* SQLAlchemy
+* JSP
+* MyBatis
+* JPA
 
 ### Frontend
 
@@ -90,84 +133,167 @@
 * CSS
 * JavaScript
 * jQuery
+* Ajax
+* Jinja
 
-### Database
+### Databases
 
 * MySQL
 * PostgreSQL
 * Oracle
-* MS SQL
+* Microsoft SQL Server
 
-### AI / Audio / Vision
+### AI, Audio and Computer Vision
 
 * Librosa
-* Essentia
 * Demucs
+* PyTorch
+* torchcrepe
+* Hugging Face Transformers
+* Praat-Parselmouth
 * OpenCV
 * MediaPipe
+* cvzone
 
-### Tools
+### Development Tools
 
 * Git
 * GitHub
 * VS Code
+* Eclipse
+* Maven
+* Gradle
+* Tomcat
+* WebLogic
 
----
+## Project Structure
 
-## 실행 방법
-
-프로젝트를 클론합니다.
-
-```bash
-git clone https://github.com/JeeaYou/Portflio.git
+```text
+Portfolio/
+├── project/
+│   ├── templates/
+│   ├── static/
+│   ├── musicAI/
+│   ├── eyecarex/
+│   ├── handemote/
+│   ├── models.py
+│   ├── main.py
+│   └── __init__.py
+├── requirements.txt
+├── run.py
+├── .gitignore
+└── README.md
 ```
 
-프로젝트 폴더로 이동합니다.
+## Local Installation
+
+### 1. Clone the repository
 
 ```bash
-cd Portflio
+git clone https://github.com/JeeaYou/Portfolio.git
+cd Portfolio
 ```
 
-가상환경을 실행합니다.
+### 2. Create a virtual environment
+
+macOS or Linux:
 
 ```bash
+python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-필요한 패키지를 설치합니다.
+Windows:
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+### 3. Install the dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Flask 서버를 실행합니다.
+Some audio-analysis features may also require FFmpeg.
+
+macOS:
+
+```bash
+brew install ffmpeg
+```
+
+Ubuntu or Debian:
+
+```bash
+sudo apt update
+sudo apt install ffmpeg
+```
+
+### 4. Configure environment variables
+
+Create a `.env` file in the project root.
+
+```env
+FLASK_SECRET_KEY=your-secret-key
+
+MYSQL_USER=root
+MYSQL_PASSWORD=your-mysql-password
+MYSQL_HOST=127.0.0.1
+MYSQL_PORT=3306
+MYSQL_DATABASE=project
+```
+
+The résumé email feature additionally requires:
+
+```env
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@example.com
+SMTP_PASSWORD=your-app-password
+MAIL_FROM=your-email@example.com
+```
+
+Do not commit the `.env` file to GitHub.
+
+### 5. Prepare the database
+
+Create the MySQL database before starting the application.
+
+```sql
+CREATE DATABASE project
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+```
+
+The application also requires its project, translation, résumé, and music-analysis tables and data.
+
+### 6. Run the Flask application
 
 ```bash
 python run.py
 ```
 
-브라우저에서 아래 주소로 접속합니다.
+Open the following address in a browser:
 
 ```text
 http://127.0.0.1:5001
 ```
 
----
+## Project Purpose
 
-## 프로젝트 목적
+This portfolio was developed to demonstrate more than a static collection of project screenshots.
 
-이 포트폴리오는 단순한 정적 웹사이트가 아니라,
-백엔드 개발 경험과 AI 분석 기능을 결합한 프로젝트를 보여주기 위해 제작되었습니다.
+It shows how I design and implement backend services, connect AI and audio-processing libraries to web applications, manage multilingual database content, process long-running analysis tasks, and present technical results through practical user interfaces.
 
-특히 Music AI Analysis 프로젝트는 음악 데이터를 분석하고,
-사용자가 음악의 특징을 이해할 수 있도록 돕는 것을 목표로 합니다.
+My current goal is to continue developing backend and applied-AI services that turn technical models and data-processing functions into usable products.
 
----
+## Author
 
-## 작성자
+**Jeea You**
 
-Jeea You
+Backend Developer focused on Java, Spring Boot, Python, Flask, and applied AI services.
 
-* Backend Developer
-* AI / Music Analysis Project
-* Java, Spring Boot, Python, Flask
+* GitHub: [JeeaYou](https://github.com/JeeaYou)
+* Repository: [Portfolio](https://github.com/JeeaYou/Portfolio)
