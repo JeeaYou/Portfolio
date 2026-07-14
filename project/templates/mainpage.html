@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block header %}
@@ -13,118 +12,176 @@
         <section id="home" class="portfolio-hero">
           <div class="hero-copy">
             <p class="hero-eyebrow">{{ t('hero_badge') }}</p>
+
             <h1>
-              Backend Developer<br>
-              building<br>
-              <span>AI-&amp;<br>powered services</span>
+              {{ t('hero_title_backend') }}<br>
+              {{ t('hero_title_building') }}<br>
+              <span>
+                AI-&amp;<br>
+                {{ t('hero_title_services') }}
+              </span>
             </h1>
 
             <p class="hero-description">
-              Building AI-powered music analysis, vocal separation,
-              pitch detection, and lyric transcription services.
+              {{ t('hero_description') }}
             </p>
 
-            <div class="hero-buttons">
-              {% if projects %}
-                {% set music_project = namespace(item=None) %}
-                {% for p in projects %}
-                  {% if music_project.item is none and ('musicAI' in p.url or 'music' in p.raw_name|lower) %}
-                    {% set music_project.item = p %}
-                  {% endif %}
-                {% endfor %}
-              {% endif %}
+            {% set music_project = namespace(item=None) %}
 
-              <a href="{{ music_project.item.url if projects and music_project.item else '#projects' }}" class="btn btn-primary">
-                View MusicAI Project <span>→</span>
+            {% if projects %}
+              {% for p in projects %}
+                {% if music_project.item is none and ('musicAI' in p.url or 'music' in p.raw_name|lower) %}
+                  {% set music_project.item = p %}
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+
+            <div class="hero-buttons">
+              <a
+                href="{{ music_project.item.url if music_project.item else '#projects' }}"
+                class="btn btn-primary"
+              >
+                {{ t('hero_view_musicai_project') }} <span>→</span>
               </a>
-              <a href="#projects" class="btn btn-secondary">View All Projects</a>
+
+              <a href="#projects" class="btn btn-secondary">
+                {{ t('hero_view_all_projects') }}
+              </a>
             </div>
-<!-- 
+
+            <!--
             <div class="hero-socials">
-              <a href="https://github.com/JeeaYou/Portfolio" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GH</a>
-              <a href="https://www.linkedin.com/in/jeea-you-5150562bb/v" aria-label="LinkedIn">in</a>
-            </div> -->
+              <a
+                href="https://github.com/JeeaYou/Portfolio"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub"
+              >
+                GH
+              </a>
+
+              <a
+                href="https://www.linkedin.com/in/jeea-you-5150562bb/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+              >
+                in
+              </a>
+            </div>
+            -->
           </div>
 
           <div class="hero-visual" aria-hidden="true">
             <div class="waveform waveform-main">
-              {% for i in range(54) %}<i></i>{% endfor %}
+              {% for i in range(54) %}
+                <i></i>
+              {% endfor %}
             </div>
 
             <div class="hero-analysis-grid">
               <article class="visual-card vocal-card">
-                <h3>Vocal Separation</h3>
+                <h3>{{ t('home_vocal_separation_title') }}</h3>
+
                 <div class="track-row"><span class="play-dot">▶</span><span>Vocals</span><span class="mini-line purple"></span></div>
                 <div class="track-row"><span class="play-dot">▶</span><span>Instrumental</span><span class="mini-line blue"></span></div>
               </article>
 
               <article class="visual-card analysis-card">
-                <h3>Analysis</h3>
+                <h3>{{ t('home_analysis_title') }}</h3>
+
                 <dl>
                   <div><dt>Key</dt><dd>C Major</dd></div>
                   <div><dt>Tempo</dt><dd>128 BPM</dd></div>
                   <div><dt>Genre</dt><dd>Pop</dd></div>
                   <div><dt>Mood</dt><dd>Happy</dd></div>
                 </dl>
+
                 <!-- <span class="donut"></span> -->
               </article>
             </div>
 
             <article class="visual-card lyric-card">
-              <h3>Lyric Transcription (coming soon)</h3>
-              <p>AI-based lyric transcription from separated vocals</p>
+              <h3>{{ t('home_lyrics_coming_soon_title') }}</h3>
+              <p>{{ t('home_lyrics_coming_soon_description') }}</p>
             </article>
           </div>
         </section>
 
         <section id="projects" class="featured-project-section">
           <div class="featured-copy">
-            <span class="section-kicker">FEATURED PROJECT</span>
-            <h2>MusicAI — Audio Intelligence Platform</h2>
+            <span class="section-kicker">
+              {{ t('project_section_label') }}
+            </span>
+
+            <h2>{{ t('project_section_title') }}</h2>
+
             <p>
-              Upload music files and automatically analyze key, tempo, genre, mood,
-              vocal pitch range, background instruments, and separated vocals.
+              {{ t('project_section_description') }}
             </p>
 
-            <h3>Tech Stack</h3>
+            <h3>{{ t('home_tech_stack_title') }}</h3>
+
             <div class="tech-tags">
-              <span>Python</span><span>FastAPI</span><span>PostgreSQL</span><span>Redis</span>
-              <span>Celery</span><span>Docker</span><span>Librosa</span><span>PyTorch</span>
+              <span>Python</span>
+              <span>FastAPI</span>
+              <span>PostgreSQL</span>
+              <span>Redis</span>
+              <span>Celery</span>
+              <span>Docker</span>
+              <span>Librosa</span>
+              <span>PyTorch</span>
             </div>
 
             <ul class="feature-list">
-              <li>Vocal &amp; instrumental separation (Demucs)</li>
-              <li>Vocal pitch analysis (torchcrepe)</li>
-              <li>Instrument classification (AST)</li>
-              <li>Music information retrieval (key, tempo, genre, mood, etc.)</li>
-              <li>REST API, background task processing, progress tracking</li>
+              <li>{{ t('home_feature_vocal_separation') }}</li>
+              <li>{{ t('home_feature_pitch_analysis') }}</li>
+              <li>{{ t('home_feature_instrument_classification') }}</li>
+              <li>{{ t('home_feature_music_information') }}</li>
+              <li>{{ t('home_feature_backend_processing') }}</li>
             </ul>
 
-            <a href="{{ music_project.item.url if projects and music_project.item else '#projects' }}" class="btn btn-primary">View Project <span>→</span></a>
+            <a
+              href="{{ music_project.item.url if music_project.item else '#projects' }}"
+              class="btn btn-primary"
+            >
+              {{ t('project_view_button') }} <span>→</span>
+            </a>
           </div>
 
           <div class="product-preview">
             <div class="preview-header">
               <strong>♫ MusicAI</strong>
-              <span>◷ Upload History</span>
+              <span>◷ {{ t('home_upload_history') }}</span>
             </div>
 
             <div class="preview-panel upload-preview">
-              <h3>Upload your music file</h3>
-              <p>Supports MP3, WAV, FLAC</p>
-              <div class="preview-dropzone">☁<span>Drag &amp; drop a file here or click to upload</span></div>
+              <h3>{{ t('home_upload_music_title') }}</h3>
+              <p>{{ t('home_supported_formats') }}</p>
+
+              <div class="preview-dropzone">
+                ☁
+                <span>{{ t('home_upload_dropzone') }}</span>
+              </div>
             </div>
 
             <div class="preview-panel progress-preview">
-              <h3>Analysis Progress</h3>
+              <h3>{{ t('home_analysis_progress') }}</h3>
               <div class="progress-line"><span></span></div>
               <b>73%</b>
             </div>
 
             <div class="preview-panel results-preview">
-              <h3>Analysis Results</h3>
-              <div class="preview-tabs"><span class="active">Overview</span><span>Vocal</span><span>Instruments</span><span>Lyrics (Coming Soon)</span></div>
-              <div class="result-values">
+              <h3>{{ t('home_analysis_results') }}</h3>
+
+              <div class="preview-tabs">
+                <span class="active">Overview</span>
+                <span>Vocal</span>
+                <span>Instruments</span>
+                <span>Lyrics (Coming Soon)</span>
+              </div>
+
+               <div class="result-values">
                 <div><small>Key</small><strong>C Major</strong></div>
                 <div><small>Tempo</small><strong>128 BPM</strong></div>
                 <div><small>Genre</small><strong>Pop</strong></div>
@@ -136,50 +193,70 @@
         </section>
 
         <section class="other-projects-section">
-          <h2>Other AI Projects</h2>
+          <h2>{{ t('home_other_ai_projects') }}</h2>
+
           <div class="project-grid">
+            {% set other_project_count = namespace(value=0) %}
+
             {% if projects %}
               {% for p in projects %}
                 {% set is_music_project = 'musicAI' in p.url or 'music' in p.raw_name|lower %}
+
                 {% if not is_music_project %}
+                  {% set other_project_count.value = other_project_count.value + 1 %}
                   {% set is_eye_project = 'eyecare' in p.url|lower or 'eye' in p.raw_name|lower %}
                   {% set is_hand_project = 'hand' in p.url|lower or 'hand' in p.raw_name|lower %}
-                  <a href="{{ p.url }}" class="modern-project-card {% if is_eye_project %}eye-card{% elif is_hand_project %}hand-card{% endif %}">
-                    <span class="project-icon">{% if is_eye_project %}
-                      <img
-                        src="{{ url_for('static', filename='image/eyecarex.png') }}"
-                        alt="EyeCareX Logo"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
-                      >
+
+                  <a
+                    href="{{ p.url }}"
+                    class="modern-project-card {% if is_eye_project %}eye-card{% elif is_hand_project %}hand-card{% endif %}"
+                  >
+                    <span class="project-icon">
+                      {% if is_eye_project %}
+                        <img
+                          src="{{ url_for('static', filename='image/eyecarex.png') }}"
+                          alt="{{ t('home_eyecarex_logo_alt') }}"
+                        >
                       {% elif is_hand_project %}
-                      <img
-                        src="{{ url_for('static', filename='image/handemote.png') }}"
-                        alt="HandCare Logo"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
-                      >
-                      {% else %}&lt;/&gt;{% endif %}</span>
+                        <img
+                          src="{{ url_for('static', filename='image/handemote.png') }}"
+                          alt="{{ t('home_handcare_logo_alt') }}"
+                        >
+                      {% else %}
+                        &lt;/&gt;
+                      {% endif %}
+                    </span>
+
                     <div>
                       <h3>{{ p.name }}</h3>
                       <p class="project-type">{{ p.des }}</p>
-                      <p class="project-desc">Backend and AI project with a clean, responsive interface and practical service features.</p>
-                      <div class="project-tags"><span>Python</span><span>FastAPI</span><span>JavaScript</span></div>
-                      <span class="project-link">View Project →</span>
+
+                      <p class="project-desc">
+                        {{ t('home_project_default_description') }}
+                      </p>
+
+                      <div class="project-tags">
+                        <span>Python</span>
+                        <span>FastAPI</span>
+                        <span>JavaScript</span>
+                      </div>
+
+                      <span class="project-link">
+                        {{ t('home_project_link') }}
+                      </span>
                     </div>
                   </a>
                 {% endif %}
               {% endfor %}
             {% endif %}
+
+            {% if other_project_count.value == 0 %}
+              <p class="empty-project-message">
+                {{ t('empty_project_message') }}
+              </p>
+            {% endif %}
           </div>
         </section>
-
-        <!-- <section id="contact" class="contact-strip">
-          <div class="contact-icon">✉</div>
-          <div>
-            <h2>Let's build something together!</h2>
-            <p>I'm always open to discussing new opportunities and interesting projects.</p>
-          </div>
-          <a href="mailto:your-email@example.com" class="btn btn-primary">Contact Me</a>
-        </section> -->
       </main>
     </div>
 
@@ -188,19 +265,37 @@
         document.querySelectorAll(".lang-btn").forEach(function (button) {
           button.addEventListener("click", function () {
             const lang = button.dataset.lang;
-            document.cookie = "lang=" + lang + "; path=/; max-age=" + 60 * 60 * 24 * 365;
+
+            document.cookie =
+              "lang=" +
+              lang +
+              "; path=/; max-age=" +
+              60 * 60 * 24 * 365;
+
             window.location.reload();
           });
         });
 
-        document.querySelectorAll('.portfolio-nav a[href^="#"]').forEach(function (link) {
-          link.addEventListener("click", function (event) {
-            const target = document.querySelector(link.getAttribute("href"));
-            if (!target) return;
-            event.preventDefault();
-            target.scrollIntoView({ behavior: "smooth", block: "start" });
+        document
+          .querySelectorAll('.portfolio-nav a[href^="#"]')
+          .forEach(function (link) {
+            link.addEventListener("click", function (event) {
+              const target = document.querySelector(
+                link.getAttribute("href")
+              );
+
+              if (!target) {
+                return;
+              }
+
+              event.preventDefault();
+
+              target.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+              });
+            });
           });
-        });
       });
     </script>
   </body>
