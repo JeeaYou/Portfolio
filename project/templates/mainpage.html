@@ -39,11 +39,11 @@
               </a>
               <a href="#projects" class="btn btn-secondary">View All Projects</a>
             </div>
-
+<!-- 
             <div class="hero-socials">
               <a href="https://github.com/JeeaYou/Portfolio" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GH</a>
               <a href="https://www.linkedin.com/in/jeea-you-5150562bb/v" aria-label="LinkedIn">in</a>
-            </div>
+            </div> -->
           </div>
 
           <div class="hero-visual" aria-hidden="true">
@@ -145,7 +145,19 @@
                   {% set is_eye_project = 'eyecare' in p.url|lower or 'eye' in p.raw_name|lower %}
                   {% set is_hand_project = 'hand' in p.url|lower or 'hand' in p.raw_name|lower %}
                   <a href="{{ p.url }}" class="modern-project-card {% if is_eye_project %}eye-card{% elif is_hand_project %}hand-card{% endif %}">
-                    <span class="project-icon">{% if is_eye_project %}◉{% elif is_hand_project %}✦{% else %}&lt;/&gt;{% endif %}</span>
+                    <span class="project-icon">{% if is_eye_project %}
+                      <img
+                        src="{{ url_for('static', filename='image/eyecarex.png') }}"
+                        alt="EyeCareX Logo"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
+                      >
+                      {% elif is_hand_project %}
+                      <img
+                        src="{{ url_for('static', filename='image/handemote.png') }}"
+                        alt="HandCare Logo"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"
+                      >
+                      {% else %}&lt;/&gt;{% endif %}</span>
                     <div>
                       <h3>{{ p.name }}</h3>
                       <p class="project-type">{{ p.des }}</p>
@@ -169,14 +181,6 @@
           <a href="mailto:your-email@example.com" class="btn btn-primary">Contact Me</a>
         </section> -->
       </main>
-
-      <footer class="portfolio-footer">
-        <span>© 2024 Jeea You. All rights reserved.</span>
-        <nav>
-          <a href="https://github.com/JeeaYou/Portfolio" target="_blank" rel="noopener noreferrer">GitHub</a>
-          <a href="https://www.linkedin.com/in/jeea-you-5150562bb/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          <a href="mailto:your-email@example.com">Email</a></nav>
-      </footer>
     </div>
 
     <script>
