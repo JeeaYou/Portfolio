@@ -17,7 +17,7 @@ html {
   scroll-behavior: smooth;
 }
 
-body.home-page {
+.home-page {
   margin: 0;
   background: #ffffff !important;
   color: var(--text) !important;
@@ -25,7 +25,7 @@ body.home-page {
   overflow-x: hidden;
 }
 
-body.home-page #wrapper {
+.home-page #wrapper {
   min-height: 100vh;
   background: #fff;
 }

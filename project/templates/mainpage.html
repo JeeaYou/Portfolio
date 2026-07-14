@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-  <body class="is-preload home-page">
+  <div class="is-preload home-page">
     <div id="wrapper">
       <main class="home-main">
         <section id="home" class="portfolio-hero">
@@ -298,5 +298,9 @@
           });
       });
     </script>
-  </body>
+  </div>
+{% endblock %}
+
+{% block footer %}
+  {% include "components/footer.html" %}
 {% endblock %}
