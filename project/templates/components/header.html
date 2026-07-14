@@ -4,6 +4,12 @@
     <a class="t-brand" href="/">
       J.A<span>.</span>
     </a>
+    <a href="{{ url_for('home') if false else '#' }}" class="brand-block" aria-label="Home">
+      <span class="brand-copy">
+        <strong>Jeea You</strong>
+        <small>Backend Developer</small>
+      </span>
+    </a>
 
     <nav class="t-topnav" aria-label="{{ t('header_nav_aria_label') }}">
       <ul>

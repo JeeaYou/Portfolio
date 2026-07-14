@@ -1,198 +1,203 @@
-<!DOCTYPE HTML>
-<html lang="{{ current_lang }}">
-  <head>
-    <title>{{ t('page_title') }}</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/mainstyle.css') }}">
 
+{% extends "base.html" %}
+
+{% block header %}
+  {% include "components/header.html" %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/mainstyle.css') }}">
+{% endblock %}
+
+{% block content %}
   <body class="is-preload home-page">
     <div id="wrapper">
-
       <main class="home-main">
+        <section id="home" class="portfolio-hero">
+          <div class="hero-copy">
+            <p class="hero-eyebrow">{{ t('hero_badge') }}</p>
+            <h1>
+              Backend Developer<br>
+              building<br>
+              <span>AI-&amp;<br>powered services</span>
+            </h1>
 
-        <div class="home-top-actions">
-          <div class="language-switch">
-            <button
-              type="button"
-              class="lang-btn {% if current_lang == 'en' %}is-active{% endif %}"
-              data-lang="en"
-            >
-              ENG
-            </button>
-
-            <button
-              type="button"
-              class="lang-btn {% if current_lang == 'ko' %}is-active{% endif %}"
-              data-lang="ko"
-            >
-              한글
-            </button>
-
-            <button
-              type="button"
-              class="lang-btn {% if current_lang == 'zh' %}is-active{% endif %}"
-              data-lang="zh"
-            >
-              中文
-            </button>
-          </div>
-
-          <a
-            href="https://github.com/JeeaYou/Portfolio"
-            class="github-link"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="GitHub profile"
-          >
-            <span class="github-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" role="img">
-                <path
-                  d="M12 0.5C5.65 0.5 0.5 5.65 0.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2.02c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.75 2.69 1.25 3.35.95.1-.74.4-1.25.73-1.54-2.55-.29-5.23-1.28-5.23-5.68 0-1.25.45-2.28 1.18-3.08-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.16 1.18.92-.26 1.9-.38 2.88-.39.98.01 1.96.13 2.88.39 2.2-1.49 3.16-1.18 3.16-1.18.62 1.58.23 2.75.11 3.04.73.8 1.18 1.83 1.18 3.08 0 4.42-2.69 5.39-5.25 5.67.41.35.78 1.05.78 2.12v3.08c0 .31.21.68.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35 0.5 12 0.5Z"
-                />
-              </svg>
-            </span>
-
-            <span class="github-copy">
-              <span class="github-title">GitHub</span>
-              <span class="github-subtitle">
-                {{ t('github_view_code') }}
-              </span>
-            </span>
-          </a>
-        </div>
-
-        <section class="home-hero">
-          <div class="home-badge">
-            {{ t('hero_badge') }}
-          </div>
-
-          <h1>
-            {{ t('hero_title') }}
-          </h1>
-
-          <p class="home-subtitle">
-            {{ t('hero_subtitle') }}
-          </p>
-
-          <p class="home-description">
-            {{ t('hero_description') }}
-          </p>
-
-          <div class="home-stack">
-            <span>Java</span>
-            <span>Spring Boot</span>
-            <span>Python</span>
-            <span>Flask</span>
-            <span>REST API</span>
-            <span>JavaScript</span>
-            <span>HTML/CSS</span>
-            <span>MySQL/PostgreSQL</span>
-            <span>PyTorch</span>
-            <span>Audio Analysis</span>
-            <span>OpenCV/MediaPipe</span>
-            <span>Git/GitHub</span>
-          </div>
-        </section>
-
-        <section class="project-section">
-          <div class="section-heading">
-            <span>
-              {{ t('project_section_label') }}
-            </span>
-
-            <h2>
-              {{ t('project_section_title') }}
-            </h2>
-
-            <p>
-              {{ t('project_section_description') }}
+            <p class="hero-description">
+              Building AI-powered music analysis, vocal separation,
+              pitch detection, and lyric transcription services.
             </p>
+
+            <div class="hero-buttons">
+              {% if projects %}
+                {% set music_project = namespace(item=None) %}
+                {% for p in projects %}
+                  {% if music_project.item is none and ('musicAI' in p.url or 'music' in p.raw_name|lower) %}
+                    {% set music_project.item = p %}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+
+              <a href="{{ music_project.item.url if projects and music_project.item else '#projects' }}" class="btn btn-primary">
+                View MusicAI Project <span>→</span>
+              </a>
+              <a href="#projects" class="btn btn-secondary">View All Projects</a>
+            </div>
+
+            <div class="hero-socials">
+              <a href="https://github.com/JeeaYou/Portfolio" target="_blank" rel="noopener noreferrer" aria-label="GitHub">GH</a>
+              <a href="https://www.linkedin.com/in/jeea-you-5150562bb/v" aria-label="LinkedIn">in</a>
+            </div>
           </div>
 
-          <nav class="project-nav">
-            {% if projects %}
-              <ul>
-                {% for p in projects %}
+          <div class="hero-visual" aria-hidden="true">
+            <div class="waveform waveform-main">
+              {% for i in range(54) %}<i></i>{% endfor %}
+            </div>
 
-                  {% set is_music_project =
-                    'musicAI' in p.url
-                    or 'music' in p.raw_name|lower
-                  %}
+            <div class="hero-analysis-grid">
+              <article class="visual-card vocal-card">
+                <h3>Vocal Separation</h3>
+                <div class="track-row"><span class="play-dot">▶</span><span>Vocals</span><span class="mini-line purple"></span></div>
+                <div class="track-row"><span class="play-dot">▶</span><span>Instrumental</span><span class="mini-line blue"></span></div>
+              </article>
 
-                  {% set is_eye_project =
-                    'eyecare' in p.url|lower
-                    or 'eye' in p.raw_name|lower
-                  %}
+              <article class="visual-card analysis-card">
+                <h3>Analysis</h3>
+                <dl>
+                  <div><dt>Key</dt><dd>C Major</dd></div>
+                  <div><dt>Tempo</dt><dd>128 BPM</dd></div>
+                  <div><dt>Genre</dt><dd>Pop</dd></div>
+                  <div><dt>Mood</dt><dd>Happy</dd></div>
+                </dl>
+                <!-- <span class="donut"></span> -->
+              </article>
+            </div>
 
-                  {% set is_hand_project =
-                    'hand' in p.url|lower
-                    or 'hand' in p.raw_name|lower
-                  %}
-
-                  <li>
-                    <a
-                      href="{{ p.url }}"
-                      class="project-card is-featured-project
-                        {% if is_music_project %}is-music-project{% endif %}
-                        {% if is_eye_project %}is-eye-project{% endif %}
-                        {% if is_hand_project %}is-hand-project{% endif %}
-                      "
-                    >
-                      <span class="project-number">
-                        {{ "%02d"|format(loop.index) }}
-                      </span>
-
-                      {% if is_music_project %}
-                        <span class="featured-label">
-                          {{ t('featured_project_label') }}
-                        </span>
-                      {% endif %}
-
-                      <span class="project-content">
-                        <strong class="project-title">
-                          {{ p.name }}
-                        </strong>
-
-                        <span class="project-subtitle">
-                          {{ p.des }}
-                        </span>
-                      </span>
-
-                      <span class="project-link-text">
-                        {{ t('project_view_button') }}
-                      </span>
-                    </a>
-                  </li>
-                {% endfor %}
-              </ul>
-            {% else %}
-              <p class="empty-project-message">
-                {{ t('empty_project_message') }}
-              </p>
-            {% endif %}
-          </nav>
+            <article class="visual-card lyric-card">
+              <h3>Lyric Transcription (coming soon)</h3>
+              <p>AI-based lyric transcription from separated vocals</p>
+            </article>
+          </div>
         </section>
 
+        <section id="projects" class="featured-project-section">
+          <div class="featured-copy">
+            <span class="section-kicker">FEATURED PROJECT</span>
+            <h2>MusicAI — Audio Intelligence Platform</h2>
+            <p>
+              Upload music files and automatically analyze key, tempo, genre, mood,
+              vocal pitch range, background instruments, and separated vocals.
+            </p>
+
+            <h3>Tech Stack</h3>
+            <div class="tech-tags">
+              <span>Python</span><span>FastAPI</span><span>PostgreSQL</span><span>Redis</span>
+              <span>Celery</span><span>Docker</span><span>Librosa</span><span>PyTorch</span>
+            </div>
+
+            <ul class="feature-list">
+              <li>Vocal &amp; instrumental separation (Demucs)</li>
+              <li>Vocal pitch analysis (torchcrepe)</li>
+              <li>Instrument classification (AST)</li>
+              <li>Music information retrieval (key, tempo, genre, mood, etc.)</li>
+              <li>REST API, background task processing, progress tracking</li>
+            </ul>
+
+            <a href="{{ music_project.item.url if projects and music_project.item else '#projects' }}" class="btn btn-primary">View Project <span>→</span></a>
+          </div>
+
+          <div class="product-preview">
+            <div class="preview-header">
+              <strong>♫ MusicAI</strong>
+              <span>◷ Upload History</span>
+            </div>
+
+            <div class="preview-panel upload-preview">
+              <h3>Upload your music file</h3>
+              <p>Supports MP3, WAV, FLAC</p>
+              <div class="preview-dropzone">☁<span>Drag &amp; drop a file here or click to upload</span></div>
+            </div>
+
+            <div class="preview-panel progress-preview">
+              <h3>Analysis Progress</h3>
+              <div class="progress-line"><span></span></div>
+              <b>73%</b>
+            </div>
+
+            <div class="preview-panel results-preview">
+              <h3>Analysis Results</h3>
+              <div class="preview-tabs"><span class="active">Overview</span><span>Vocal</span><span>Instruments</span><span>Lyrics (Coming Soon)</span></div>
+              <div class="result-values">
+                <div><small>Key</small><strong>C Major</strong></div>
+                <div><small>Tempo</small><strong>128 BPM</strong></div>
+                <div><small>Genre</small><strong>Pop</strong></div>
+                <div><small>Mood</small><strong>Happy</strong></div>
+                <span class="donut large"></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="other-projects-section">
+          <h2>Other AI Projects</h2>
+          <div class="project-grid">
+            {% if projects %}
+              {% for p in projects %}
+                {% set is_music_project = 'musicAI' in p.url or 'music' in p.raw_name|lower %}
+                {% if not is_music_project %}
+                  {% set is_eye_project = 'eyecare' in p.url|lower or 'eye' in p.raw_name|lower %}
+                  {% set is_hand_project = 'hand' in p.url|lower or 'hand' in p.raw_name|lower %}
+                  <a href="{{ p.url }}" class="modern-project-card {% if is_eye_project %}eye-card{% elif is_hand_project %}hand-card{% endif %}">
+                    <span class="project-icon">{% if is_eye_project %}◉{% elif is_hand_project %}✦{% else %}&lt;/&gt;{% endif %}</span>
+                    <div>
+                      <h3>{{ p.name }}</h3>
+                      <p class="project-type">{{ p.des }}</p>
+                      <p class="project-desc">Backend and AI project with a clean, responsive interface and practical service features.</p>
+                      <div class="project-tags"><span>Python</span><span>FastAPI</span><span>JavaScript</span></div>
+                      <span class="project-link">View Project →</span>
+                    </div>
+                  </a>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          </div>
+        </section>
+
+        <!-- <section id="contact" class="contact-strip">
+          <div class="contact-icon">✉</div>
+          <div>
+            <h2>Let's build something together!</h2>
+            <p>I'm always open to discussing new opportunities and interesting projects.</p>
+          </div>
+          <a href="mailto:your-email@example.com" class="btn btn-primary">Contact Me</a>
+        </section> -->
       </main>
 
+      <footer class="portfolio-footer">
+        <span>© 2024 Jeea You. All rights reserved.</span>
+        <nav>
+          <a href="https://github.com/JeeaYou/Portfolio" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="https://www.linkedin.com/in/jeea-you-5150562bb/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="mailto:your-email@example.com">Email</a></nav>
+      </footer>
     </div>
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        const langButtons = document.querySelectorAll(".lang-btn");
-
-        langButtons.forEach(function (button) {
+        document.querySelectorAll(".lang-btn").forEach(function (button) {
           button.addEventListener("click", function () {
             const lang = button.dataset.lang;
-
-            document.cookie =
-              "lang=" + lang + "; path=/; max-age=" + 60 * 60 * 24 * 365;
-
+            document.cookie = "lang=" + lang + "; path=/; max-age=" + 60 * 60 * 24 * 365;
             window.location.reload();
+          });
+        });
+
+        document.querySelectorAll('.portfolio-nav a[href^="#"]').forEach(function (link) {
+          link.addEventListener("click", function (event) {
+            const target = document.querySelector(link.getAttribute("href"));
+            if (!target) return;
+            event.preventDefault();
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
           });
         });
       });
     </script>
   </body>
-</html>
+{% endblock %}

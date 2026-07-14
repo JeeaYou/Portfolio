@@ -63,6 +63,23 @@ body {
   color: var(--primary);
 }
 
+.brand-copy { 
+  display:flex; 
+  flex-direction:column; 
+  line-height:1.15; 
+}
+
+.brand-copy strong { 
+  font-size: 18px; 
+  font-weight: 850; 
+}
+
+.brand-copy small { 
+  margin-top:4px; 
+  color:#475467; 
+  font-size:12px; 
+}
+
 /* Top Navigation */
 .t-topnav {
   margin-left: auto;
@@ -123,7 +140,8 @@ body {
 
 /* Active underline */
 .t-topnav a.is-active::after,
-.t-topnav a[aria-current="page"]::after {
+.t-topnav a[aria-current="page"]::after,
+.t-topnav a[aria-current="/page"]::after {
   content: "";
   display: block;
 
