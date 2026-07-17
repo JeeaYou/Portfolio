@@ -1,34 +1,51 @@
 {% extends "base.html" %}
+
 {% block header %}
   {% include "components/header.html" %}
 {% endblock %}
 
 {% block content %}
- {% include "components/sidebar.html" %}
-<div id="main">
-  <article id="eyetest" class="testbody" style="text-align:center;">
-    <h2 class="major" style="color:#000;">시력 검사</h2>
+  {% include "components/sidebar.html" %}
 
-    <p style="color:#000;">
-      오른쪽 눈부터 테스트 시작합니다.<br>
-      화면을 보며 알맞는 방향을 가리키세요.
-    </p>
-    <div class="screenshot" style="padding:10px; text-align:center;">
-      <div class="cam-wrap">
-        <div class="img_frame">
-          <img class="cam-stream"
-              src="{{ url_for('eyecarex.eyetest.eyevision.cam') }}"
-              alt="시력 검사 실시간 화면">
-        </div>
+  <div class="main">
+    <article id="signcue" class="testbody">
+      <h2 class="major">손동작 감정 인식</h2>
 
-        <div class="cam-actions">
-          <a class="c-btn c-btn--ghost" href="{{ url_for('eyecarex.eyecarex') }}">← 돌아가기</a>
-          <button class="c-btn" type="button" onclick="location.reload()">다시하기 ↺</button>
+      <p class="description">
+        카메라 앞에서 손동작을 보여주세요.<br>
+        BEST, OK, YEAH, HEART 동작을 실시간으로 인식합니다.
+      </p>
+
+      <div class="screenshot">
+        <div class="cam-wrap">
+          <div class="img_frame">
+            <img
+              class="cam-stream"
+              src="{{ url_for('handemote.signcue.cam') }}"
+              alt="손동작 인식 실시간 화면"
+            >
+          </div>
+
+          <div class="cam-actions">
+            <a
+              class="c-btn c-btn--ghost"
+              href="{{ url_for('handemote.handemote') }}"
+            >
+              ← 돌아가기
+            </a>
+
+            <button
+              class="c-btn"
+              type="button"
+              onclick="location.reload()"
+            >
+              다시하기 ↺
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  </article>
-</div>
+    </article>
+  </div>
 {% endblock %}
 
 {% block footer %}

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint
 
 bp = Blueprint(
     "signcue",
@@ -8,10 +8,8 @@ bp = Blueprint(
     static_folder="static",
 )
 
-
-@bp.get("/", endpoint="show")
-def show():
-    return render_template("signcue.html")
+# service_signcue.py 안의 show, cam 라우트를 등록한다.
+from . import service_signcue  # noqa: E402, F401
 
 
 def register_into(parent_bp):

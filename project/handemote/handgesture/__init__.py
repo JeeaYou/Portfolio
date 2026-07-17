@@ -1,3 +1,4 @@
+# project > handemote > handgesture > __init__.py
 from flask import Blueprint, render_template
 
 bp = Blueprint(

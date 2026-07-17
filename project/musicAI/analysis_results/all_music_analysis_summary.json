@@ -5,8 +5,8 @@
         "text": "16 min 38 sec"
     },
     "total_program_execution_time": {
-        "seconds": 312.53,
-        "text": "5 min 12 sec"
+        "seconds": 131.4,
+        "text": "2 min 11 sec"
     },
     "results": [
         {
@@ -45,7 +45,7 @@
                     -5.14798,
                     38.42812,
                     -10.26479,
-                    19.68406,
+                    19.68405,
                     -14.28203,
                     19.38724,
                     -8.04622,
@@ -155,13 +155,13 @@
                 ]
             },
             "analysis_time_summary": {
-                "original_audio_analysis_time": 21.09,
-                "vocal_separation_time": 53.19,
-                "vocal_pitch_analysis_time": 8.33,
-                "background_instrument_analysis_time": 0.99,
-                "total_analysis_time": 83.61
+                "original_audio_analysis_time": 33.24,
+                "vocal_separation_time": 0.0,
+                "vocal_pitch_analysis_time": 10.45,
+                "background_instrument_analysis_time": 0.96,
+                "total_analysis_time": 44.66
             },
-            "db_track_id": "track_0000208"
+            "db_track_id": "track_0000211"
         },
         {
             "file_info": {
@@ -194,8 +194,8 @@
                 "spectral_flux": 0.03947,
                 "zero_crossing_rate": 0.054172,
                 "mfcc_mean": [
-                    -195.38629,
-                    129.97482,
+                    -195.38626,
+                    129.97484,
                     0.42611,
                     32.04034,
                     1.40953,
@@ -342,13 +342,13 @@
                 ]
             },
             "analysis_time_summary": {
-                "original_audio_analysis_time": 28.3,
-                "vocal_separation_time": 76.79,
-                "vocal_pitch_analysis_time": 10.43,
-                "background_instrument_analysis_time": 0.51,
-                "total_analysis_time": 116.03
+                "original_audio_analysis_time": 30.27,
+                "vocal_separation_time": 0.0,
+                "vocal_pitch_analysis_time": 15.58,
+                "background_instrument_analysis_time": 0.45,
+                "total_analysis_time": 46.31
             },
-            "db_track_id": "track_0000209"
+            "db_track_id": "track_0000212"
         },
         {
             "file_info": {
@@ -394,13 +394,13 @@
                     -1.62375,
                     5.5164,
                     -4.31744,
-                    3.66809,
+                    3.66808,
                     -4.53249,
                     6.66996,
                     -0.48786,
                     4.32274,
                     -0.04708,
-                    0.05697
+                    0.05696
                 ],
                 "mfcc_std": [
                     67.87669,
@@ -503,13 +503,13 @@
                 ]
             },
             "analysis_time_summary": {
-                "original_audio_analysis_time": 25.81,
-                "vocal_separation_time": 69.37,
-                "vocal_pitch_analysis_time": 9.58,
-                "background_instrument_analysis_time": 0.42,
-                "total_analysis_time": 105.19
+                "original_audio_analysis_time": 26.53,
+                "vocal_separation_time": 0.0,
+                "vocal_pitch_analysis_time": 10.06,
+                "background_instrument_analysis_time": 0.43,
+                "total_analysis_time": 37.02
             },
-            "db_track_id": "track_0000210"
+            "db_track_id": "track_0000213"
         }
     ]
 }
