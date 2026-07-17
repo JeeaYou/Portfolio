@@ -391,7 +391,7 @@ def create_app():
             if current_path == "musicAI":
                 category_link = f"#cat-{c.id}"
             else:
-                category_link = c.show or c.url or "#"
+                category_link = c.url or "#"
 
             if category_link is None or str(category_link).lower() == "none":
                 category_link = "#"
