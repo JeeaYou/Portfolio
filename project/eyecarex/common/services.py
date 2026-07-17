@@ -147,8 +147,7 @@ def save_results(userID, nowDatetime, eye, answer, List, disease_name, eyecarex_
     return List
 
 # 계속 검사 창
-def overlay_next_test_screen(image, background, timeStart, height , width_h, height_h, eye, eyecarex_static):
-    lang = get_lang()
+def overlay_next_test_screen(image, background, timeStart, height , width_h, height_h, eye, eyecarex_static, lang):
 
     font_dir = str(Path(eyecarex_static) / "fonts" / "H2GSRB.TTF")
     text = (f'{int(6-(time.time()-timeStart))}초후 {eye} 검사 시작합니다.'
@@ -158,7 +157,7 @@ def overlay_next_test_screen(image, background, timeStart, height , width_h, hei
     
     # Display "continue the test" message
     text_box(image, None, int(height * 0.35), 
-             '검사 계속하기', 
+             '검사 계속하기' if lang == "ko" else 'Continue the test',
              ImageFont.truetype(font_dir, height // 10), (0, 0, 0))
     
     # Countdown for the next test
@@ -173,14 +172,12 @@ def overlay_next_test_screen(image, background, timeStart, height , width_h, hei
     
 
 # 검사 결과 창
-def overlay_test_result_screen(image, background, disease_name, List, timeStart, height, width_h, height_h, font, eyecarex_static):
-    
-    lang = get_lang()
-    
+def overlay_test_result_screen(image, background, disease_name, List, timeStart, height, width_h, height_h, font, eyecarex_static, lang):
+        
     font_dir = str(Path(eyecarex_static) / "fonts" / "H2GSRB.TTF")
     overlay_jpg(image, background, width_h, height_h)
     # Display the test result title
-    text_box(image, None, int(height * 0.3), 
+    text_box(image, None, int(height * 0.25), 
              f"{disease_name} 검사 결과" if lang == "ko" else f"{disease_name} Test Result", 
              ImageFont.truetype(font_dir, height // 10),  (0, 0, 0))
     
@@ -188,7 +185,7 @@ def overlay_test_result_screen(image, background, disease_name, List, timeStart,
     text_box(image, None, int(height * 0.5), 
              f"{List[0]['eye']}: {List[0]['tf']} ", 
              font,  (0, 0, 0))
-    text_box(image, None, int(height * 0.5) + 30, 
+    text_box(image, None, int(height * 0.5) + 60, 
              f"{List[1]['eye']}: {List[1]['tf']} ", 
              font,  (0, 0, 0))
     

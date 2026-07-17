@@ -1,5 +1,5 @@
 # project/eyecarex/eyetest/eyevision/service_eyevision.py
-from flask import render_template, Response, current_app, url_for, redirect
+from flask import render_template, Response, current_app, stream_with_context
 from . import bp  # ← __init__.py의 bp를 가져옴 (중요)
 import os, cv2, time, datetime
 import urllib.request
@@ -115,7 +115,7 @@ def cam():
         level, max_level = int(dataList['level'].min()), int(dataList['level'].max())
         answer_list, test_count, wrong_cnt = [], 0, 0
         mode, finish, next_test, testEnd = 'normal', False, False, False
-        eye = '오른쪽눈' if lang is 'ko'  else 'Left Eye'
+        eye = '오른쪽눈' if lang == 'ko'  else 'Left Eye'
         img_name, img_level, img_eyelevel, img_url = get_eyeImg(level, dataList)
         img_raw = cv2.imread(img_url)
 
@@ -227,16 +227,21 @@ def cam():
 
             if testEnd and len(List) == 2:
                 # 결과 화면까지 프레임에 그려서 보여주고 루프 종료
-                if overlay_test_result_screen(frame, background, name, List, timeStart, height, w2, h2, font, eyecarex_dir):
-                    pass
+                overlay_test_result_screen(frame, background, name, List, timeStart, height, w2, h2, font, eyecarex_dir, lang)
             elif next_test:
-                if overlay_next_test_screen(frame, background, timeStart, height, w2, h2, eye, eyecarex_dir):
+                if overlay_next_test_screen(frame, background, timeStart, height, w2, h2, eye, eyecarex_dir, lang):
                     next_test = False
-                    eye = '왼쪽눈' if lang is 'ko'  else 'Right Eye'
-                    level, wrong_cnt, test_count, mode, counter = 1, 0, 0, 'normal', 0
+
+                    eye = "왼쪽눈" if lang == "ko" else "Right Eye"
+
+                    level = 1
+                    wrong_cnt = 0
+                    test_count = 0
+                    mode = "normal"
+                    counter = 0
                     answer_list = []
-                    img_name, img_level, img_eyelevel, img_url, img_test = \
-                        load_next_image(level, dataList, h2, h2)
+
+                    img_name, img_level, img_eyelevel, img_url, img_test = load_next_image(level, dataList, h2, h2)
 
             # 인코딩 & 전송
             ok2, buf = cv2.imencode(".jpg", frame)
@@ -248,4 +253,7 @@ def cam():
         hand_landmarker.close()
         cap.release()
 
-    return Response(gen(), mimetype="multipart/x-mixed-replace; boundary=frame")
+    return Response(
+        stream_with_context(gen()),
+        mimetype="multipart/x-mixed-replace; boundary=frame"
+    )

@@ -843,3 +843,23 @@ a {
   }
 }
 
+.main {
+  padding-left: 15%;
+}
+
+.testbody {
+  text-align: center;
+}
+
+.major{
+  color: #000;
+}
+
+.description {
+  color: #000;
+}
+
+.screenshot{
+  padding: 10px;
+  text-align: center;
+}

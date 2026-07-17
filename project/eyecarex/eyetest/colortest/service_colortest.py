@@ -3,10 +3,7 @@
 from flask import render_template, Response, current_app
 from . import bp
 
-import cv2
-import time
-import datetime
-import os
+import os, cv2, time, datetime
 
 from cvzone.FaceMeshModule import FaceMeshDetector
 from cvzone.HandTrackingModule import HandDetector
@@ -28,7 +25,7 @@ def show():
 
     lang = get_lang()
 
-    return render_template("colortest.html", lang=lang)
+    return render_template("colortest.html", lang = lang)
 
 
 # ---------- 헬퍼 ----------
@@ -118,7 +115,7 @@ def cam():
         if not os.path.exists(font_path):
             raise FileNotFoundError(f"Can't find font file: {font_path}")
 
-        font = ImageFont.truetype(font_path, 20)
+        font = ImageFont.truetype(font_path, 40)
 
         background_raw = read_image(bg_path, cv2.IMREAD_COLOR, "background 이미지")
         logo = read_image(logo_path, cv2.IMREAD_UNCHANGED, "logo 이미지")
@@ -194,6 +191,7 @@ def cam():
         try:
             while True:
                 ok, frame = cap.read()
+                frame = cv2.flip(frame, 1)
 
                 if not ok:
                     break
@@ -283,96 +281,26 @@ def cam():
                     counter = 0
 
                 # ---------- 기본 화면 ----------
-                draw_banner_with_text(
-                    frame,
-                    width,
-                    height,
-                    font,
-                    guide_message
-                )
+                draw_banner_with_text(frame, width, height, font, guide_message)
 
-                overlay_png(
-                    frame,
-                    20,
-                    20,
-                    btn_size // 4,
-                    btn_size // 4,
-                    logo
-                )
+                overlay_png(frame, *(60, 60), half // 2, half // 2, logo)
 
-                overlay_jpg(
-                    frame,
-                    img_test,
-                    w2,
-                    int(height * 0.40)
-                )
+                overlay_jpg(frame, img_test, w2, int(height * 0.40))
 
-                text_box(
-                    frame,
-                    int(width * 0.25),
-                    int(height * 0.32),
-                    "① ",
-                    font,
-                    (0, 0, 0)
-                )
-
-                text_box(
-                    frame,
-                    int(width * 0.43),
-                    int(height * 0.32),
-                    "② ",
-                    font,
-                    (0, 0, 0)
-                )
-
-                text_box(
-                    frame,
-                    int(width * 0.60),
-                    int(height * 0.32),
-                    "③ ",
-                    font,
-                    (0, 0, 0)
-                )
+                text_box(frame, int(width * 0.25), int(height * 0.32), "① ", font, (0, 0, 0))
+                text_box(frame, int(width * 0.43), int(height * 0.32), "② ", font, (0, 0, 0))
+                text_box(frame, int(width * 0.60), int(height * 0.32), "③ ", font, (0, 0, 0))
 
                 # 선택지 버튼 출력
                 for btn in buttons:
-                    overlay_png(
-                        frame,
-                        btn["pos"][0],
-                        btn["pos"][1],
-                        half,
-                        half,
-                        btn["img"]
-                    )
+                    overlay_png(frame, btn["pos"][0], btn["pos"][1], half, half, btn["img"])
 
                     if btn["val"] in selected_btns:
-                        cv2.circle(
-                            frame,
-                            btn["pos"],
-                            half + 3,
-                            (0, 255, 0),
-                            5,
-                            cv2.LINE_AA
-                        )
-
+                        cv2.circle(frame, btn["pos"], half + 3, (0, 255, 0), 5, cv2.LINE_AA)
+                
                 # 현재 눈 표시
-                overlay_png(
-                    frame,
-                    int(width * 0.13),
-                    int(height * 0.82),
-                    btn_size,
-                    height // 15,
-                    img_textbox
-                )
-
-                text_box(
-                    frame,
-                    int(btn_size * 0.75),
-                    int(height * 0.8),
-                    eye,
-                    font,
-                    (0, 0, 0)
-                )
+                overlay_png(frame, int(width * 0.13), int(height * 0.82), btn_size, height // 15, img_textbox)
+                text_box(frame, int(btn_size * 0.75), int(height * 0.8), eye, font, (0, 0, 0))
 
                 # ---------- 결과 / 다음 테스트 ----------
                 if testEnd:
@@ -386,7 +314,8 @@ def cam():
                         w2,
                         h2,
                         font,
-                        eyecarex_dir
+                        eyecarex_dir,
+                        lang
                     )
 
                     if should_break:
@@ -401,7 +330,8 @@ def cam():
                         w2,
                         h2,
                         eye,
-                        eyecarex_dir
+                        eyecarex_dir,
+                        lang
                     )
 
                     if should_next:
