@@ -7,17 +7,17 @@
 {% block content %}
 {% include "components/sidebar.html" %}
 
-<div id="main">
-  <article id="eyetest" class="testbody" style="text-align:center;">
-    <h2 class="major" style="color:#000;">
+<div class="main">
+  <article id="eyetest" class="testbody">
+    <h2 class="major">
       {{ t('winkbird_title') }}
     </h2>
 
-    <p style="color:#000;">
+    <p class="description">
       {{ t('winkbird_desc') }}
     </p>
 
-    <div class="screenshot" style="padding:10px; text-align:center;">
+    <div class="screenshot">
       <div class="cam-wrap">
         <div class="img_frame">
           <img class="cam-stream"
