@@ -490,6 +490,11 @@
   "errorNoResultTitle": t("musicai_error_no_result_title"),
   "errorNoResultMessage": t("musicai_error_no_result_message"),
 
+  "vocalDetected": t("musicai_vocal_detected"),
+  "vocalNotDetected": t("musicai_vocal_not_detected"),
+  "semitonesUnit": t("musicai_semitones_unit"),
+  "octavesUnit": t("musicai_octaves_unit"),
+
   "noInstrumentsDetected": t("musicai_no_instruments_detected"),
   "noAnalyzedFileResult": t("musicai_no_analyzed_file_result"),
 
@@ -497,6 +502,17 @@
   "allGenre": t("musicai_all_genre"),
   "allTracks": t("musicai_current_filter_all_tracks"),
   "filterSummaryAll": t("musicai_filter_summary_all"),
+
+  "songDnaEnergy": t("musicai_song_dna_energy"),
+  "songDnaDanceability": t("musicai_song_dna_danceability"),
+  "songDnaBrightness": t("musicai_song_dna_brightness"),
+  "songDnaDynamics": t("musicai_song_dna_dynamics"),
+  "songDnaClarity": t("musicai_song_dna_clarity"),
+  "songDnaAverage": t("musicai_song_dna_average"),
+
+  "filterGenreLabel": t("musicai_filter_genre_label"),
+  "filterKeyLabel": t("musicai_filter_key_label"),
+  "filterVocalNoteLabel": t("musicai_filter_vocal_note_label"),
 
   "filterGenreSummaryTemplate": t("musicai_filter_genre_summary_template"),
   "filterKeySummaryTemplate": t("musicai_filter_key_summary_template"),
@@ -564,7 +580,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let analysisTimeChart = null;
 
   let selectedVocalNoteMidi = null;
-  let activeGenreLabel = "All Genre";
+  let activeGenreLabel = "";
   let activeGenreTracks = null;
 
 
@@ -1292,7 +1308,7 @@ if (sidebarSections.length > 0) {
     }
 
     if (desc) {
-      desc.textContent = progress.current_step || I18N.progressChecking;
+      desc.textContent = I18N.progressRunning;
     }
 
     if (!progress.files) return;
@@ -1360,7 +1376,7 @@ if (sidebarSections.length > 0) {
     const numberHz = Number(hz);
 
     if (Number.isFinite(numberHz)) {
-      return safeNote + " (" + numberHz.toFixed(2) + " Hz)";
+      return safeNote + " (" + numberHz + " Hz)";
     }
 
     return safeNote;
@@ -1388,7 +1404,7 @@ if (sidebarSections.length > 0) {
     const numberValue = Number(value);
 
     if (Number.isFinite(numberValue)) {
-      return numberValue.toFixed(2) + "s";
+      return numberValue + "s";
     }
 
     return String(value);
@@ -1455,8 +1471,11 @@ if (sidebarSections.length > 0) {
       setField(card, "lowest_pitch_hz", pitch.lowest_pitch_hz, " Hz");
       setField(card, "highest_note", pitch.highest_note);
       setField(card, "highest_pitch_hz", pitch.highest_pitch_hz, " Hz");
-      setField(card, "pitch_range_semitones", pitch.pitch_range_semitones, " semitones");
-      setField(card, "pitch_range_octaves", pitch.pitch_range_octaves === null || pitch.pitch_range_octaves === undefined ? "-" : pitch.pitch_range_octaves + " octaves");
+      setField(card, "pitch_range_semitones", pitch.pitch_range_semitones, " " + I18N.semitonesUnit);
+      setField(card, "pitch_range_octaves", pitch.pitch_range_octaves === null || 
+        pitch.pitch_range_octaves === undefined ? 
+        "-" : 
+        pitch.pitch_range_octaves + " " + I18N.octavesUnit);
 
       const vocalRatio = pickFirstValue(
         pitch.vocal_ratio,
@@ -1482,7 +1501,7 @@ if (sidebarSections.length > 0) {
         pitch.vocal_pitch_mean_hz
       );
 
-      setField(card, "vocal_presence", "Detected");
+      setField(card, "vocal_presence", I18N.vocalDetected);
       setField(card, "vocal_ratio", vocalRatio === null ? "-" : formatPercentLike(vocalRatio));
       setField(card, "vocal_pitch_mean", pitchMeanNote || pitchMeanHz ? formatPitchWithNote(pitchMeanNote, pitchMeanHz) : "-");
       setField(card, "vocal_pitch_min", formatPitchWithNote(pitch.lowest_note, pitch.lowest_pitch_hz));
@@ -1491,7 +1510,7 @@ if (sidebarSections.length > 0) {
       if (pitchResult) pitchResult.style.display = "none";
       if (pitchEmpty) pitchEmpty.style.display = "";
 
-      setField(card, "vocal_presence", "Not detected");
+      setField(card, "vocal_presence", I18N.vocalNotDetected);
       setField(card, "vocal_ratio", "-");
       setField(card, "vocal_pitch_mean", "-");
       setField(card, "vocal_pitch_min", "-");
@@ -1698,7 +1717,7 @@ if (sidebarSections.length > 0) {
     if (endMarker) endMarker.style.left = "0%";
     if (rangeText) rangeText.textContent = I18N.vocalRangeNoData;
 
-    updateVisualizationFilterState("All", "all", 0);
+    updateVisualizationFilterState(I18N.filterAll, "all", 0);
 
     buildPianoKeyboard(null, null);
 
@@ -1753,23 +1772,37 @@ if (sidebarSections.length > 0) {
     return sum / values.length;
   }
 
-  function updateVisualizationFilterState(label = "All", filterType = "all", trackCount = 0) {
+  function updateVisualizationFilterState(
+    label = I18N.filterAll,
+    filterType = "all",
+    trackCount = 0
+  ) {
     const isAllFilter = filterType === "all";
-    const hasGenreFilter = activeGenreLabel && activeGenreLabel !== "All Genre";
+
+    const hasGenreFilter =
+      activeGenreLabel &&
+      activeGenreLabel !== I18N.allGenre;
 
     if (visualCurrentFilter) {
       if (isAllFilter) {
         visualCurrentFilter.textContent = I18N.allTracks;
+
       } else if (filterType === "genre") {
-        visualCurrentFilter.textContent = "Genre · " + label;
+        visualCurrentFilter.textContent =
+          I18N.filterGenreLabel + " · " + label;
+
       } else if (filterType === "key") {
         visualCurrentFilter.textContent = hasGenreFilter
-          ? "Genre · " + activeGenreLabel + " / Key · " + label
-          : "Key · " + label;
+          ? I18N.filterGenreLabel + " · " + activeGenreLabel +
+            " / " + I18N.filterKeyLabel + " · " + label
+          : I18N.filterKeyLabel + " · " + label;
+
       } else if (filterType === "note") {
         visualCurrentFilter.textContent = hasGenreFilter
-          ? "Genre · " + activeGenreLabel + " / Vocal Note · " + label
-          : "Vocal Note · " + label;
+          ? I18N.filterGenreLabel + " · " + activeGenreLabel +
+            " / " + I18N.filterVocalNoteLabel + " · " + label
+          : I18N.filterVocalNoteLabel + " · " + label;
+
       } else {
         visualCurrentFilter.textContent = label;
       }
@@ -1778,24 +1811,68 @@ if (sidebarSections.length > 0) {
     if (visualFilterSummary) {
       if (isAllFilter) {
         visualFilterSummary.textContent = I18N.filterSummaryAll;
+
       } else if (filterType === "genre") {
-        visualFilterSummary.textContent = i18nTemplate(I18N.filterGenreSummaryTemplate, { genre: label, count: trackCount });
+        visualFilterSummary.textContent = i18nTemplate(
+          I18N.filterGenreSummaryTemplate,
+          {
+            genre: label,
+            count: trackCount
+          }
+        );
+
       } else if (filterType === "key") {
         visualFilterSummary.textContent = hasGenreFilter
-          ? i18nTemplate(I18N.filterGenreKeySummaryTemplate, { genre: activeGenreLabel, key: label, count: trackCount })
-          : i18nTemplate(I18N.filterKeySummaryTemplate, { key: label, count: trackCount });
+          ? i18nTemplate(
+              I18N.filterGenreKeySummaryTemplate,
+              {
+                genre: activeGenreLabel,
+                key: label,
+                count: trackCount
+              }
+            )
+          : i18nTemplate(
+              I18N.filterKeySummaryTemplate,
+              {
+                key: label,
+                count: trackCount
+              }
+            );
+
       } else if (filterType === "note") {
         visualFilterSummary.textContent = hasGenreFilter
-          ? i18nTemplate(I18N.filterGenreNoteSummaryTemplate, { genre: activeGenreLabel, note: label, count: trackCount })
-          : i18nTemplate(I18N.filterNoteSummaryTemplate, { note: label, count: trackCount });
+          ? i18nTemplate(
+              I18N.filterGenreNoteSummaryTemplate,
+              {
+                genre: activeGenreLabel,
+                note: label,
+                count: trackCount
+              }
+            )
+          : i18nTemplate(
+              I18N.filterNoteSummaryTemplate,
+              {
+                note: label,
+                count: trackCount
+              }
+            );
+
       } else {
-        visualFilterSummary.textContent = i18nTemplate(I18N.filterCountSummaryTemplate, { count: trackCount });
+        visualFilterSummary.textContent = i18nTemplate(
+          I18N.filterCountSummaryTemplate,
+          {
+            count: trackCount
+          }
+        );
       }
     }
 
     if (resetVisualizationFilterBtn) {
       resetVisualizationFilterBtn.disabled = isAllFilter;
-      resetVisualizationFilterBtn.classList.toggle("is-active", !isAllFilter);
+      resetVisualizationFilterBtn.classList.toggle(
+        "is-active",
+        !isAllFilter
+      );
     }
   }
 
@@ -1807,7 +1884,7 @@ if (sidebarSections.length > 0) {
     }
 
     selectedVocalNoteMidi = null;
-    activeGenreLabel = "All Genre";
+    activeGenreLabel = I18N.allGenre;
     activeGenreTracks = null;
 
     const visualMainGenre = document.getElementById("visualMainGenre");
@@ -1823,13 +1900,13 @@ if (sidebarSections.length > 0) {
 
     renderGenreDistributionChartForAllTracks(tracks);
     renderKeyDistributionChartForAllTracks(tracks);
-    applyDashboardTrackScope(tracks, "All", "all");
+    applyDashboardTrackScope(tracks, I18N.filterAll, "all");
   }
 
   function applyGenreFilter(genreTracks, genreLabel) {
     const safeTracks = Array.isArray(genreTracks) ? genreTracks : [];
 
-    activeGenreLabel = genreLabel || "All Genre";
+    activeGenreLabel = genreLabel || I18N.allGenre;
     activeGenreTracks = safeTracks;
     selectedVocalNoteMidi = null;
 
@@ -1867,7 +1944,7 @@ if (sidebarSections.length > 0) {
 
     renderGenreDistributionChartForAllTracks(tracks);
     renderKeyDistributionChartForAllTracks(tracks);
-    applyDashboardTrackScope(tracks, "All", "all");
+    applyDashboardTrackScope(tracks, I18N.filterAll, "all");
   }
 
   function renderGenreDistributionChartForAllTracks(tracks) {
@@ -1993,10 +2070,16 @@ if (sidebarSections.length > 0) {
     songDnaChart = new Chart(canvas, {
       type: "radar",
       data: {
-        labels: ["Energy", "Danceability", "Brightness", "Dynamics", "Clarity"],
+        labels: [
+          I18N.songDnaEnergy,
+          I18N.songDnaDanceability,
+          I18N.songDnaBrightness,
+          I18N.songDnaDynamics,
+          I18N.songDnaClarity
+        ],
         datasets: [
           {
-            label: "Average Song DNA",
+            label: I18N.songDnaAverage,
             data: [
               Math.round(avgEnergy),
               Math.round(avgDanceability),
@@ -2510,26 +2593,20 @@ if (sidebarSections.length > 0) {
     });
   }
 
-  function applyDashboardTrackScope(tracks, label = "All", filterType = "all") {
+  function applyDashboardTrackScope(tracks, label = I18N.filterAll, filterType = "all") {
     const safeTracks = Array.isArray(tracks) ? tracks : [];
-
-    selectedVocalNoteMidi = null;
-
     const visualMainGenre = document.getElementById("visualMainGenre");
     const visualMainKey = document.getElementById("visualMainKey");
 
+    selectedVocalNoteMidi = null;
+
     if (filterType === "all") {
-      activeGenreLabel = "All Genre";
+      activeGenreLabel = I18N.allGenre;
       activeGenreTracks = null;
     }
 
-    if (visualMainGenre) {
-      visualMainGenre.textContent = activeGenreLabel || "All Genre";
-    }
-
-    if (visualMainKey) {
-      visualMainKey.textContent = filterType === "key" ? label : "All";
-    }
+    if (visualMainGenre) visualMainGenre.textContent = activeGenreLabel || I18N.allGenre;
+    if (visualMainKey) visualMainKey.textContent = filterType === "key" ? label : I18N.filterAll;
 
     updateVisualizationFilterState(label, filterType, safeTracks.length);
     renderVocalRangeVisualForAllTracks(safeTracks, label);
@@ -2658,7 +2735,7 @@ if (sidebarSections.length > 0) {
     const highNote = midiToNote(highMidi);
 
     const octaveValue = ((highMidi - lowMidi) / 12).toFixed(2);
-    const octaveText = octaveValue.replace(/\.00$/, "") + " octaves";
+    const octaveText = octaveValue.replace(/\.00$/, "") + " " + I18N.octavesUnit;
 
     lowestNote.textContent = lowNote;
     highestNote.textContent = highNote;

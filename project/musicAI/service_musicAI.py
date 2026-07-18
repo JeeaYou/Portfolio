@@ -18,6 +18,7 @@ import time
 import json
 import re
 import threading
+from flask import request
 
 from .music_db_service import (
     save_music_analysis_to_db,
@@ -25,6 +26,10 @@ from .music_db_service import (
     mark_analysis_job_failed,
 )
 
+def get_lang():
+    lang = request.args.get("lang", "ko")
+
+    return lang
 
 # =============================
 # 기본 설정
@@ -46,11 +51,52 @@ ANALYSIS_RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 _CURRENT_DEMUCS_PROCESSES = {}
 _CURRENT_DEMUCS_PROCESSES_LOCK = threading.Lock()
 
+UPDATE_STEP_TEXT = {
+    "ko": {
+        "original_analyzing": "음악 오디오 원곡 분석 중",
+        "original_completed": "음악 오디오 원곡 분석 완료",
+        "separating": "음악 오디오 보컬/배경음악 분리 중",
+        "separating_percent": "음악 오디오 보컬/배경음악 분리 중",
+        "separation_completed": "음악 오디오 보컬/배경음악 분리 완료",
+        "pitch_analyzing": "음악 오디오 보컬 피치 분석 중",
+        "pitch_completed": "음악 오디오 보컬 피치 분석 완료",
+        "instrument_analyzing": "음악 오디오 배경 악기 분석 중",
+        "saving": "음악 오디오 결과 저장 중",
+        "analysis_completed": "음악 오디오 분석 완료",
+    },
+    "en": {
+        "original_analyzing": "Analyzing the original audio",
+        "original_completed": "Original audio analysis completed",
+        "separating": "Separating vocals and background music",
+        "separating_percent": "Separating vocals and background music",
+        "separation_completed": "Vocal and background music separation completed",
+        "pitch_analyzing": "Analyzing vocal pitch",
+        "pitch_completed": "Vocal pitch analysis completed",
+        "instrument_analyzing": "Analyzing background instruments",
+        "saving": "Saving audio analysis results",
+        "analysis_completed": "Audio analysis completed",
+    },
+    "zh": {
+        "original_analyzing": "正在分析原始音频",
+        "original_completed": "原始音频分析完成",
+        "separating": "正在分离人声和背景音乐",
+        "separating_percent": "正在分离人声和背景音乐",
+        "separation_completed": "人声和背景音乐分离完成",
+        "pitch_analyzing": "正在分析人声音高",
+        "pitch_completed": "人声音高分析完成",
+        "instrument_analyzing": "正在分析背景乐器",
+        "saving": "正在保存音频分析结果",
+        "analysis_completed": "音频分析完成",
+    },
+}
 
-class AnalysisCancelled(Exception):
-    """사용자가 화면 이동/Home 클릭 등으로 분석을 취소한 경우 사용한다."""
-    pass
+class AnalysisCancelled(Exception):pass
 
+def format_duration_text(total_seconds, lang="ko"):
+    minutes, seconds = int(total_seconds // 60), int(total_seconds % 60)
+    units = {"ko": ("분", "초"), "en": ("min", "sec"), "zh": ("分", "秒")}
+    minute_unit, second_unit = units.get(lang, units["ko"])
+    return f"{minutes} {minute_unit} {seconds} {second_unit}" if minutes > 0 else f"{seconds} {second_unit}"
 
 def terminate_process_tree(process, timeout=3):
     """
@@ -101,7 +147,6 @@ MINOR_PROFILE = np.array([
     2.54, 4.75, 3.98, 2.69, 3.34, 3.17
 ])
 
-
 # =============================
 # 공통 유틸
 # =============================
@@ -138,6 +183,9 @@ def get_progress_path(job_id):
 def write_progress(job_id, data):
     if not job_id:
         return
+
+    # progress 폴더가 없으면 매번 자동 생성
+    PROGRESS_DIR.mkdir(parents=True, exist_ok=True)
 
     progress_path = get_progress_path(job_id)
     temp_path = progress_path.with_suffix(".tmp")
@@ -198,20 +246,21 @@ def make_progress_files(
     return files
 
 
-def init_progress(job_id, audio_files):
+def init_progress(job_id, audio_files, **kwargs):
     total_files = len(audio_files)
-
+    lang = kwargs.get("lang", "ko")
     write_progress(job_id, {
         "status": "running",
         "total_files": total_files,
         "current_file_index": 0,
         "processed_count": 0,
-        "current_step": "분석 준비 중",
+        "current_step": "분석 준비 중" if lang == "ko" else "Preparing for analysis" if lang == "en" else "准备分析中",
         "files": make_progress_files(audio_files),
         "result": None,
         "error": None,
         "cancel_requested": False,
-        "cancel_reason": None
+        "cancel_reason": None,
+        "language": lang
     })
 
 
@@ -330,7 +379,7 @@ def write_cancelled_progress(
 # 1. 원곡 분석
 # =============================
 
-def analyze_original_audio_librosa(audio_file, sample_rate=44100):
+def analyze_original_audio_librosa(audio_file, sample_rate=44100, lang="ko"):
     y, sr = librosa.load(audio_file, sr=sample_rate, mono=True)
 
     duration = librosa.get_duration(y=y, sr=sr)
@@ -368,15 +417,15 @@ def analyze_original_audio_librosa(audio_file, sample_rate=44100):
             best_score = major_score
             best_key = NOTE_NAMES[i]
             best_scale = "major"
-
+            scale = "大调" if lang == "zh" else "Major"
         if minor_score > best_score:
             best_score = minor_score
             best_key = NOTE_NAMES[i]
             best_scale = "minor"
+            scale = "小调" if lang == "zh" else "minor"
 
     music_key = f"{best_key} {best_scale}"
-
-    # -----------------------------
+    music_key_text = f"{best_key} {scale}"
     # Tempo / Beat
     # -----------------------------
     tempo, beats = librosa.beat.beat_track(y=y_trimmed, sr=sr)
@@ -393,10 +442,10 @@ def analyze_original_audio_librosa(audio_file, sample_rate=44100):
     )
 
     rhythm_pattern = estimate_rhythm_pattern(
-        tempo=tempo,
         beats=beats,
         onset_env=onset_env,
-        sr=sr
+        sr=sr,
+        lang=lang
     )
 
     # -----------------------------
@@ -410,65 +459,43 @@ def analyze_original_audio_librosa(audio_file, sample_rate=44100):
     energy_score = max(0, min(100, energy_score))
 
     if energy_score < 35:
-        energy_level = "Low Energy"
+        energy_level = "Low" if lang == "en" else "低" if lang == "zh" else "낮음"
     elif energy_score < 70:
-        energy_level = "Medium Energy"
+        energy_level = "Medium" if lang == "en" else "中" if lang == "zh" else "중간"
     else:
-        energy_level = "High Energy"
+        energy_level = "High" if lang == "en" else "高" if lang == "zh" else "높음"
 
     # -----------------------------
     # Spectral Features
     # -----------------------------
-    spectral_centroid = librosa.feature.spectral_centroid(
-        y=y_trimmed,
-        sr=sr
-    )[0]
+    spectral_centroid = librosa.feature.spectral_centroid(y=y_trimmed, sr=sr)[0]
     avg_spectral_centroid = float(np.mean(spectral_centroid))
 
-    spectral_bandwidth = librosa.feature.spectral_bandwidth(
-        y=y_trimmed,
-        sr=sr
-    )[0]
+    spectral_bandwidth = librosa.feature.spectral_bandwidth(y=y_trimmed, sr=sr)[0]
     avg_spectral_bandwidth = float(np.mean(spectral_bandwidth))
 
-    spectral_rolloff = librosa.feature.spectral_rolloff(
-        y=y_trimmed,
-        sr=sr
-    )[0]
+    spectral_rolloff = librosa.feature.spectral_rolloff(y=y_trimmed, sr=sr)[0]
     avg_spectral_rolloff = float(np.mean(spectral_rolloff))
 
-    spectral_flatness = librosa.feature.spectral_flatness(
-        y=y_trimmed
-    )[0]
+    spectral_flatness = librosa.feature.spectral_flatness(y=y_trimmed)[0]
     avg_spectral_flatness = float(np.mean(spectral_flatness))
 
-    zero_crossing = librosa.feature.zero_crossing_rate(
-        y_trimmed
-    )[0]
+    zero_crossing = librosa.feature.zero_crossing_rate(y=y_trimmed)[0]
     avg_zero_crossing_rate = float(np.mean(zero_crossing))
 
     stft = np.abs(librosa.stft(y_trimmed))
     stft_norm = stft / (np.sum(stft, axis=0, keepdims=True) + 1e-8)
 
-    spectral_flux = np.sqrt(
-        np.sum(np.diff(stft_norm, axis=1) ** 2, axis=0)
-    )
+    spectral_flux = np.sqrt(np.sum(np.diff(stft_norm, axis=1) ** 2, axis=0))
     avg_spectral_flux = float(np.mean(spectral_flux))
 
-    spectral_contrast = librosa.feature.spectral_contrast(
-        y=y_trimmed,
-        sr=sr
-    )
+    spectral_contrast = librosa.feature.spectral_contrast(y=y_trimmed, sr=sr)
     spectral_contrast_mean = np.mean(spectral_contrast, axis=1)
 
     # -----------------------------
     # MFCC / Tonnetz
     # -----------------------------
-    mfcc = librosa.feature.mfcc(
-        y=y_trimmed,
-        sr=sr,
-        n_mfcc=20
-    )
+    mfcc = librosa.feature.mfcc(y=y_trimmed, sr=sr, n_mfcc=20)
     mfcc_mean = np.mean(mfcc, axis=1)
     mfcc_std = np.std(mfcc, axis=1)
 
@@ -486,10 +513,7 @@ def analyze_original_audio_librosa(audio_file, sample_rate=44100):
     # Dynamic Range / HNR
     # -----------------------------
     rms_db_frames = librosa.amplitude_to_db(rms, ref=np.max)
-    dynamic_range = (
-        np.percentile(rms_db_frames, 95)
-        - np.percentile(rms_db_frames, 10)
-    )
+    dynamic_range = (np.percentile(rms_db_frames, 95) - np.percentile(rms_db_frames, 10))
 
     try:
         snd = parselmouth.Sound(audio_file)
@@ -521,7 +545,8 @@ def analyze_original_audio_librosa(audio_file, sample_rate=44100):
         tempo=tempo,
         energy_score=energy_score,
         spectral_centroid=avg_spectral_centroid,
-        danceability=danceability
+        danceability=danceability,
+        lang=lang
     )
 
     genre = estimate_genre(
@@ -530,14 +555,15 @@ def analyze_original_audio_librosa(audio_file, sample_rate=44100):
         spectral_centroid=avg_spectral_centroid,
         zero_crossing_rate=avg_zero_crossing_rate,
         spectral_flatness=avg_spectral_flatness,
-        danceability=danceability
+        danceability=danceability,
+        lang=lang
     )
 
     return {
         "duration": round(duration, 2),
         "duration_text": duration_text,
 
-        "key": music_key,
+        "key": music_key_text,
         "key_confidence": round(float(best_score), 3),
         "key_method": "librosa",
 
@@ -577,62 +603,80 @@ def analyze_original_audio_librosa(audio_file, sample_rate=44100):
 # 2. BPM / 장르 / 분위기 / 리듬 정보
 # =============================
 
-def get_tempo_info(bpm):
-    if bpm <= 24:
-        return {
-            "tempo_name": "Larghissimo",
-            "tempo_category": "Very Very Slow",
-            "description": "almost no movement very slow"
-        }
-    elif bpm <= 60:
-        return {
-            "tempo_name": "Largo",
-            "tempo_category": "Very Slow",
-            "description": "Very slow"
-        }
-    elif bpm <= 76:
-        return {
-            "tempo_name": "Adagio",
-            "tempo_category": "Slow",
-            "description": "천천히, 편안하게"
-        }
-    elif bpm <= 108:
-        return {
-            "tempo_name": "Andante",
-            "tempo_category": "Moderately Slow",
-            "description": "걷는 속도"
-        }
-    elif bpm <= 120:
-        return {
-            "tempo_name": "Moderato",
-            "tempo_category": "Medium",
-            "description": "보통 빠르기"
-        }
-    elif bpm <= 156:
-        return {
-            "tempo_name": "Allegro",
-            "tempo_category": "Fast",
-            "description": "빠르고 경쾌하게"
-        }
-    elif bpm <= 168:
-        return {
-            "tempo_name": "Vivace",
-            "tempo_category": "Very Fast",
-            "description": "생기 있고 아주 빠르게"
-        }
-    elif bpm <= 200:
-        return {
-            "tempo_name": "Presto",
-            "tempo_category": "Very Fast",
-            "description": ""
-        }
-    else:
-        return {
-            "tempo_name": "Prestissimo",
-            "tempo_category": "Extremely Fast",
-            "description": "가능한 한 아주 빠르게"
-        }
+def get_tempo_info(bpm, lang="ko"):
+    if lang not in ("ko", "en", "zh"): lang = "ko"
 
+    if bpm <= 24:
+        categories = {"ko": "극도로 느림", "en": "Very Very Slow", "zh": "极其缓慢"}
+        descriptions = {
+            "ko": "거의 움직임이 느껴지지 않을 정도로 매우 느리게", 
+            "en": "Extremely slow, with almost no sense of movement", 
+            "zh": "极其缓慢，几乎感觉不到移动"}
+        return {"tempo_name": "Larghissimo", "tempo_category": categories[lang], "description": descriptions[lang]}
+
+    elif bpm <= 60:
+        categories = {"ko": "매우 느림", "en": "Very Slow", "zh": "非常缓慢"}
+        descriptions = {
+            "ko": "아주 느리고 폭넓게", 
+            "en": "Very slow and broad", 
+            "zh": "非常缓慢而宽广"}
+        return {"tempo_name": "Largo", "tempo_category": categories[lang], "description": descriptions[lang]}
+
+    elif bpm <= 76:
+        categories = {"ko": "느림", "en": "Slow", "zh": "缓慢"}
+        descriptions = {
+            "ko": "천천히, 편안하게", 
+            "en": "Slowly and comfortably", 
+            "zh": "缓慢而舒适地"}
+        return {"tempo_name": "Adagio", "tempo_category": categories[lang], "description": descriptions[lang]}
+
+    elif bpm <= 108:
+        categories = {"ko": "약간 느림", "en": "Moderately Slow", "zh": "中等偏慢"}
+        descriptions = {
+            "ko": "걷는 속도로", 
+            "en": "At a walking pace", 
+            "zh": "以步行的速度"}
+        return {"tempo_name": "Andante", "tempo_category": categories[lang], "description": descriptions[lang]}
+
+    elif bpm <= 120:
+        categories = {"ko": "보통", "en": "Medium", "zh": "中等"}
+        descriptions = {
+            "ko": "보통 빠르기", 
+            "en": "At a moderate speed", 
+            "zh": "以中等速度"}
+        return {"tempo_name": "Moderato", "tempo_category": categories[lang], "description": descriptions[lang]}
+
+    elif bpm <= 156:
+        categories = {"ko": "빠름", "en": "Fast", "zh": "快速"}
+        descriptions = {
+            "ko": "빠르고 경쾌하게", 
+            "en": "Fast and lively", 
+            "zh": "快速而欢快地"}
+        return {"tempo_name": "Allegro", "tempo_category": categories[lang], "description": descriptions[lang]}
+
+    elif bpm <= 168:
+        categories = {"ko": "매우 빠름", "en": "Very Fast", "zh": "非常快速"}
+        descriptions = {
+            "ko": "생기 있고 아주 빠르게", 
+            "en": "Very fast and lively", 
+            "zh": "活泼而快速地"}
+        return {"tempo_name": "Vivace", "tempo_category": categories[lang], "description": descriptions[lang]}
+
+    elif bpm <= 200:
+        categories = {"ko": "매우 빠름", "en": "Very Fast", "zh": "非常快速"}
+        descriptions = {
+            "ko": "매우 빠르게", 
+            "en": "Very fast", 
+            "zh": "非常快速地"}
+        return {"tempo_name": "Presto", "tempo_category": categories[lang], "description": descriptions[lang]}
+
+    else:
+        categories = {"ko": "극도로 빠름", "en": "Extremely Fast", "zh": "极其快速"}
+        descriptions = {
+            "ko": "가능한 한 아주 빠르게", 
+            "en": "As fast as possible", 
+            "zh": "尽可能快地"}
+        return {"tempo_name": "Prestissimo", "tempo_category": categories[lang], "description": descriptions[lang]}
 
 def estimate_genre(
         bpm,
@@ -640,78 +684,146 @@ def estimate_genre(
         spectral_centroid=None,
         zero_crossing_rate=None,
         spectral_flatness=None,
-        danceability=None
+        danceability=None,
+        lang="ko"
     ):
+    if lang not in ("ko", "en", "zh"):
+        lang = "ko"
+
+    genre_text = {
+        "ballad": {
+            "ko": "발라드 / 어쿠스틱 계열",
+            "en": "Ballad / Acoustic-like",
+            "zh": "抒情 / 原声风格"
+        },
+        "pop": {
+            "ko": "팝 계열",
+            "en": "Pop-like",
+            "zh": "流行风格"
+        },
+        "dance": {
+            "ko": "댄스 / EDM 계열",
+            "en": "Dance / EDM-like",
+            "zh": "舞曲 / EDM风格"
+        },
+        "rock": {
+            "ko": "록 / 일렉트로닉 계열",
+            "en": "Rock / Electronic-like",
+            "zh": "摇滚 / 电子风格"
+        },
+        "jazz": {
+            "ko": "재즈 / 어쿠스틱 계열",
+            "en": "Jazz / Acoustic-like",
+            "zh": "爵士 / 原声风格"
+        },
+        "mixed": {
+            "ko": "혼합 / 알 수 없음",
+            "en": "Mixed / Unknown",
+            "zh": "混合 / 未知"
+        }
+    }
+
     scores = {
-        "Ballad / Acoustic-like": 0,
-        "Pop-like": 0,
-        "Dance / EDM-like": 0,
-        "Rock / Electronic-like": 0,
-        "Jazz / Acoustic-like": 0,
-        "Mixed / Unknown": 0
+        "ballad": 0,
+        "pop": 0,
+        "dance": 0,
+        "rock": 0,
+        "jazz": 0,
+        "mixed": 0
     }
 
     # Dance / EDM
     if bpm >= 120:
-        scores["Dance / EDM-like"] += 2
+        scores["dance"] += 2
     if energy_score >= 70:
-        scores["Dance / EDM-like"] += 2
+        scores["dance"] += 2
     if danceability is not None and danceability >= 55:
-        scores["Dance / EDM-like"] += 1
+        scores["dance"] += 1
     if spectral_flatness is not None and spectral_flatness >= 0.03:
-        scores["Dance / EDM-like"] += 1
+        scores["dance"] += 1
 
     # Pop
     if 90 <= bpm <= 130:
-        scores["Pop-like"] += 2
+        scores["pop"] += 2
     if 45 <= energy_score <= 75:
-        scores["Pop-like"] += 2
+        scores["pop"] += 2
     if danceability is not None and 35 <= danceability <= 65:
-        scores["Pop-like"] += 1
+        scores["pop"] += 1
 
     # Ballad / Acoustic
     if bpm < 95:
-        scores["Ballad / Acoustic-like"] += 2
+        scores["ballad"] += 2
     if energy_score < 60:
-        scores["Ballad / Acoustic-like"] += 2
+        scores["ballad"] += 2
     if spectral_centroid is not None and spectral_centroid < 2200:
-        scores["Ballad / Acoustic-like"] += 1
+        scores["ballad"] += 1
     if zero_crossing_rate is not None and zero_crossing_rate < 0.05:
-        scores["Ballad / Acoustic-like"] += 1
+        scores["ballad"] += 1
 
     # Rock / Electronic
     if bpm >= 130:
-        scores["Rock / Electronic-like"] += 1
+        scores["rock"] += 1
     if energy_score >= 65:
-        scores["Rock / Electronic-like"] += 1
+        scores["rock"] += 1
     if spectral_centroid is not None and spectral_centroid >= 2500:
-        scores["Rock / Electronic-like"] += 1
+        scores["rock"] += 1
     if zero_crossing_rate is not None and zero_crossing_rate >= 0.08:
-        scores["Rock / Electronic-like"] += 1
+        scores["rock"] += 1
 
     # Jazz / Acoustic
     if spectral_centroid is not None and spectral_centroid < 1800:
-        scores["Jazz / Acoustic-like"] += 1
+        scores["jazz"] += 1
     if energy_score < 65:
-        scores["Jazz / Acoustic-like"] += 1
+        scores["jazz"] += 1
 
     best_genre = max(scores, key=scores.get)
 
     if scores[best_genre] == 0:
-        return "Mixed / Unknown"
+        best_genre = "mixed"
 
-    return best_genre
+    return genre_text[best_genre][lang]
 
 
-def estimate_rhythm_pattern(tempo, beats, onset_env, sr):
+def estimate_rhythm_pattern(beats, onset_env, sr, lang="ko"):
+    if lang not in ("ko", "en", "zh"):
+        lang = "ko"
+
+    rhythm_text = {
+        "not_detected": {
+            "ko": "리듬이 명확하게 감지되지 않음",
+            "en": "Rhythm not clearly detected",
+            "zh": "未能清晰检测到节奏"
+        },
+        "strong_steady": {
+            "ko": "강하고 일정한 비트",
+            "en": "Strong and steady beat",
+            "zh": "强烈而稳定的节拍"
+        },
+        "steady": {
+            "ko": "일정한 리듬",
+            "en": "Steady rhythm",
+            "zh": "稳定的节奏"
+        },
+        "moderate_variation": {
+            "ko": "적당한 리듬 변화",
+            "en": "Moderate rhythmic variation",
+            "zh": "适度的节奏变化"
+        },
+        "irregular_expressive": {
+            "ko": "불규칙하거나 표현적인 리듬",
+            "en": "Irregular or expressive rhythm",
+            "zh": "不规则或富有表现力的节奏"
+        }
+    }
+
     if beats is None or len(beats) < 3:
-        return "Rhythm not clearly detected"
+        return rhythm_text["not_detected"][lang]
 
     beat_times = librosa.frames_to_time(beats, sr=sr)
     beat_intervals = np.diff(beat_times)
 
     if len(beat_intervals) == 0:
-        return "Rhythm not clearly detected"
+        return rhythm_text["not_detected"][lang]
 
     interval_mean = float(np.mean(beat_intervals))
     interval_std = float(np.std(beat_intervals))
@@ -720,16 +832,16 @@ def estimate_rhythm_pattern(tempo, beats, onset_env, sr):
     beat_strength = float(np.mean(onset_env))
 
     if beat_variation < 0.08 and beat_strength >= 1.5:
-        return "Strong and steady beat"
+        return rhythm_text["strong_steady"][lang]
 
     elif beat_variation < 0.12:
-        return "Steady rhythm"
+        return rhythm_text["steady"][lang]
 
     elif beat_variation < 0.2:
-        return "Moderate rhythmic variation"
+        return rhythm_text["moderate_variation"][lang]
 
     else:
-        return "Irregular or expressive rhythm"
+        return rhythm_text["irregular_expressive"][lang]
 
 
 def estimate_mood(
@@ -737,33 +849,76 @@ def estimate_mood(
         tempo,
         energy_score,
         spectral_centroid,
-        danceability
+        danceability,
+        lang="ko"
     ):
-    key_lower = music_key.lower() if music_key else ""
+    if lang not in ("ko", "en", "zh"):
+        lang = "ko"
 
+    mood_text = {
+        "melancholic": {
+            "ko": "우울 / 감성",
+            "en": "Melancholic / Emotional",
+            "zh": "忧郁 / 感性"
+        },
+        "bright": {
+            "ko": "밝음 / 활기참",
+            "en": "Bright / Energetic",
+            "zh": "明亮 / 充满活力"
+        },
+        "powerful": {
+            "ko": "강렬 / 강함",
+            "en": "Powerful / Intense",
+            "zh": "强劲 / 强烈"
+        },
+        "calm": {
+            "ko": "차분 / 부드러움",
+            "en": "Calm / Soft",
+            "zh": "平静 / 柔和"
+        },
+        "dramatic": {
+            "ko": "극적 / 감성",
+            "en": "Dramatic / Emotional",
+            "zh": "戏剧性 / 感性"
+        },
+        "groovy": {
+            "ko": "그루비 / 기분 상승",
+            "en": "Groovy / Uplifting",
+            "zh": "富有律动感 / 振奋"
+        },
+        "neutral": {
+            "ko": "중립 / 균형",
+            "en": "Neutral / Balanced",
+            "zh": "中性 / 平衡"
+        }
+    }
+
+    key_lower = music_key.lower() if music_key else ""
     is_minor = "minor" in key_lower
     is_major = "major" in key_lower
 
     if is_minor and energy_score < 55 and tempo <= 115:
-        return "Melancholic / Emotional"
+        mood_key = "melancholic"
 
     elif is_major and energy_score >= 65 and tempo >= 110:
-        return "Bright / Energetic"
+        mood_key = "bright"
 
     elif energy_score >= 75 and spectral_centroid >= 2500:
-        return "Powerful / Intense"
+        mood_key = "powerful"
 
     elif energy_score < 45 and tempo < 90:
-        return "Calm / Soft"
+        mood_key = "calm"
 
     elif is_minor and energy_score >= 60:
-        return "Dramatic / Emotional"
+        mood_key = "dramatic"
 
     elif danceability >= 60 and energy_score >= 60:
-        return "Groovy / Uplifting"
+        mood_key = "groovy"
 
     else:
-        return "Neutral / Balanced"
+        mood_key = "neutral"
+
+    return mood_text[mood_key][lang]
 
 
 # =============================
@@ -1050,9 +1205,9 @@ def analyze_pitch_torchcrepe(vocal_file):
     semitones = highest_midi - lowest_midi
 
     result = {
-        "lowest_pitch_hz": round(float(librosa.midi_to_hz(lowest_midi)), 2),
+        "lowest_pitch_hz": round(librosa.midi_to_hz(lowest_midi)),
         "lowest_note": librosa.midi_to_note(lowest_midi),
-        "highest_pitch_hz": round(float(librosa.midi_to_hz(highest_midi)), 2),
+        "highest_pitch_hz": round(librosa.midi_to_hz(highest_midi)),
         "highest_note": librosa.midi_to_note(highest_midi),
         "pitch_range_semitones": int(semitones),
         "pitch_range_octaves": round(semitones / 12, 2)
@@ -1077,106 +1232,73 @@ def load_ast_model():
     return processor, model
 
 
-def detect_background_instruments_ast(
-        background_file,
-        processor,
-        model,
-        threshold=0.008,
-        top_n=10
-    ):
-    audio, sr = librosa.load(background_file, sr=16000, mono=True)
+def detect_background_instruments_ast(background_file, processor, model, threshold=0.008, top_n=10, lang="ko"):
+    if lang not in ("ko", "en", "zh"): lang = "ko"
 
-    inputs = processor(
-        audio,
-        sampling_rate=16000,
-        return_tensors="pt"
-    )
+    audio, _ = librosa.load(background_file, sr=16000, mono=True)
+    inputs = processor(audio, sampling_rate=16000, return_tensors="pt")
 
-    with torch.no_grad():
-        outputs = model(**inputs)
+    with torch.no_grad(): outputs = model(**inputs)
 
-    logits = outputs.logits[0]
-    scores = torch.sigmoid(logits)
-
+    scores = torch.sigmoid(outputs.logits[0])
     id2label = model.config.id2label
 
     instrument_groups = {
-        "Drums / Percussion": [
-            "drum", "drum kit", "snare drum", "bass drum",
-            "cymbal", "percussion", "wood block", "cowbell",
-            "hi-hat", "tabla", "bongo", "conga"
-        ],
-        "Electronic Instruments": [
-            "synthesizer", "drum machine", "sampler", "keyboard"
-        ],
-        "Piano / Keyboard": [
-            "piano", "electric piano", "keyboard"
-        ],
-        "Guitar": [
-            "guitar", "electric guitar", "acoustic guitar"
-        ],
-        "Bass": [
-            "bass guitar", "double bass", "electric bass"
-        ],
-        "Strings": [
-            "violin", "viola", "cello", "string", "harp"
-        ],
-        "Brass": [
-            "trumpet", "trombone", "brass", "horn"
-        ],
-        "Woodwinds": [
-            "flute", "clarinet", "saxophone", "oboe"
-        ],
-        "Organ / Accordion": [
-            "organ", "accordion"
-        ]
+        "drums_percussion": ["drum", "drum kit", "snare drum", "bass drum", "cymbal", 
+                             "percussion", "wood block", "cowbell", "hi-hat", "tabla", 
+                             "bongo", "conga"],
+        "electronic": ["synthesizer", "drum machine", "sampler"],
+        "piano_keyboard": ["piano", "electric piano", "keyboard"],
+        "guitar": ["guitar", "electric guitar", "acoustic guitar"],
+        "bass": ["bass guitar", "double bass", "electric bass"],
+        "strings": ["violin", "viola", "cello", "string", "harp"],
+        "brass": ["trumpet", "trombone", "brass", "horn"],
+        "woodwinds": ["flute", "clarinet", "saxophone", "oboe"],
+        "organ_accordion": ["organ", "accordion"]
+    }
+
+    instrument_text = {
+        "drums_percussion": {"ko": "드럼 / 타악기", "en": "Drums / Percussion", "zh": "鼓 / 打击乐器"},
+        "electronic": {"ko": "전자 악기", "en": "Electronic Instruments", "zh": "电子乐器"},
+        "piano_keyboard": {"ko": "피아노 / 키보드", "en": "Piano / Keyboard", "zh": "钢琴 / 键盘"},
+        "guitar": {"ko": "Guitar", "en": "Guitar", "zh": "吉他"},
+        "bass": {"ko": "Bass", "en": "Bass", "zh": "贝斯"},
+        "strings": {"ko": "현악기", "en": "Strings", "zh": "弦乐器"},
+        "brass": {"ko": "금관악기", "en": "Brass", "zh": "铜管乐器"},
+        "woodwinds": {"ko": "목관악기", "en": "Woodwinds", "zh": "木管乐器"},
+        "organ_accordion": {"ko": "오르간 / 아코디언", "en": "Organ / Accordion", "zh": "风琴 / 手风琴"}
     }
 
     detected_groups = {}
-    top_scores, top_indices = torch.topk(scores, 30)
+    top_scores, top_indices = torch.topk(scores, min(30, len(scores)))
 
     for score, idx in zip(top_scores, top_indices):
         label = id2label[int(idx)]
         score_value = float(score)
-
         label_lower = label.lower()
 
-        for group_name, keywords in instrument_groups.items():
-            if any(keyword in label_lower for keyword in keywords):
-                if group_name not in detected_groups:
-                    detected_groups[group_name] = {
-                        "instrument": group_name,
-                        "score": score_value,
-                        "percentage": round(score_value * 100, 1),
-                        "matched_labels": [label]
-                    }
-                else:
-                    if score_value > detected_groups[group_name]["score"]:
-                        detected_groups[group_name]["score"] = score_value
-                        detected_groups[group_name]["percentage"] = round(
-                            score_value * 100,
-                            1
-                        )
+        for group_key, keywords in instrument_groups.items():
+            if not any(keyword in label_lower for keyword in keywords): continue
 
-                    detected_groups[group_name]["matched_labels"].append(label)
+            if group_key not in detected_groups:
+                detected_groups[group_key] = {
+                    "instrument": instrument_text[group_key][lang],
+                    "instrument_key": group_key,
+                    "score": score_value,
+                    "percentage": round(score_value * 100, 1),
+                    "matched_labels": [label]
+                }
+            else:
+                if score_value > detected_groups[group_key]["score"]:
+                    detected_groups[group_key]["score"] = score_value
+                    detected_groups[group_key]["percentage"] = round(score_value * 100, 1)
 
-    detected = [
-        info for info in detected_groups.values()
-        if info["score"] >= threshold
-    ]
+                detected_groups[group_key]["matched_labels"].append(label)
 
-    detected = sorted(
-        detected,
-        key=lambda x: x["score"],
-        reverse=True
-    )
+    detected = [info for info in detected_groups.values() if info["score"] >= threshold]
+    detected = sorted(detected, key=lambda item: item["score"], reverse=True)[:top_n]
 
-    detected = detected[:top_n]
-
-    return {
-        "instrument_count": len(detected),
-        "instruments": detected
-    }
+    return {"instrument_count": len(detected), "instruments": detected}
 
 
 # =============================
@@ -1190,12 +1312,17 @@ def analyze_one_music_file(
         sample_rate=44100,
         file_index=None,
         progress_callback=None,
-        job_id=None
+        job_id=None,
+        **kwargs
     ):
     music_name = Path(audio_file).stem
+    lang = kwargs.get("lang", "ko")
+    if lang not in UPDATE_STEP_TEXT:
+        lang = "ko"
+    step_text = UPDATE_STEP_TEXT[lang]
 
     print("\n" + "=" * 100)
-    if file_index is not None:
+    if file_index is not None: 
         print(f"{file_index}. {music_name}")
     else:
         print(music_name)
@@ -1209,15 +1336,15 @@ def analyze_one_music_file(
         if progress_callback:
             progress_callback(percent, step)
 
-    update_step(10, f"{file_index}번째 음악 오디오 원곡 분석 중")
+    update_step(10, step_text["original_analyzing"])
 
     start = time.perf_counter()
-    original_info = analyze_original_audio_librosa(audio_file, sample_rate)
+    original_info = analyze_original_audio_librosa(audio_file, sample_rate, lang)
     original_time = time.perf_counter() - start
 
     check_cancelled(job_id)
 
-    update_step(25, f"{file_index}번째 음악 오디오 원곡 분석 완료")
+    update_step(25, step_text["original_completed"])
 
     print(f"Duration: {original_info['duration']} sec")
     print(f"Duration (min:sec): {original_info['duration_text']}")
@@ -1225,7 +1352,7 @@ def analyze_one_music_file(
     print(f"Key Confidence: {original_info['key_confidence']}")
 
     tempo = original_info["tempo"]
-    tempo_info = get_tempo_info(tempo)
+    tempo_info = get_tempo_info(tempo,lang)
 
     print(f"Tempo: {tempo} bpm")
     print(f"Tempo Name: {tempo_info['tempo_name']}")
@@ -1253,16 +1380,14 @@ def analyze_one_music_file(
     print(f"Danceability: {original_info['danceability']}")
     print("-" * 100)
 
-    update_step(35, f"{file_index}번째 음악 오디오 보컬/배경음악 분리 중")
+    update_step(35, step_text["separating"])
 
     def demucs_progress_callback(demucs_percent):
         mapped_percent = 35 + int((demucs_percent / 100) * 20)
         mapped_percent = max(35, min(55, mapped_percent))
 
-        update_step(
-            mapped_percent,
-            f"{file_index}번째 음악 오디오 보컬/배경음악 분리 중 ({demucs_percent}%)"
-        )
+        update_step(mapped_percent, step_text["separating_percent"]+f" ({demucs_percent}%)")
+        # f"{file_index}번째 음악 오디오 보컬/배경음악 분리 중 ({demucs_percent}%)"
 
     start = time.perf_counter()
     separated_files = separate_vocals(
@@ -1278,9 +1403,9 @@ def analyze_one_music_file(
 
     separation_time = time.perf_counter() - start
 
-    update_step(55, f"{file_index}번째 음악 오디오 보컬/배경음악 분리 완료")
+    update_step(55, step_text["separation_completed"])
 
-    update_step(65, f"{file_index}번째 음악 오디오 보컬 피치 분석 중")
+    update_step(65, step_text["pitch_analyzing"])
 
     start = time.perf_counter()
     pitch_range = analyze_pitch_torchcrepe(vocal_file)
@@ -1288,7 +1413,7 @@ def analyze_one_music_file(
 
     check_cancelled(job_id)
 
-    update_step(75, f"{file_index}번째 음악 오디오 보컬 피치 분석 완료")
+    update_step(75, step_text["pitch_completed"])
 
     if pitch_range is not None:
         print(f"Lowest Vocal Pitch: {pitch_range['lowest_pitch_hz']} Hz")
@@ -1302,7 +1427,7 @@ def analyze_one_music_file(
 
     print("-" * 100)
 
-    update_step(85, f"{file_index}번째 음악 오디오 배경 악기 분석 중")
+    update_step(85, step_text["instrument_analyzing"])
 
     start = time.perf_counter()
     instrument_result = detect_background_instruments_ast(
@@ -1310,13 +1435,14 @@ def analyze_one_music_file(
         ast_processor,
         ast_model,
         threshold=0.008,
-        top_n=10
+        top_n=10,
+        lang=lang
     )
     instrument_time = time.perf_counter() - start
 
     check_cancelled(job_id)
 
-    update_step(95, f"{file_index}번째 음악 오디오 결과 저장 중")
+    update_step(95, step_text["saving"])
 
     print(f"Background Instrument Count: {instrument_result['instrument_count']}")
     print("Background Instruments:")
@@ -1385,11 +1511,11 @@ def analyze_one_music_file(
         },
 
         "analysis_time_summary": {
-            "original_audio_analysis_time": round(original_time, 2),
-            "vocal_separation_time": round(separation_time, 2),
-            "vocal_pitch_analysis_time": round(pitch_time, 2),
-            "background_instrument_analysis_time": round(instrument_time, 2),
-            "total_analysis_time": round(total_time, 2)
+            "original_audio_analysis_time": round(original_time),
+            "vocal_separation_time": round(separation_time),
+            "vocal_pitch_analysis_time": round(pitch_time),
+            "background_instrument_analysis_time": round(instrument_time),
+            "total_analysis_time": round(total_time)
         }
     }
 
@@ -1407,7 +1533,7 @@ def analyze_one_music_file(
     if job_id:
         mark_analysis_job_success(job_id, track_id)
 
-    update_step(100, f"{file_index}번째 음악 오디오 분석 완료")
+    update_step(100, step_text["analysis_completed"])
 
     print(f"Analysis result saved: {json_path.resolve()}")
     print(f"Analysis result saved to DB. track_id={track_id}")
@@ -1432,7 +1558,7 @@ def get_ast_model():
     return _AST_PROCESSOR, _AST_MODEL
 
 
-def run_uploaded_analysis(audio_file_paths, sample_rate=44100, job_id=None):
+def run_uploaded_analysis(audio_file_paths, sample_rate=44100, job_id=None, **kwargs):
     if isinstance(audio_file_paths, str):
         audio_files = [audio_file_paths]
     else:
@@ -1444,11 +1570,12 @@ def run_uploaded_analysis(audio_file_paths, sample_rate=44100, job_id=None):
     return music_audio_analysis(
         audio_files,
         sample_rate,
-        job_id=job_id
+        job_id=job_id,
+        lang=kwargs.get("lang", "ko")
     )
 
 
-def music_audio_analysis(audio_files, sample_rate=44100, job_id=None):
+def music_audio_analysis(audio_files, sample_rate=44100, job_id=None, **kwargs):
     all_results = []
     failed_indexes = set()
 
@@ -1458,8 +1585,9 @@ def music_audio_analysis(audio_files, sample_rate=44100, job_id=None):
 
     total_files = len(audio_files)
     processed_count = 0
+    lang = kwargs.get("lang", "ko")
 
-    init_progress(job_id, audio_files)
+    init_progress(job_id, audio_files,**kwargs)
     check_cancelled(job_id)
 
     for index, audio_file in enumerate(audio_files, start=1):
@@ -1503,7 +1631,8 @@ def music_audio_analysis(audio_files, sample_rate=44100, job_id=None):
                 sample_rate,
                 file_index=index,
                 progress_callback=update_current_file,
-                job_id=job_id
+                job_id=job_id,
+                lang=lang
             )
 
             all_results.append(result)
@@ -1633,12 +1762,12 @@ def music_audio_analysis(audio_files, sample_rate=44100, job_id=None):
 
         "total_music_duration": {
             "seconds": round(total_music_duration, 2),
-            "text": f"{music_minutes} min {music_seconds} sec"
+            "text": format_duration_text(total_music_duration, lang)
         },
 
         "total_program_execution_time": {
             "seconds": round(program_total_time, 2),
-            "text": f"{minutes} min {seconds} sec"
+            "text": format_duration_text(program_total_time, lang)
         },
 
         "results": all_results
@@ -1652,7 +1781,7 @@ def music_audio_analysis(audio_files, sample_rate=44100, job_id=None):
         "total_files": total_files,
         "current_file_index": 0,
         "processed_count": processed_count,
-        "current_step": "전체 분석 완료",
+        "current_step": "전체 분석 완료" if lang == "ko" else "Analysis Completed" if lang == "en" else "分析完成",
         "files": make_progress_files(
             audio_files,
             current_index=0,

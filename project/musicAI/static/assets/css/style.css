@@ -1208,7 +1208,7 @@
 
 .vocal-analysis-card .metric-group p,
 .vocal-analysis-card .vocal-metric-right p {
-  grid-template-columns: 18px minmax(0, 1fr) minmax(86px, 116px);
+  grid-template-columns: 18px minmax(0, 1fr) minmax(74px, 96px);
   gap: 8px;
 }
 

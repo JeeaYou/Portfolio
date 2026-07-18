@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify, request, current_app
+from flask import Blueprint, render_template, jsonify, request, current_app, g
 from werkzeug.utils import secure_filename
 from pathlib import Path
 import time
@@ -15,7 +15,6 @@ bp = Blueprint(
 )
 
 ALLOWED_EXTENSIONS = {"mp3", "wav"}
-
 
 def register_into(app):
     """
@@ -84,13 +83,15 @@ def start_analysis():
 
         job_id = create_analysis_job()
 
+        lang = getattr(g, "lang", "ko")
+
         from .service_musicAI import (
             init_progress,
             run_uploaded_analysis,
             write_progress
         )
 
-        init_progress(job_id, saved_paths)
+        init_progress(job_id, saved_paths, lang=lang)
 
         flask_app = current_app._get_current_object()
 
@@ -100,7 +101,8 @@ def start_analysis():
                     result = run_uploaded_analysis(
                         saved_paths,
                         sample_rate=44100,
-                        job_id=job_id
+                        job_id=job_id,
+                        lang=lang
                     )
 
                     # 취소된 작업은 service_musicAI.py에서 cancelled로 처리함.
