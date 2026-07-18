@@ -168,6 +168,7 @@ a {
 
 .home-main {
   width: 100%;
+  padding-bottom: 50px;
 }
 
 .portfolio-hero, .featured-project-section, .other-projects-section, .contact-strip, .portfolio-footer {

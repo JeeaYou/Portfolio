@@ -1250,9 +1250,9 @@ body {
 }
 
 /* footer가 본문을 가리지 않게 */
-body {
+/* body {
   padding-bottom: 64px;
-}
+} */
 
 @media screen and (max-width: 760px) {
   .t-footer {
