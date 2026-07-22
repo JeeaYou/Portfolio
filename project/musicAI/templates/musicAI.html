@@ -4,6 +4,7 @@
   {% include "components/header.html" %}
   <link rel="stylesheet" href="{{ url_for('musicAI.static', filename='assets/css/style.css') }}">
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 {% endblock %}
 
 {% block content %}
@@ -42,7 +43,16 @@
                       </div>
 {% endmacro %}
 
-
+{% macro metric_row(icon, label, field, help_key) %}
+                        <p class="metric-row">
+                          <span aria-hidden="true">{{ icon }}</span>
+                          <b class="metric-label" tabindex="0" aria-describedby="tooltip-{{ field }}">
+                            {{ label }}
+                            <span id="tooltip-{{ field }}" class="metric-tooltip" role="tooltip">{{ t(help_key) }}</span>
+                          </b>
+                          <strong data-field="{{ field }}"></strong>
+                        </p>
+{% endmacro %}
 <div class="t-shell music-ai-shell">
   {% include "components/sidebar.html" %}
 
@@ -205,46 +215,45 @@
 
                     <div class="metric-columns original-metric-columns">
                       <div class="metric-group original-metric-left">
-                        <p><span>♬</span><b>{{ t('musicai_metric_key_confidence') }}</b> <strong data-field="key_confidence"></strong></p>
-                        <p><span>◎</span><b>{{ t('musicai_metric_tempo_category') }}</b> <strong data-field="tempo_category"></strong></p>
-                        <p><span>◷</span><b>{{ t('musicai_metric_tempo_description') }}</b> <strong data-field="tempo_description"></strong></p>
+                        {{ metric_row('♬', t('musicai_metric_key_confidence'), 'key_confidence', 'musicai_help_key_confidence') }}
+                        {{ metric_row('◎', t('musicai_metric_tempo_category'), 'tempo_category', 'musicai_help_tempo_category') }}
+                        {{ metric_row('◷', t('musicai_metric_tempo_description'), 'tempo_description', 'musicai_help_tempo_description') }}
 
                         <hr>
 
-                        <p><span>♪</span><b>{{ t('musicai_metric_rhythm_pattern') }}</b> <strong data-field="rhythm_pattern_detail"></strong></p>
-                        <p><span>♯</span><b>{{ t('musicai_metric_beat_count') }}</b> <strong data-field="beat_count"></strong></p>
-                        <p><span>✦</span><b>{{ t('musicai_metric_beat_strength') }}</b> <strong data-field="beat_strength"></strong></p>
-                        <p><span>⌘</span><b>{{ t('musicai_metric_beat_regularity') }}</b> <strong data-field="beat_regularity"></strong></p>
+                        {{ metric_row('♪', t('musicai_metric_rhythm_pattern'), 'rhythm_pattern_detail', 'musicai_help_rhythm_pattern') }}
+                        {{ metric_row('♯', t('musicai_metric_beat_count'), 'beat_count', 'musicai_help_beat_count') }}
+                        {{ metric_row('✦', t('musicai_metric_beat_strength'), 'beat_strength', 'musicai_help_beat_strength') }}
+                        {{ metric_row('⌘', t('musicai_metric_beat_regularity'), 'beat_regularity', 'musicai_help_beat_regularity') }}
 
                         <hr>
 
-                        <p><span>✦</span><b>{{ t('musicai_metric_energy') }}</b> <strong data-field="energy_level"></strong></p>
-                        <p><span>◇</span><b>{{ t('musicai_metric_energy_score') }}</b> <strong data-field="energy_score"></strong></p>
-                        <p><span>⌁</span><b>{{ t('musicai_metric_rms') }}</b> <strong data-field="rms"></strong></p>
-                        <p><span>◎</span><b>{{ t('musicai_metric_mood') }}</b> <strong data-field="mood_detail"></strong></p>
+                        {{ metric_row('✦', t('musicai_metric_energy'), 'energy_level', 'musicai_help_energy') }}
+                        {{ metric_row('◇', t('musicai_metric_energy_score'), 'energy_score', 'musicai_help_energy_score') }}
+                        <!-- {{ metric_row('⌁', t('musicai_metric_rms'), 'rms', 'musicai_help_rms') }} -->
+                        {{ metric_row('◎', t('musicai_metric_mood'), 'mood_detail', 'musicai_help_mood') }}
                       </div>
 
                       <div class="metric-group original-metric-right">
-                        <p><span>✣</span><b>{{ t('musicai_metric_dynamic_range') }}</b> <strong data-field="dynamic_range"></strong></p>
-                        <p><span>♫</span><b>{{ t('musicai_metric_hnr') }}</b> <strong data-field="harmonic_to_noise_ratio"></strong></p>
-                        <p><span>♬</span><b>{{ t('musicai_metric_danceability') }}</b> <strong data-field="danceability"></strong></p>
+                        {{ metric_row('✣', t('musicai_metric_dynamic_range'), 'dynamic_range', 'musicai_help_dynamic_range') }}
+                        {{ metric_row('♬', t('musicai_metric_danceability'), 'danceability', 'musicai_help_danceability') }}
+                        {{ metric_row('♫', t('musicai_metric_hnr'), 'harmonic_to_noise_ratio', 'musicai_help_hnr') }}
+                        <hr>
+
+                        {{ metric_row('⌁', t('musicai_metric_spectral_centroid'), 'spectral_centroid', 'musicai_help_spectral_centroid') }}
+                        <!-- {{ metric_row('⌁', t('musicai_metric_spectral_bandwidth'), 'spectral_bandwidth', 'musicai_help_spectral_bandwidth') }} -->
+                        <!-- {{ metric_row('⌁', t('musicai_metric_spectral_rolloff'), 'spectral_rolloff', 'musicai_help_spectral_rolloff') }} -->
+                        {{ metric_row('⌁', t('musicai_metric_spectral_flatness'), 'spectral_flatness', 'musicai_help_spectral_flatness') }}
+                        {{ metric_row('⌁', t('musicai_metric_spectral_flux'), 'spectral_flux', 'musicai_help_spectral_flux') }}
+                        {{ metric_row('⌁', t('musicai_metric_zero_crossing_rate'), 'zero_crossing_rate', 'musicai_help_zero_crossing_rate') }}
 
                         <hr>
 
-                        <p><span>⌁</span><b>{{ t('musicai_metric_spectral_centroid') }}</b> <strong data-field="spectral_centroid"></strong></p>
-                        <p><span>⌁</span><b>{{ t('musicai_metric_spectral_bandwidth') }}</b> <strong data-field="spectral_bandwidth"></strong></p>
-                        <p><span>⌁</span><b>{{ t('musicai_metric_spectral_rolloff') }}</b> <strong data-field="spectral_rolloff"></strong></p>
-                        <p><span>⌁</span><b>{{ t('musicai_metric_spectral_flatness') }}</b> <strong data-field="spectral_flatness"></strong></p>
-                        <p><span>⌁</span><b>{{ t('musicai_metric_spectral_flux') }}</b> <strong data-field="spectral_flux"></strong></p>
-                        <p><span>⌁</span><b>{{ t('musicai_metric_zero_crossing_rate') }}</b> <strong data-field="zero_crossing_rate"></strong></p>
-
-                        <hr>
-
-                        <p><span>⌁</span><b>{{ t('musicai_metric_mfcc_mean') }}</b> <strong data-field="mfcc_mean"></strong></p>
-                        <p><span>⌁</span><b>{{ t('musicai_metric_mfcc_std') }}</b> <strong data-field="mfcc_std"></strong></p>
-                        <p><span>⌁</span><b>{{ t('musicai_metric_spectral_contrast') }}</b> <strong data-field="spectral_contrast_mean"></strong></p>
-                        <p><span>⌁</span><b>{{ t('musicai_metric_chroma_mean') }}</b> <strong data-field="chroma_mean"></strong></p>
-                        <p><span>⌁</span><b>{{ t('musicai_metric_tonnetz_mean') }}</b> <strong data-field="tonnetz_mean"></strong></p>
+                        <!-- {{ metric_row('⌁', t('musicai_metric_mfcc_mean'), 'mfcc_mean', 'musicai_help_mfcc_mean') }} -->
+                        <!-- {{ metric_row('⌁', t('musicai_metric_mfcc_std'), 'mfcc_std', 'musicai_help_mfcc_std') }} -->
+                        <!-- {{ metric_row('⌁', t('musicai_metric_spectral_contrast'), 'spectral_contrast_mean', 'musicai_help_spectral_contrast') }} -->
+                        {{ metric_row('⌁', t('musicai_metric_chroma_mean'), 'chroma_mean', 'musicai_help_chroma_mean') }}
+                        <!-- {{ metric_row('⌁', t('musicai_metric_tonnetz_mean'), 'tonnetz_mean', 'musicai_help_tonnetz_mean') }} -->
                       </div>
                     </div>
                   </section>
@@ -255,14 +264,14 @@
 
                       <div class="metric-columns vocal-metric-columns">
                         <div class="metric-group vocal-metric-left">
-                          <p><span>✦</span><b>{{ t('musicai_vocal_presence') }}</b> <strong data-field="vocal_presence"></strong></p>
-                          <p><span>↟</span><b>{{ t('musicai_vocal_pitch_range') }}</b> <strong data-field="pitch_range_semitones"></strong></p>
-                          <p><span>♬</span><b>{{ t('musicai_vocal_octaves') }}</b> <strong data-field="pitch_range_octaves"></strong></p>
+                          {{ metric_row('✦', t('musicai_vocal_presence'), 'vocal_presence', 'musicai_help_vocal_presence') }}
+                          {{ metric_row('♬', t('musicai_vocal_octaves'), 'pitch_range_octaves', 'musicai_help_vocal_octaves') }}
+                          {{ metric_row('↟', t('musicai_vocal_pitch_range'), 'pitch_range_semitones', 'musicai_help_vocal_pitch_range') }}
                         </div>
 
                         <div class="metric-group vocal-metric-right">
-                          <p><span>↡</span><b>{{ t('musicai_vocal_min_pitch') }}</b> <strong data-field="vocal_pitch_min"></strong></p>
-                          <p><span>↟</span><b>{{ t('musicai_vocal_max_pitch') }}</b> <strong data-field="vocal_pitch_max"></strong></p>
+                          {{ metric_row('↡', t('musicai_vocal_min_pitch'), 'vocal_pitch_min', 'musicai_help_vocal_min_pitch') }}
+                          {{ metric_row('↟', t('musicai_vocal_max_pitch'), 'vocal_pitch_max', 'musicai_help_vocal_max_pitch') }}
                         </div>
                       </div>
                     </section>
@@ -311,7 +320,6 @@
           </section>
         </section>
       {% endif %}
-
 
       {% if cat.category_id == 430 %}
         <section id="cat-{{ cat.category_id }}" class="music-ai-anchor-section">
@@ -631,13 +639,12 @@ document.addEventListener("DOMContentLoaded", function () {
     return `${value}${suffix}`;
   }
 
-  function displayArrayPreview(values, limit = 6) {
+  function displayArrayPreview(values) {
     if (!Array.isArray(values) || values.length === 0) {
       return "-";
     }
 
     const preview = values
-      .slice(0, limit)
       .map(function (value) {
         const numberValue = Number(value);
 
@@ -649,7 +656,7 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .join(", ");
 
-    return values.length > limit ? `${preview} ...` : preview;
+    return preview;
   }
 
   function setField(root, fieldName, value, suffix = "") {
@@ -1440,25 +1447,25 @@ if (sidebarSections.length > 0) {
 
     setField(card, "energy_level", audio.energy_level);
     setField(card, "energy_score", audio.energy_score);
-    setField(card, "rms", audio.rms);
+    // setField(card, "rms", audio.rms); 
     setField(card, "mood_detail", audio.mood);
 
-    setField(card, "spectral_centroid", audio.spectral_centroid, " Hz");
-    setField(card, "spectral_bandwidth", audio.spectral_bandwidth, " Hz");
-    setField(card, "spectral_rolloff", audio.spectral_rolloff, " Hz");
+    setField(card, "spectral_centroid", audio.spectral_centroid);
+    // setField(card, "spectral_bandwidth", audio.spectral_bandwidth);
+    // setField(card, "spectral_rolloff", audio.spectral_rolloff);
     setField(card, "spectral_flatness", audio.spectral_flatness);
     setField(card, "spectral_flux", audio.spectral_flux);
     setField(card, "zero_crossing_rate", audio.zero_crossing_rate);
 
-    setField(card, "dynamic_range", audio.dynamic_range, " dB");
-    setField(card, "harmonic_to_noise_ratio", audio.harmonic_to_noise_ratio, " dB");
+    setField(card, "dynamic_range", audio.dynamic_range);
+    setField(card, "harmonic_to_noise_ratio", audio.harmonic_to_noise_ratio);
     setField(card, "danceability", audio.danceability);
 
-    setField(card, "mfcc_mean", displayArrayPreview(audio.mfcc_mean));
-    setField(card, "mfcc_std", displayArrayPreview(audio.mfcc_std));
-    setField(card, "spectral_contrast_mean", displayArrayPreview(audio.spectral_contrast_mean));
+    // setField(card, "mfcc_mean", displayArrayPreview(audio.mfcc_mean));
+    // setField(card, "mfcc_std", displayArrayPreview(audio.mfcc_std));
+    // setField(card, "spectral_contrast_mean", displayArrayPreview(audio.spectral_contrast_mean));
     setField(card, "chroma_mean", displayArrayPreview(audio.chroma_mean));
-    setField(card, "tonnetz_mean", displayArrayPreview(audio.tonnetz_mean));
+    // setField(card, "tonnetz_mean", displayArrayPreview(audio.tonnetz_mean));
 
     const pitchResult = card.querySelector('[data-section="pitch_result"]');
     const pitchEmpty = card.querySelector('[data-section="pitch_empty"]');
@@ -1650,13 +1657,9 @@ if (sidebarSections.length > 0) {
   }
 
   function toNumber(value, defaultValue = 0) {
+    if (value === null || value === undefined || value === "") return defaultValue;
     const numberValue = Number(value);
-
-    if (Number.isFinite(numberValue)) {
-      return numberValue;
-    }
-
-    return defaultValue;
+    return Number.isFinite(numberValue) ? numberValue : defaultValue;
   }
 
   function clamp(value, min, max) {
@@ -2062,10 +2065,10 @@ if (sidebarSections.length > 0) {
     const audioList = getAudioList(tracks);
 
     const avgEnergy = clamp(getAverageValue(audioList, "energy_score"), 0, 100);
-    const avgDanceability = clamp(getAverageValue(audioList, "danceability"), 0, 100);
-    const avgBrightness = clamp((getAverageValue(audioList, "spectral_centroid") / 4000) * 100, 0, 100);
-    const avgDynamics = clamp((getAverageValue(audioList, "dynamic_range") / 30) * 100, 0, 100);
-    const avgClarity = clamp((getAverageValue(audioList, "harmonic_to_noise_ratio") / 20) * 100, 0, 100);
+    const avgDanceability = clamp(getAverageValue(audioList, "danceability_value"), 0, 100);
+    const avgBrightness = clamp((getAverageValue(audioList, "spectral_centroid_value") / 4000) * 100, 0, 100);
+    const avgDynamics = clamp((getAverageValue(audioList, "dynamic_range_value") / 30) * 100, 0, 100);
+    const avgClarity = clamp((getAverageValue(audioList, "harmonic_to_noise_ratio_value") / 20) * 100, 0, 100);
 
     songDnaChart = new Chart(canvas, {
       type: "radar",

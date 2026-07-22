@@ -2247,3 +2247,129 @@
 .t-nav-list a[aria-current="page"] i {
   color: var(--primary);
 }
+
+/* =========================
+   Original audio metric tooltip
+   항목명 hover/focus 시 설명 표시
+========================= */
+
+.original-analysis-card,
+.original-metric-columns,
+.original-metric-columns .metric-group,
+.vocal-analysis-card,
+.vocal-metric-columns,
+.vocal-metric-columns .metric-group {
+  overflow: visible;
+}
+
+.original-analysis-card .metric-row,
+.vocal-analysis-card .metric-row {
+  position: relative;
+}
+
+.original-analysis-card .metric-label,
+.vocal-analysis-card .metric-label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: help;
+  outline: none;
+}
+
+.original-analysis-card .metric-tooltip,
+.vocal-analysis-card .metric-tooltip {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 10px);
+  z-index: 1000;
+  width: max-content;
+  max-width: 290px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: #0f172a;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.55;
+  text-align: left;
+  white-space: normal;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.24);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(5px);
+  transition:
+    opacity 0.18s ease,
+    visibility 0.18s ease,
+    transform 0.18s ease;
+}
+
+.original-analysis-card .metric-tooltip::after,
+.vocal-analysis-card .metric-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 18px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: #0f172a transparent transparent transparent;
+}
+
+.original-analysis-card .original-metric-right .metric-tooltip,
+.vocal-analysis-card .vocal-metric-right .metric-tooltip {
+  right: 0;
+  left: auto;
+}
+
+.original-analysis-card .original-metric-right .metric-tooltip::after,
+.vocal-analysis-card .vocal-metric-right .metric-tooltip::after {
+  right: 18px;
+  left: auto;
+}
+
+.original-analysis-card .metric-label:hover .metric-tooltip,
+.original-analysis-card .metric-label:focus .metric-tooltip,
+.original-analysis-card .metric-label:focus-visible .metric-tooltip,
+.vocal-analysis-card .metric-label:hover .metric-tooltip,
+.vocal-analysis-card .metric-label:focus .metric-tooltip,
+.vocal-analysis-card .metric-label:focus-visible .metric-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.original-analysis-card .metric-label:hover,
+.original-analysis-card .metric-label:focus,
+.original-analysis-card .metric-label:focus-visible,
+.vocal-analysis-card .metric-label:hover,
+.vocal-analysis-card .metric-label:focus,
+.vocal-analysis-card .metric-label:focus-visible {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
+}
+
+.original-analysis-card .metric-label:focus-visible,
+.vocal-analysis-card .metric-label:focus-visible {
+  border-radius: 4px;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+}
+
+@media (max-width: 700px) {
+  .original-analysis-card .metric-tooltip,
+  .original-analysis-card .original-metric-right .metric-tooltip,
+  .vocal-analysis-card .metric-tooltip,
+  .vocal-analysis-card .vocal-metric-right .metric-tooltip {
+    right: auto;
+    left: 0;
+    width: 230px;
+    max-width: 72vw;
+  }
+
+  .original-analysis-card .original-metric-right .metric-tooltip::after,
+  .vocal-analysis-card .vocal-metric-right .metric-tooltip::after {
+    right: auto;
+    left: 18px;
+  }
+}

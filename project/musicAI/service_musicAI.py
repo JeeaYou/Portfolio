@@ -395,9 +395,7 @@ def analyze_original_audio_librosa(audio_file, sample_rate=44100, lang="ko"):
     # -----------------------------
     # Key / Chroma
     # -----------------------------
-    chroma = librosa.feature.chroma_cqt(y=y_trimmed, sr=sr)
-    chroma_mean = np.mean(chroma, axis=1)
-    chroma_mean = chroma_mean / (np.linalg.norm(chroma_mean) + 1e-8)
+    chroma_mean = analyze_chroma_profile(y_trimmed, sr)
 
     best_score = -1
     best_key = None
@@ -410,8 +408,8 @@ def analyze_original_audio_librosa(audio_file, sample_rate=44100, lang="ko"):
         major_profile = major_profile / np.linalg.norm(major_profile)
         minor_profile = minor_profile / np.linalg.norm(minor_profile)
 
-        major_score = np.dot(chroma_mean, major_profile)
-        minor_score = np.dot(chroma_mean, minor_profile)
+        major_score = np.dot(chroma_mean["value"], major_profile)
+        minor_score = np.dot(chroma_mean["value"], minor_profile)
 
         if major_score > best_score:
             best_score = major_score
@@ -429,17 +427,11 @@ def analyze_original_audio_librosa(audio_file, sample_rate=44100, lang="ko"):
     # Tempo / Beat
     # -----------------------------
     tempo, beats = librosa.beat.beat_track(y=y_trimmed, sr=sr)
-    tempo = float(np.asarray(tempo).flatten()[0])
-    tempo = round(tempo)
+    tempo = round(np.asarray(tempo).flatten()[0])
 
     onset_env = librosa.onset.onset_strength(y=y_trimmed, sr=sr)
-    beat_strength = float(np.mean(onset_env))
-
-    beat_regularity = (
-        1.0 / (np.std(np.diff(beats)) + 1e-6)
-        if len(beats) > 2
-        else 0
-    )
+    beat_strength = analyze_beat_strength(float(np.mean(onset_env)), lang)
+    beat_regularity = analyze_beat_regularity(beats, lang)
 
     rhythm_pattern = estimate_rhythm_pattern(
         beats=beats,
@@ -468,8 +460,7 @@ def analyze_original_audio_librosa(audio_file, sample_rate=44100, lang="ko"):
     # -----------------------------
     # Spectral Features
     # -----------------------------
-    spectral_centroid = librosa.feature.spectral_centroid(y=y_trimmed, sr=sr)[0]
-    avg_spectral_centroid = float(np.mean(spectral_centroid))
+    spectral_centroid = analyze_spectral_centroid(y_trimmed, sr, lang)
 
     spectral_bandwidth = librosa.feature.spectral_bandwidth(y=y_trimmed, sr=sr)[0]
     avg_spectral_bandwidth = float(np.mean(spectral_bandwidth))
@@ -477,17 +468,14 @@ def analyze_original_audio_librosa(audio_file, sample_rate=44100, lang="ko"):
     spectral_rolloff = librosa.feature.spectral_rolloff(y=y_trimmed, sr=sr)[0]
     avg_spectral_rolloff = float(np.mean(spectral_rolloff))
 
-    spectral_flatness = librosa.feature.spectral_flatness(y=y_trimmed)[0]
-    avg_spectral_flatness = float(np.mean(spectral_flatness))
+    spectral_flatness = analyze_spectral_flatness(y_trimmed, lang)
 
-    zero_crossing = librosa.feature.zero_crossing_rate(y=y_trimmed)[0]
-    avg_zero_crossing_rate = float(np.mean(zero_crossing))
+    zero_crossing = analyze_zero_crossing_rate(y_trimmed,lang)
 
     stft = np.abs(librosa.stft(y_trimmed))
     stft_norm = stft / (np.sum(stft, axis=0, keepdims=True) + 1e-8)
 
-    spectral_flux = np.sqrt(np.sum(np.diff(stft_norm, axis=1) ** 2, axis=0))
-    avg_spectral_flux = float(np.mean(spectral_flux))
+    spectral_flux = analyze_spectral_flux(stft_norm, lang)
 
     spectral_contrast = librosa.feature.spectral_contrast(y=y_trimmed, sr=sr)
     spectral_contrast_mean = np.mean(spectral_contrast, axis=1)
@@ -513,49 +501,33 @@ def analyze_original_audio_librosa(audio_file, sample_rate=44100, lang="ko"):
     # Dynamic Range / HNR
     # -----------------------------
     rms_db_frames = librosa.amplitude_to_db(rms, ref=np.max)
-    dynamic_range = (np.percentile(rms_db_frames, 95) - np.percentile(rms_db_frames, 10))
+    dynamic_range = analyze_dynamic_range((np.percentile(rms_db_frames, 95) - np.percentile(rms_db_frames, 10)), lang)
 
-    try:
-        snd = parselmouth.Sound(audio_file)
-        harmonicity = call(
-            snd,
-            "To Harmonicity (cc)",
-            0.01,
-            75,
-            0.1,
-            1.0
-        )
-        hnr = call(harmonicity, "Get mean", 0, 0)
-    except Exception:
-        hnr = None
-
+    hrn = analyze_vocal_hnr(audio_file,lang)
+    
     # -----------------------------
     # Danceability / Mood / Genre
     # -----------------------------
     tempo_score = 1.0 - min(abs(tempo - 120) / 120, 1.0)
 
-    danceability = (
-        0.4 * tempo_score
-        + 0.3 * min(beat_strength / 5, 1.0)
-        + 0.3 * min(beat_regularity / 10, 1.0)
-    ) * 100
+    danceability = analyze_danceability(tempo_score, beat_strength["value"], beat_regularity["value"], lang)
 
     mood = estimate_mood(
         music_key=music_key,
         tempo=tempo,
         energy_score=energy_score,
-        spectral_centroid=avg_spectral_centroid,
-        danceability=danceability,
+        spectral_centroid=spectral_centroid["value"],
+        danceability=danceability["value"],
         lang=lang
     )
 
     genre = estimate_genre(
         bpm=tempo,
         energy_score=energy_score,
-        spectral_centroid=avg_spectral_centroid,
-        zero_crossing_rate=avg_zero_crossing_rate,
-        spectral_flatness=avg_spectral_flatness,
-        danceability=danceability,
+        spectral_centroid=spectral_centroid["value"],
+        zero_crossing_rate=zero_crossing["value"],
+        spectral_flatness=spectral_flatness["value"],
+        danceability=danceability["value"],
         lang=lang
     )
 
@@ -570,32 +542,38 @@ def analyze_original_audio_librosa(audio_file, sample_rate=44100, lang="ko"):
         "tempo": tempo,
         "rhythm_pattern": rhythm_pattern,
         "beat_count": int(len(beats)),
-        "beat_strength": round(float(beat_strength), 5),
-        "beat_regularity": round(float(beat_regularity), 5),
+        "beat_strength": beat_strength["text"],
+        "beat_regularity": beat_regularity["text"],
 
-        "energy_score": round(float(energy_score), 2),
+        "energy_score": int(energy_score),
         "energy_level": energy_level,
         "rms": round(avg_rms, 5),
 
         "genre": genre,
         "mood": mood,
 
-        "spectral_centroid": round(avg_spectral_centroid, 2),
+        "spectral_centroid": spectral_centroid["text"],
+        "spectral_centroid_value": spectral_centroid["value"],
         "spectral_bandwidth": round(avg_spectral_bandwidth, 2),
         "spectral_rolloff": round(avg_spectral_rolloff, 2),
-        "spectral_flatness": round(avg_spectral_flatness, 6),
-        "spectral_flux": round(avg_spectral_flux, 5),
-        "zero_crossing_rate": round(avg_zero_crossing_rate, 6),
+        "spectral_flatness": spectral_flatness["text"],
+        "spectral_flux": spectral_flux["text"],
+        "zero_crossing_rate": zero_crossing["text"],
+
 
         "mfcc_mean": to_float_list(mfcc_mean),
         "mfcc_std": to_float_list(mfcc_std),
         "spectral_contrast_mean": to_float_list(spectral_contrast_mean),
-        "chroma_mean": to_float_list(chroma_mean),
+        "chroma_mean": chroma_mean["text"],
         "tonnetz_mean": to_float_list(tonnetz_mean),
 
-        "dynamic_range": round(float(dynamic_range), 2),
-        "hnr": round(float(hnr), 2) if hnr is not None else None,
-        "danceability": round(float(danceability), 2)
+        "dynamic_range": dynamic_range["text"],
+        "dynamic_range_value": round(float(dynamic_range["value"]), 2),
+        "hnr": hrn["text"],
+        "hnr_value": hrn["value_db"],
+        "danceability": danceability["text"],
+        "danceability_value": danceability["value"]
+
     }
 
 
@@ -920,6 +898,470 @@ def estimate_mood(
 
     return mood_text[mood_key][lang]
 
+
+def analyze_beat_strength(beat_strength, lang="ko"):
+
+    if beat_strength < 0.5:
+        beat_strength_text = {
+            "ko": "약함",
+            "en": "Weak",
+            "zh": "弱"
+        }
+    elif beat_strength < 1.0:
+        beat_strength_text = {
+            "ko": "보통",
+            "en": "Moderate",
+            "zh": "中等"
+        }
+    elif beat_strength < 1.5:
+        beat_strength_text = {
+            "ko": "강함",
+            "en": "Strong",
+            "zh": "强"
+        }
+    else:
+        beat_strength_text = {
+            "ko": "매우 강함",
+            "en": "Very Strong",
+            "zh": "非常强"
+        }
+    text = beat_strength_text.get(lang, beat_strength_text['ko'])
+    return {"value": beat_strength, "text": text}
+
+def analyze_beat_regularity(beats, lang="ko"):
+    beat_regularity = 1.0 / (np.std(np.diff(beats)) + 1e-6) if len(beats) > 2 else 0
+
+    if beat_regularity >= 0.92:
+        text_key = "very_steady"
+    elif beat_regularity >= 0.85:
+        text_key = "steady"
+    elif beat_regularity >= 0.70:
+        text_key = "moderate"
+    else:
+        text_key = "irregular"
+
+    texts = {
+        "very_steady": {
+            "ko": "매우 일정함",
+            "en": "Very steady",
+            "zh": "非常稳定"
+        },
+        "steady": {
+            "ko": "일정함",
+            "en": "Steady",
+            "zh": "稳定"
+        },
+        "moderate": {
+            "ko": "",
+            "en": "Moderately varied",
+            "zh": "有一定变化"
+        },
+        "irregular": {
+            "ko": "불규칙함",
+            "en": "Irregular",
+            "zh": "不规则"
+        }
+    }
+
+    return {"value": beat_regularity, "text": texts[text_key][lang]}
+
+def analyze_dynamic_range(dynamic_range, lang="ko"):
+    if lang not in ("ko", "en", "zh"):
+        lang = "ko"
+
+    if dynamic_range < 6:
+        level_key = "very_low"
+    elif dynamic_range < 10:
+        level_key = "low"
+    elif dynamic_range < 18:
+        level_key = "moderate"
+    else:
+        level_key = "high"
+
+    texts = {
+        "very_low": {
+            "ko": "매우 적음",
+            "en": "Very little",
+            "zh": "非常小"
+        },
+        "low": {
+            "ko": "적음",
+            "en": "Little",
+            "zh": "较小"
+        },
+        "moderate": {
+            "ko": "적당함",
+            "en": "Moderate",
+            "zh": "适中"
+        },
+        "high": {
+            "ko": "큼",
+            "en": "Wide",
+            "zh": "较大"
+        }
+    }
+
+    return {"text": texts[level_key][lang], "value": dynamic_range}
+
+def analyze_vocal_hnr(vocal_file, lang="ko"):
+    """
+    분리된 보컬 파일의 HNR을 측정한다.
+
+    반환값:
+        value_db: 분석용 실제 HNR 수치
+        text: 사용자 화면에 표시할 문구
+    """
+    if lang not in ("ko", "en", "zh"):
+        lang = "ko"
+
+    try:
+        sound = parselmouth.Sound(str(vocal_file))
+
+        harmonicity = call(
+            sound,
+            "To Harmonicity (cc)",
+            0.01,   # 시간 간격
+            75,     # 최소 피치
+            0.1,    # silence threshold
+            1.0     # periods per window
+        )
+
+        hnr = float(
+            call(
+                harmonicity,
+                "Get mean",
+                0,
+                0
+            )
+        )
+
+        if not np.isfinite(hnr):
+            raise ValueError("유효하지 않은 HNR 결과")
+
+    except Exception:
+        return {
+            "value_db": None,
+            "text": {
+                "ko": "보컬 선명도를 측정할 수 없음",
+                "en": "Harmonic clarity could not be measured",
+                "zh": "无法测量声音清晰度"
+            }[lang]
+        }
+
+    if hnr < 0:
+        level_key = "noise_dominant"
+    elif hnr < 5:
+        level_key = "low"
+    elif hnr < 10:
+        level_key = "moderate"
+    elif hnr < 20:
+        level_key = "clear"
+    else:
+        level_key = "very_clear"
+
+    texts = {
+        "noise_dominant": {
+            "ko": "잡음 성분이 많음",
+            "en": "Noise components are dominant",
+            "zh": "噪声成分较多"
+        },
+        "low": {
+            "ko": "보컬 선명도가 낮음",
+            "en": "Low harmonic clarity",
+            "zh": "声音清晰度较低"
+        },
+        "moderate": {
+            "ko": "보컬과 잡음이 혼합됨",
+            "en": "Vocal and noisy components are mixed",
+            "zh": "声音与噪声成分混合"
+        },
+        "clear": {
+            "ko": "보컬이 비교적 선명함",
+            "en": "Relatively clear Vocal",
+            "zh": "声音较清晰"
+        },
+        "very_clear": {
+            "ko": "보컬이 매우 선명함",
+            "en": "Very clear Vocal",
+            "zh": "声音非常清晰"
+        }
+    }
+
+    return {
+        "value_db": round(hnr, 2),
+        "text": texts[level_key][lang]
+    }
+
+def analyze_danceability(
+        tempo,
+        beat_strength,
+        beat_regularity,
+        lang="ko"
+    ):
+
+    if lang not in ("ko", "en", "zh"):
+        lang = "ko"
+
+    danceability = (
+            0.4 * tempo
+            + 0.3 * min(beat_strength / 5, 1.0)
+            + 0.3 * min(beat_regularity / 10, 1.0)
+        ) * 100
+
+
+
+    if danceability < 30:
+        level_key = "low"
+    elif danceability < 50:
+        level_key = "slightly_low"
+    elif danceability < 70:
+        level_key = "moderate"
+    elif danceability < 85:
+        level_key = "high"
+    else:
+        level_key = "very_high"
+
+    texts = {
+        "low": {
+            "ko": "낮음",
+            "en": "Low",
+            "zh": "较低"
+        },
+        "slightly_low": {
+            "ko": "다소 낮음",
+            "en": "Slightly low",
+            "zh": "偏低"
+        },
+        "moderate": {
+            "ko": "보통",
+            "en": "Moderate",
+            "zh": "中等"
+        },
+        "high": {
+            "ko": "적합함",
+            "en": "Dance-friendly",
+            "zh": "适合"
+        },
+        "very_high": {
+            "ko": "매우 적합함",
+            "en": "Very dance-friendly",
+            "zh": "非常适合"
+        }
+    }
+
+    return {
+        "value": round(danceability),
+        "text": texts[level_key][lang]
+    }
+
+def analyze_spectral_centroid(
+        y_trimmed,
+        sr,
+        lang="ko"
+    ):
+    if lang not in ("ko", "en", "zh"):
+        lang = "ko"
+
+    spectral_centroid = librosa.feature.spectral_centroid(y=y_trimmed, sr=sr)[0]
+    avg_spectral_centroid = float(np.mean(spectral_centroid))
+
+    if avg_spectral_centroid < 1500:
+        level_key = "dark"
+    elif avg_spectral_centroid < 2500:
+        level_key = "warm"
+    elif avg_spectral_centroid < 4000:
+        level_key = "bright"
+    else:
+        level_key = "very_bright"
+
+    texts = {
+        "dark": {
+            "ko": "어둡고 부드러운 음색",
+            "en": "Dark and soft tone",
+            "zh": "低沉柔和的音色"
+        },
+        "warm": {
+            "ko": "부드럽고 따뜻한 음색",
+            "en": "Soft and warm tone",
+            "zh": "柔和温暖的音色"
+        },
+        "bright": {
+            "ko": "밝고 선명한 음색",
+            "en": "Bright and clear tone",
+            "zh": "明亮清晰的音色"
+        },
+        "very_bright": {
+            "ko": "매우 밝고 날카로운 음색",
+            "en": "Very bright and sharp tone",
+            "zh": "非常明亮尖锐的音色"
+        }
+    }
+
+    return {
+        "value": round(avg_spectral_centroid),
+        "text": texts[level_key][lang]
+    }
+
+def analyze_spectral_flatness(y, lang="ko"):
+    if lang not in ("ko", "en", "zh"):
+        lang = "ko"
+
+    spectral_flatness = librosa.feature.spectral_flatness(y=y)[0]
+    avg_spectral_flatness = float(np.mean(spectral_flatness))
+
+    if avg_spectral_flatness < 0.001:
+        level_key = "very_low"
+    elif avg_spectral_flatness < 0.01:
+        level_key = "low"
+    elif avg_spectral_flatness < 0.05:
+        level_key = "high"
+    else:
+        level_key = "very_high"
+
+    texts = {
+        "very_low": {
+            "ko": "노이즈 성분이 매우 적음",
+            "en": "Very low noise content",
+            "zh": "噪声成分非常少"
+        },
+        "low": {
+            "ko": "노이즈 성분이 적음",
+            "en": "Low noise content",
+            "zh": "噪声成分较少"
+        },
+        "high": {
+            "ko": "노이즈 성분이 많음",
+            "en": "High noise content",
+            "zh": "噪声成分较多"
+        },
+        "very_high": {
+            "ko": "노이즈 성분이 매우 많음",
+            "en": "Very high noise content",
+            "zh": "噪声成分非常多"
+        }
+    }
+
+    return {
+        "value": round(avg_spectral_flatness, 6),
+        "text": texts[level_key][lang]
+    }
+
+def analyze_spectral_flux(stft_norm, lang="ko"):
+    if lang not in ("ko", "en", "zh"):
+        lang = "ko"
+
+    spectral_flux = np.sqrt(np.sum(np.diff(stft_norm, axis=1) ** 2, axis=0))
+    avg_spectral_flux = float(np.mean(spectral_flux))
+
+    if avg_spectral_flux < 0.02:
+        level_key = "very_low"
+    elif avg_spectral_flux < 0.05:
+        level_key = "low"
+    elif avg_spectral_flux < 0.10:
+        level_key = "high"
+    else:
+        level_key = "very_high"
+
+    texts = {
+        "very_low": {
+            "ko": "매우 적음",
+            "en": "Very little",
+            "zh": "非常少"
+        },
+        "low": {
+            "ko": "적음",
+            "en": "Little tonal",
+            "zh": "较少"
+        },
+        "high": {
+            "ko": "많음",
+            "en": "Frequent",
+            "zh": "较多"
+        },
+        "very_high": {
+            "ko": "매우 많음",
+            "en": "Very frequent",
+            "zh": "非常多"
+        }
+    }
+
+    return {
+        "value": round(avg_spectral_flux, 5),
+        "text": texts[level_key][lang]
+    }
+
+def analyze_zero_crossing_rate(y, lang="ko"):
+    if lang not in ("ko", "en", "zh"):
+        lang = "ko"
+
+    zero_crossing = librosa.feature.zero_crossing_rate(y=y)[0]
+    avg_zero_crossing_rate = float(np.mean(zero_crossing))
+
+    if avg_zero_crossing_rate < 0.02:
+        level_key = "very_low"
+    elif avg_zero_crossing_rate < 0.05:
+        level_key = "low"
+    elif avg_zero_crossing_rate < 0.10:
+        level_key = "high"
+    else:
+        level_key = "very_high"
+
+    texts = {
+        "very_low": {
+            "ko": "매우 낮음",
+            "en": "Very low",
+            "zh": "非常低"
+        },
+        "low": {
+            "ko": "낮음",
+            "en": "Low",
+            "zh": "较低"
+        },
+        "high": {
+            "ko": "높음",
+            "en": "High",
+            "zh": "较高"
+        },
+        "very_high": {
+            "ko": "매우 높음",
+            "en": "Very high",
+            "zh": "非常高"
+        }
+    }
+
+    return {
+        "value": round(avg_zero_crossing_rate, 6),
+        "text": texts[level_key][lang]
+    }
+
+def analyze_chroma_profile(y_trimmed, sr):
+
+    chroma = librosa.feature.chroma_cqt(y=y_trimmed, sr=sr)
+    chroma_mean = np.mean(chroma, axis=1)
+    chroma_mean = chroma_mean / (np.linalg.norm(chroma_mean) + 1e-8)
+
+    if len(chroma_mean) != 12:
+        raise ValueError(
+            "chroma_mean은 12개의 음계 값을 가져야 합니다."
+        )
+
+    max_value = float(np.max(chroma_mean))
+
+    if max_value <= 0:
+        return []
+
+    ratios = chroma_mean / max_value
+
+    strong_notes = [
+        note_name
+        for note_name, ratio in zip(NOTE_NAMES, ratios)
+        if ratio >= 0.6
+    ]
+
+    return {
+        "text" : strong_notes,
+        "value" : chroma_mean
+    }
 
 # =============================
 # 3. Demucs 보컬 분리
@@ -1466,7 +1908,7 @@ def analyze_one_music_file(
 
         "original_audio_analysis": {
             "key": original_info["key"],
-            "key_confidence": original_info["key_confidence"],
+            "key_confidence": str(float(original_info["key_confidence"]) * 100) + "%",
             "key_method": original_info["key_method"],
 
             "tempo": original_info["tempo"],
@@ -1486,6 +1928,7 @@ def analyze_one_music_file(
             "mood": original_info["mood"],
 
             "spectral_centroid": original_info["spectral_centroid"],
+            "spectral_centroid_value": original_info["spectral_centroid_value"],
             "spectral_bandwidth": original_info["spectral_bandwidth"],
             "spectral_rolloff": original_info["spectral_rolloff"],
             "spectral_flatness": original_info["spectral_flatness"],
@@ -1499,8 +1942,12 @@ def analyze_one_music_file(
             "tonnetz_mean": original_info["tonnetz_mean"],
 
             "dynamic_range": original_info["dynamic_range"],
+            "dynamic_range_value": original_info["dynamic_range_value"],
             "harmonic_to_noise_ratio": original_info["hnr"],
-            "danceability": original_info["danceability"]
+            "harmonic_to_noise_ratio_value": original_info["hnr_value"],
+            "danceability": original_info["danceability"],
+            "danceability_value": original_info["danceability_value"]
+
         },
 
         "vocal_pitch_analysis": pitch_range,
@@ -1750,12 +2197,7 @@ def music_audio_analysis(audio_files, sample_rate=44100, job_id=None, **kwargs):
         for result in all_results
     )
 
-    music_minutes = int(total_music_duration // 60)
-    music_seconds = int(total_music_duration % 60)
-
     program_total_time = time.perf_counter() - program_start
-    minutes = int(program_total_time // 60)
-    seconds = int(program_total_time % 60)
 
     summary_result = {
         "total_file_count": len(all_results),
