@@ -40,7 +40,7 @@ def print_single_line_progress(label, percent):
     filled_length = int(bar_length * percent / 100)
     bar = "█" * filled_length + "░" * (bar_length - filled_length)
 
-    print(f"\r{label} [{bar}] {percent:3d}%", end="", flush=True)
+    print(f"\r{label} [{bar}] {percent:3d}%", end="\n", flush=True)
 
 
 def unregister_demucs_process(job_id, process):

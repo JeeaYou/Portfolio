@@ -12,10 +12,10 @@ __pycache__/
 .vscode/
 
 # MusicAI generated files
-project/musicAI/uploads/
-project/musicAI/separated/
-project/musicAI/analysis_results/
-project/musicAI/progress/
+project/musicAI/static/music/uploads/
+project/musicAI/static/music/separated/
+project/musicAI/static/music/analysis_results/
+project/musicAI/static/music/progress/
 
 # Logs
 *.log

@@ -8,19 +8,23 @@ import numpy as np
 # Directory paths
 # =============================
 
-# Directory containing this file
-BASE_DIR = Path(__file__).resolve().parent
+# musicAI project directory.
+MUSIC_AI_DIR = Path(__file__).resolve().parents[1]
 
-# Stores analysis progress JSON files
-PROGRESS_DIR = BASE_DIR / "progress"
+# Stores uploaded audio files.
+UPLOAD_DIR = MUSIC_AI_DIR / "static" /  "music" /  "uploads"
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+# Stores analysis progress JSON files.
+PROGRESS_DIR = MUSIC_AI_DIR / "static" /  "music" /  "progress"
 PROGRESS_DIR.mkdir(parents=True, exist_ok=True)
 
-# Stores audio files separated by Demucs
-SEPARATED_DIR = BASE_DIR / "separated"
+# Stores audio files separated by Demucs.
+SEPARATED_DIR = MUSIC_AI_DIR / "static" /  "music" /  "separated"
 SEPARATED_DIR.mkdir(parents=True, exist_ok=True)
 
-# Stores final audio analysis result files
-ANALYSIS_RESULTS_DIR = BASE_DIR / "analysis_results"
+# Stores final audio analysis result files.
+ANALYSIS_RESULTS_DIR = MUSIC_AI_DIR / "static" /  "music" /  "analysis_results"
 ANALYSIS_RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
 

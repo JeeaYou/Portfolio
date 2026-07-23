@@ -28,6 +28,7 @@ from .services.progress_service import (
     write_progress,
 )
 from .utils.file_utils import format_display_file_name
+from .constants.analysis_constants import UPLOAD_DIR
 
 # =============================
 # Blueprint configuration
@@ -43,7 +44,6 @@ bp = Blueprint(
 
 SUPPORTED_LANGUAGES = {"ko", "en", "zh"}
 ALLOWED_EXTENSIONS = {"mp3", "wav"}
-UPLOAD_DIR = Path(__file__).resolve().parent / "uploads"
 
 
 # =============================

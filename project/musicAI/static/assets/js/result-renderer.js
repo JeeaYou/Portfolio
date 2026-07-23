@@ -1,3 +1,4 @@
+// Result section DOM references.
 const resultSection = document.getElementById("resultSection");
 const resultRoot = document.getElementById("resultRoot");
 const analysisProgressCard = document.getElementById("analysisProgressCard");
@@ -11,39 +12,28 @@ const analysisTrackCards = document.getElementById("analysisTrackCards");
 const analysisTrackTabBlueprint = document.getElementById("analysisTrackTabBlueprint");
 const analysisTrackCardBlueprint = document.getElementById("analysisTrackCardBlueprint");
 
+// Returns a displayable value and applies an optional suffix.
 function displayValue(value, suffix = "") {
-  if (value === null || value === undefined || value === "") {
-    return "-";
-  }
-
+  if (value === null || value === undefined || value === "") return "-";
   return `${value}${suffix}`;
 }
 
+// Converts an array into a comma-separated preview string.
 function displayArrayPreview(values) {
-  if (!Array.isArray(values) || values.length === 0) {
-    return "-";
-  }
+  if (!Array.isArray(values) || values.length === 0) return "-";
 
-  const preview = values
+  return values
     .map(function (value) {
       const numberValue = Number(value);
-
-      if (Number.isFinite(numberValue)) {
-        return numberValue.toFixed(4);
-      }
-
-      return String(value);
-    })
-    .join(", ");
-
-  return preview;
+      return Number.isFinite(numberValue) ? numberValue.toFixed(4) : String(value);
+    }).join(", ");
 }
 
+// Updates every element matching the specified data-field attribute.
 function setField(root, fieldName, value, suffix = "") {
   if (!root) return;
 
-  const targets = root.querySelectorAll(`[data-field="${fieldName}"]`);
-
+  const targets = root.querySelectorAll(`[data-field="${fieldName}"]`)
   if (!targets || targets.length === 0) return;
 
   targets.forEach(function (target) {
@@ -51,38 +41,21 @@ function setField(root, fieldName, value, suffix = "") {
   });
 }
 
+// Hides the result and progress areas and displays an error message.
 function showError(title, message) {
-  if (resultRoot) {
-    resultRoot.hidden = true;
-  }
-
-  if (analysisProgressCard) {
-    analysisProgressCard.hidden = true;
-  }
-
-  if (analysisErrorTitle) {
-    analysisErrorTitle.textContent = title || I18N.errorAnalysisFailed;
-  }
-
-  if (analysisErrorMessage) {
-    analysisErrorMessage.textContent = message || I18N.errorUnknown;
-  }
-
-  if (analysisErrorCard) {
-    analysisErrorCard.hidden = false;
-  }
+  if (resultRoot) resultRoot.hidden = true;
+  if (analysisProgressCard) analysisProgressCard.hidden = true;
+  if (analysisErrorTitle) analysisErrorTitle.textContent = title || I18N.errorAnalysisFailed;
+  if (analysisErrorMessage) analysisErrorMessage.textContent = message || I18N.errorUnknown;
+  if (analysisErrorCard) analysisErrorCard.hidden = false;
 }
 
+// Creates an initial progress item for each selected audio file.
 function showFileProgressBars(files) {
   if (!analysisProgressCard || !fileProgressList || !fileProgressItemBlueprint) return;
 
-  if (resultRoot) {
-    resultRoot.hidden = true;
-  }
-
-  if (analysisErrorCard) {
-    analysisErrorCard.hidden = true;
-  }
+  if (resultRoot) resultRoot.hidden = true;
+  if (analysisErrorCard) analysisErrorCard.hidden = true;
 
   analysisProgressCard.hidden = false;
   fileProgressList.textContent = "";
@@ -99,63 +72,38 @@ function showFileProgressBars(files) {
     const bar = item.querySelector(".file-progress-bar");
     const statusText = item.querySelector(".file-progress-status");
 
-    if (nameText) {
-      nameText.textContent = (index + 1) + ". " + file.name;
-    }
-
-    if (percentText) {
-      percentText.textContent = "0%";
-    }
-
-    if (bar) {
-      bar.style.width = "0%";
-    }
-
-    if (statusText) {
-      statusText.textContent = I18N.progressWaiting;
-    }
+    if (nameText) nameText.textContent = (index + 1) + ". " + file.name;
+    if (percentText) percentText.textContent = "0%";
+    if (bar) bar.style.width = "0%";
+    if (statusText) statusText.textContent = I18N.progressWaiting;
 
     fileProgressList.appendChild(item);
   });
 }
 
+// Updates progress bars, percentages, classes, and status messages.
 function updateProgressUI(progress) {
   const title = document.querySelector(".progress-title");
   const desc = document.querySelector(".progress-desc");
 
-  if (title) {
-    title.textContent = I18N.progressTitle;
-  }
-
-  if (desc) {
-    desc.textContent = I18N.progressRunning;
-  }
-
+  if (title) title.textContent = I18N.progressTitle;
+  if (desc) desc.textContent = I18N.progressRunning;
   if (!progress.files) return;
 
   progress.files.forEach(function (file) {
-    const item = document.querySelector(
-      `.file-progress-item[data-file-index="${file.index}"]`
-    );
-
+    const item = document.querySelector(`.file-progress-item[data-file-index="${file.index}"]`);
     if (!item) return;
 
     const bar = item.querySelector(".file-progress-bar");
     const percentText = item.querySelector(".file-progress-percent");
     const statusText = item.querySelector(".file-progress-status");
-
-    const percent = Math.max(0, Math.min(100, Number(file.percent || 0)));
+    const percent = Math.max(0, Math.min(100, Number(file.percent || 0)))
 
     item.classList.remove("is-waiting", "is-running", "is-done", "is-failed");
     item.classList.add(`is-${file.status}`);
 
-    if (bar) {
-      bar.style.width = percent + "%";
-    }
-
-    if (percentText) {
-      percentText.textContent = percent + "%";
-    }
+    if (bar) bar.style.width = percent + "%";
+    if (percentText) percentText.textContent = percent + "%";
 
     if (statusText) {
       if (file.status === "waiting") {
@@ -173,69 +121,49 @@ function updateProgressUI(progress) {
   });
 }
 
+// Fills the overall analysis summary values.
 function fillSummaryTemplate(summaryNode, result) {
   setField(summaryNode, "summary_total_file_count", result.total_file_count);
   setField(summaryNode, "summary_total_music_duration", result.total_music_duration?.text);
-  setField(
-    summaryNode,
-    "summary_total_program_execution_time",
-    result.total_program_execution_time?.text
-  );
+  setField(summaryNode, "summary_total_program_execution_time", result.total_program_execution_time?.text);
 }
 
+// Returns the first non-empty value from the supplied arguments.
 function pickFirstValue() {
   for (let i = 0; i < arguments.length; i += 1) {
     const value = arguments[i];
-
-    if (value !== null && value !== undefined && value !== "") {
-      return value;
-    }
+    if (value !== null && value !== undefined && value !== "") return value;
   }
 
   return null;
 }
 
+// Combines a musical note and its frequency for display.
 function formatPitchWithNote(note, hz) {
   const safeNote = displayValue(note);
   const numberHz = Number(hz);
-
-  if (Number.isFinite(numberHz)) {
-    return safeNote + " (" + numberHz + " Hz)";
-  }
-
-  return safeNote;
+  return Number.isFinite(numberHz) ? safeNote + " (" + numberHz + " Hz)" : safeNote;
 }
 
+// Formats a value as a percentage while preserving existing percent signs.
 function formatPercentLike(value) {
-  if (value === null || value === undefined || value === "") {
-    return "-";
-  }
+  if (value === null || value === undefined || value === "") return "-";
 
   const numberValue = Number(value);
+  if (Number.isFinite(numberValue)) return numberValue.toFixed(2) + " %";
 
-  if (Number.isFinite(numberValue)) {
-    return numberValue.toFixed(2) + " %";
-  }
-
-  return String(value).includes("%")
-    ? String(value)
-    : String(value) + " %";
+  return String(value).includes("%") ? String(value) : String(value) + " %";
 }
 
+// Formats a duration value using seconds.
 function formatSeconds(value) {
-  if (value === null || value === undefined || value === "") {
-    return "-";
-  }
+  if (value === null || value === undefined || value === "") return "-";
 
   const numberValue = Number(value);
-
-  if (Number.isFinite(numberValue)) {
-    return numberValue + "s";
-  }
-
-  return String(value);
+  return Number.isFinite(numberValue) ? numberValue + "s" : String(value);
 }
 
+// Fills one analysis result card with track, pitch, instrument, and timing data.
 function fillTrackTemplate(card, item, index) {
   const fileInfo = item.file_info || {};
   const audio = item.original_audio_analysis || {};
@@ -243,32 +171,38 @@ function fillTrackTemplate(card, item, index) {
   const instruments = item.background_instrument_analysis || {};
   const time = item.analysis_time_summary || {};
 
+  // Creates a two-digit track number such as 01 or 02.
   const trackNo = String(index + 1).padStart(2, "0");
 
   setField(card, "track_number", trackNo);
   setField(card, "file_name", fileInfo.file_name);
   setField(card, "duration_text", fileInfo.duration_text);
 
+  // Displays the main musical information.
   setField(card, "key", audio.key);
   setField(card, "tempo", `${displayValue(audio.tempo)} BPM`);
   setField(card, "genre", audio.genre);
   setField(card, "mood", audio.mood);
   setField(card, "rhythm_pattern", audio.rhythm_pattern);
 
+  // Displays key and tempo details.
   setField(card, "key_confidence", audio.key_confidence);
   setField(card, "tempo_category", audio.tempo_category);
   setField(card, "tempo_description", audio.tempo_description);
 
+  // Displays rhythm analysis values.
   setField(card, "rhythm_pattern_detail", audio.rhythm_pattern);
   setField(card, "beat_count", audio.beat_count);
   setField(card, "beat_strength", audio.beat_strength);
   setField(card, "beat_regularity", audio.beat_regularity);
 
+  // Displays energy and mood values.
   setField(card, "energy_level", audio.energy_level);
   setField(card, "energy_score", audio.energy_score);
   // setField(card, "rms", audio.rms);
   setField(card, "mood_detail", audio.mood);
 
+  // Displays spectral analysis values.
   setField(card, "spectral_centroid", audio.spectral_centroid);
   // setField(card, "spectral_bandwidth", audio.spectral_bandwidth);
   // setField(card, "spectral_rolloff", audio.spectral_rolloff);
@@ -276,6 +210,7 @@ function fillTrackTemplate(card, item, index) {
   setField(card, "spectral_flux", audio.spectral_flux);
   setField(card, "zero_crossing_rate", audio.zero_crossing_rate);
 
+  // Displays dynamics, clarity, and danceability values.
   setField(card, "dynamic_range", audio.dynamic_range);
   setField(card, "harmonic_to_noise_ratio", audio.harmonic_to_noise_ratio);
   setField(card, "danceability", audio.danceability);
@@ -286,9 +221,11 @@ function fillTrackTemplate(card, item, index) {
   setField(card, "chroma_mean", displayArrayPreview(audio.chroma_mean));
   // setField(card, "tonnetz_mean", displayArrayPreview(audio.tonnetz_mean));
 
+  // Finds the pitch result and empty-state sections in the card.
   const pitchResult = card.querySelector('[data-section="pitch_result"]');
   const pitchEmpty = card.querySelector('[data-section="pitch_empty"]');
 
+  // Displays vocal pitch values when pitch analysis data is available.
   if (pitch) {
     if (pitchResult) pitchResult.style.display = "";
     if (pitchEmpty) pitchEmpty.style.display = "none";
@@ -297,19 +234,12 @@ function fillTrackTemplate(card, item, index) {
     setField(card, "lowest_pitch_hz", pitch.lowest_pitch_hz, " Hz");
     setField(card, "highest_note", pitch.highest_note);
     setField(card, "highest_pitch_hz", pitch.highest_pitch_hz, " Hz");
-
-    setField(
-      card,
-      "pitch_range_semitones",
-      pitch.pitch_range_semitones,
-      " " + I18N.semitonesUnit
-    );
+    setField(card, "pitch_range_semitones", pitch.pitch_range_semitones, " " + I18N.semitonesUnit);
 
     setField(
       card,
       "pitch_range_octaves",
-      pitch.pitch_range_octaves === null ||
-      pitch.pitch_range_octaves === undefined
+      pitch.pitch_range_octaves === null || pitch.pitch_range_octaves === undefined
         ? "-"
         : pitch.pitch_range_octaves + " " + I18N.octavesUnit
     );
@@ -339,40 +269,16 @@ function fillTrackTemplate(card, item, index) {
     );
 
     setField(card, "vocal_presence", I18N.vocalDetected);
-
-    setField(
-      card,
-      "vocal_ratio",
-      vocalRatio === null
-        ? "-"
-        : formatPercentLike(vocalRatio)
-    );
+    setField(card, "vocal_ratio", vocalRatio === null ? "-" : formatPercentLike(vocalRatio));
 
     setField(
       card,
       "vocal_pitch_mean",
-      pitchMeanNote || pitchMeanHz
-        ? formatPitchWithNote(pitchMeanNote, pitchMeanHz)
-        : "-"
+      pitchMeanNote || pitchMeanHz ? formatPitchWithNote(pitchMeanNote, pitchMeanHz) : "-"
     );
 
-    setField(
-      card,
-      "vocal_pitch_min",
-      formatPitchWithNote(
-        pitch.lowest_note,
-        pitch.lowest_pitch_hz
-      )
-    );
-
-    setField(
-      card,
-      "vocal_pitch_max",
-      formatPitchWithNote(
-        pitch.highest_note,
-        pitch.highest_pitch_hz
-      )
-    );
+    setField(card, "vocal_pitch_min", formatPitchWithNote(pitch.lowest_note, pitch.lowest_pitch_hz));
+    setField(card, "vocal_pitch_max", formatPitchWithNote(pitch.highest_note, pitch.highest_pitch_hz));
   } else {
     if (pitchResult) pitchResult.style.display = "none";
     if (pitchEmpty) pitchEmpty.style.display = "";
@@ -384,34 +290,28 @@ function fillTrackTemplate(card, item, index) {
     setField(card, "vocal_pitch_max", "-");
   }
 
+  // Displays detected instrument information.
   setField(card, "instrument_count", instruments.instrument_count);
 
-  const instrumentList = card.querySelector(
-    '[data-field="instrument_list"]'
-  );
+  const instrumentList = card.querySelector('[data-field="instrument_list"]');
 
   if (instrumentList) {
     instrumentList.textContent = "";
 
-    if (
-      instruments.instruments &&
-      instruments.instruments.length > 0
-    ) {
+    if (instruments.instruments && instruments.instruments.length > 0) {
       instruments.instruments.forEach(function (inst) {
         const chip = document.createElement("span");
         const nameText = document.createElement("span");
         const percentText = document.createElement("strong");
-
         const instrumentName = displayValue(inst.instrument);
         const percentageValue = displayValue(inst.percentage);
 
-        const percentageText = percentageValue === "-"
-          ? "-"
-          : (
-              String(percentageValue).includes("%")
-                ? percentageValue
-                : percentageValue + "%"
-            );
+        const percentageText =
+          percentageValue === "-"
+            ? "-"
+            : String(percentageValue).includes("%")
+              ? percentageValue
+              : percentageValue + "%";
 
         chip.className = "instrument-chip";
         nameText.className = "instrument-chip-name";
@@ -434,37 +334,15 @@ function fillTrackTemplate(card, item, index) {
     }
   }
 
-  setField(
-    card,
-    "original_audio_analysis_time",
-    formatSeconds(time.original_audio_analysis_time)
-  );
-
-  setField(
-    card,
-    "vocal_separation_time",
-    formatSeconds(time.vocal_separation_time)
-  );
-
-  setField(
-    card,
-    "vocal_pitch_analysis_time",
-    formatSeconds(time.vocal_pitch_analysis_time)
-  );
-
-  setField(
-    card,
-    "background_instrument_analysis_time",
-    formatSeconds(time.background_instrument_analysis_time)
-  );
-
-  setField(
-    card,
-    "total_analysis_time",
-    formatSeconds(time.total_analysis_time)
-  );
+  // Displays the time spent on each analysis stage.
+  setField(card, "original_audio_analysis_time", formatSeconds(time.original_audio_analysis_time));
+  setField(card, "vocal_separation_time", formatSeconds(time.vocal_separation_time));
+  setField(card, "vocal_pitch_analysis_time", formatSeconds(time.vocal_pitch_analysis_time));
+  setField(card, "background_instrument_analysis_time", formatSeconds(time.background_instrument_analysis_time));
+  setField(card, "total_analysis_time", formatSeconds(time.total_analysis_time));
 }
 
+// Renders the complete result dashboard, track tabs, and result cards.
 function renderResult(result) {
   if (
     !resultRoot ||
@@ -476,22 +354,14 @@ function renderResult(result) {
     return;
   }
 
+  // Stops rendering and shows an error when no result is available.
   if (!result) {
-    showError(
-      I18N.errorNoResultTitle,
-      I18N.errorNoResultMessage
-    );
-
+    showError(I18N.errorNoResultTitle, I18N.errorNoResultMessage);
     return;
   }
 
-  if (analysisProgressCard) {
-    analysisProgressCard.hidden = true;
-  }
-
-  if (analysisErrorCard) {
-    analysisErrorCard.hidden = true;
-  }
+  if (analysisProgressCard) analysisProgressCard.hidden = true;
+  if (analysisErrorCard) analysisErrorCard.hidden = true;
 
   resultRoot.hidden = false;
   analysisTrackTabs.textContent = "";
@@ -501,49 +371,39 @@ function renderResult(result) {
 
   const results = result.results || [];
 
+  // Displays an empty result card when no tracks were analysed.
   if (results.length === 0) {
     const emptyCard = document.createElement("div");
 
     emptyCard.className = "analysis-empty-card";
     emptyCard.textContent = I18N.noAnalyzedFileResult;
 
-    analysisTrackCards.appendChild(emptyCard);
-
+    analysisTrackCards.appendChild(emptyCard)
     renderVisualizationDashboard(result);
 
     return;
   }
 
+  // Creates one tab and one analysis card for each result item.
   results.forEach(function (item, index) {
     const fileInfo = item.file_info || {};
     const trackNo = String(index + 1).padStart(2, "0");
     const fileName = fileInfo.file_name || "Track " + (index + 1);
-    const durationText = fileInfo.duration_text || "-";
-
+    const durationText = fileInfo.duration_text || "-"
     const tabButton = analysisTrackTabBlueprint.cloneNode(true);
 
     tabButton.removeAttribute("id");
     tabButton.dataset.trackIndex = String(index);
     tabButton.classList.toggle("is-active", index === 0);
 
-    setField(
-      tabButton,
-      "tab_title",
-      trackNo + ". " + fileName
-    );
-
-    setField(
-      tabButton,
-      "tab_duration",
-      durationText
-    );
+    setField(tabButton, "tab_title", trackNo + ". " + fileName);
+    setField(tabButton, "tab_duration", durationText);
 
     analysisTrackTabs.appendChild(tabButton);
 
     const card = analysisTrackCardBlueprint.cloneNode(true);
 
-    card.removeAttribute("id");
-
+    card.removeAttribute("id")
     fillTrackTemplate(card, item, index);
 
     card.dataset.trackIndex = String(index);
@@ -552,35 +412,24 @@ function renderResult(result) {
     analysisTrackCards.appendChild(card);
   });
 
+  // Switches the visible result card when a track tab is selected.
   analysisTrackTabs.onclick = function (event) {
-    const selectedTab = event.target.closest(
-      ".analysis-track-tab"
-    );
-
+    const selectedTab = event.target.closest(".analysis-track-tab");
     if (!selectedTab) return;
 
     const selectedIndex = selectedTab.dataset.trackIndex;
 
-    analysisTrackTabs
-      .querySelectorAll(".analysis-track-tab")
-      .forEach(function (tab) {
-        tab.classList.toggle(
-          "is-active",
-          tab.dataset.trackIndex === selectedIndex
-        );
-      });
+    analysisTrackTabs.querySelectorAll(".analysis-track-tab").forEach(function (tab) {
+      tab.classList.toggle("is-active", tab.dataset.trackIndex === selectedIndex);
+    });
 
-    analysisTrackCards
-      .querySelectorAll(".analysis-card")
-      .forEach(function (card) {
-        card.classList.toggle(
-          "is-hidden",
-          card.dataset.trackIndex !== selectedIndex
-        );
-      });
+    analysisTrackCards.querySelectorAll(".analysis-card").forEach(function (card) {
+      card.classList.toggle("is-hidden", card.dataset.trackIndex !== selectedIndex);
+    });
 
     syncSidebarToTarget("#cat-420", false);
   };
 
+  // Passes the completed result to the visualization dashboard.
   renderVisualizationDashboard(result);
 }
