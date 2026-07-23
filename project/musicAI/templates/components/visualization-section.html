@@ -1,0 +1,150 @@
+{% macro vocal_note_box(label, element_id, default_text="-") %}
+  <div class="vocal-note-box">
+    <span>{{ label }}</span>
+    <strong id="{{ element_id }}">{{ default_text }}</strong>
+  </div>
+{% endmacro %}
+
+<section id="cat-{{ cat.category_id }}" class="music-ai-anchor-section">
+  <h2>{{ cat.display_name }}</h2>
+  <p>{{ cat.display_desc }}</p>
+
+  <div id="visualizationSection" class="visualization-section is-empty">
+    <p id="visualizationEmptyText" class="empty-section-text">
+      {{ t('musicai_visual_empty') }}
+    </p>
+
+    <div id="visualizationDashboard" class="visualization-dashboard" style="display: none;">
+      <div class="visual-filter-toolbar">
+        <div class="visual-filter-info">
+          <span>{{ t('musicai_current_filter_label') }}</span>
+          <strong id="visualCurrentFilter">{{ t('musicai_current_filter_all_tracks') }}</strong>
+          <p id="visualFilterSummary">
+            {{ t('musicai_filter_summary_all') }}
+          </p>
+        </div>
+
+        <button
+          id="resetVisualizationFilterBtn"
+          class="visual-filter-reset-btn"
+          type="button"
+          disabled
+        >
+          {{ t('musicai_reset_filter_button') }}
+        </button>
+      </div>
+
+      <div class="visualization-grid">
+
+        <article class="visual-card genre-distribution-card">
+          <h3>{{ t('musicai_genre_distribution_title') }}</h3>
+          <p>{{ t('musicai_genre_distribution_desc') }}</p>
+
+          <div class="genre-ratio-box">
+            <div class="genre-ratio-main">
+              <span>{{ t('musicai_selected_genre_label') }}</span>
+              <strong id="visualMainGenre">{{ t('musicai_all_genre') }}</strong>
+            </div>
+
+            <div class="chart-box">
+              <canvas id="genreDistributionChart"></canvas>
+            </div>
+          </div>
+        </article>
+
+        <article class="visual-card key-ratio-card">
+          <h3>{{ t('musicai_key_distribution_title') }}</h3>
+          <p>{{ t('musicai_key_distribution_desc') }}</p>
+
+          <div class="key-ratio-box">
+            <div class="key-ratio-main">
+              <span>{{ t('musicai_selected_key_label') }}</span>
+              <strong id="visualMainKey">-</strong>
+            </div>
+
+            <div class="chart-box">
+              <canvas id="keyDistributionChart"></canvas>
+            </div>
+          </div>
+        </article>
+
+        <article class="visual-card vocal-range-card">
+          <div class="vocal-range-card-header">
+            <div>
+              <h3>{{ t('musicai_vocal_range_title') }}</h3>
+              <p id="vocalRangeDesc">
+                {{ t('musicai_vocal_range_desc') }}
+              </p>
+            </div>
+
+            <span class="vocal-range-badge">{{ t('musicai_detected_range_badge') }}</span>
+          </div>
+
+          <div class="vocal-range-visual piano-vocal-range">
+            <div class="vocal-range-bar-area">
+              <div class="vocal-range-track">
+                <div id="visualVocalRangeFill" class="vocal-range-fill"></div>
+                <span id="visualRangeStartMarker" class="range-marker range-marker-start"></span>
+                <span id="visualRangeEndMarker" class="range-marker range-marker-end"></span>
+              </div>
+            </div>
+
+            <div id="visualPianoKeyboard" class="piano-keyboard"></div>
+
+            <div class="piano-octave-labels">
+              <span>C2</span>
+              <span>C3</span>
+              <span>C4</span>
+              <span>C5</span>
+              <span>C6</span>
+            </div>
+
+            <div class="vocal-note-row">
+              {{ vocal_note_box(t('musicai_vocal_note_lowest'), 'visualLowestNote') }}
+
+              {{ vocal_note_box(t('musicai_vocal_note_highest'), 'visualHighestNote') }}
+
+              {{ vocal_note_box(t('musicai_vocal_note_range'), 'visualRangeOctaves') }}
+            </div>
+
+            <p id="visualVocalRangeText" class="vocal-range-text">
+              {{ t('musicai_vocal_range_no_data') }}
+            </p>
+          </div>
+        </article>
+
+        <article class="visual-card songDna">
+          <h3>{{ t('musicai_song_dna_title') }}</h3>
+          <p>{{ t('musicai_song_dna_desc') }}</p>
+          <div class="chart-box">
+            <canvas id="songDnaChart"></canvas>
+          </div>
+        </article>
+
+        <article class="visual-card BgInstruments">
+          <h3>{{ t('musicai_background_instruments_title') }}</h3>
+          <p id="instrumentDesc">
+            {{ t('musicai_background_instruments_desc') }}
+          </p>
+          <div class="chart-box">
+            <canvas id="instrumentChart"></canvas>
+          </div>
+        </article>
+
+        <article class="visual-card selected-key-songs-card">
+          <h3>{{ t('musicai_songs_by_filter_title') }}</h3>
+          <p id="selectedKeySongsDesc">
+            {{ t('musicai_songs_by_filter_desc') }}
+          </p>
+
+          <div id="selectedKeySongsList" class="selected-key-songs-list">
+            <p class="empty-section-text">
+              {{ t('musicai_no_key_selected') }}
+            </p>
+          </div>
+        </article>
+        
+      </div>
+    </div>
+  </div>
+</section>

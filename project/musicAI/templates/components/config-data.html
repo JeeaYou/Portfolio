@@ -1,0 +1,78 @@
+<script id="musicAiConfig" type="application/json">
+{{ {
+  "urls": {
+    "startAnalysis": url_for("musicAI.start_analysis"),
+    "progress": url_for("musicAI.get_analysis_progress", job_id="__JOB_ID__"),
+    "cancel": url_for("musicAI.cancel_analysis", job_id="__JOB_ID__")
+  },
+  "i18n": {
+    "analyzeButton": t("musicai_analyze_button"),
+    "analyzingButton": t("musicai_analyzing_button"),
+    "alertSelectFile": t("musicai_alert_select_file"),
+
+    "selectedFileCountDefault": t("musicai_selected_file_count_default"),
+    "visualEmpty": t("musicai_visual_empty"),
+    "noKeySelected": t("musicai_no_key_selected"),
+    "vocalRangeNoData": t("musicai_vocal_range_no_data"),
+
+    "progressTitle": t("musicai_progress_title"),
+    "progressChecking": t("musicai_progress_checking"),
+    "progressWaiting": t("musicai_progress_waiting"),
+    "progressRunning": t("musicai_progress_running"),
+    "progressDone": t("musicai_progress_done"),
+    "progressFailed": t("musicai_progress_failed"),
+    "progressStatusChecking": t("musicai_progress_status_checking"),
+
+    "errorUnknown": t("musicai_error_unknown"),
+    "errorStartFailed": t("musicai_error_start_failed"),
+    "errorAnalysisFailed": t("musicai_error_analysis_failed"),
+    "errorProgressFailed": t("musicai_error_progress_failed"),
+    "errorProgressLookupFailed": t("musicai_error_progress_lookup_failed"),
+    "errorNoResultTitle": t("musicai_error_no_result_title"),
+    "errorNoResultMessage": t("musicai_error_no_result_message"),
+
+    "vocalDetected": t("musicai_vocal_detected"),
+    "vocalNotDetected": t("musicai_vocal_not_detected"),
+    "semitonesUnit": t("musicai_semitones_unit"),
+    "octavesUnit": t("musicai_octaves_unit"),
+
+    "noInstrumentsDetected": t("musicai_no_instruments_detected"),
+    "noAnalyzedFileResult": t("musicai_no_analyzed_file_result"),
+
+    "filterAll": t("musicai_filter_all"),
+    "allGenre": t("musicai_all_genre"),
+    "allTracks": t("musicai_current_filter_all_tracks"),
+    "filterSummaryAll": t("musicai_filter_summary_all"),
+
+    "songDnaEnergy": t("musicai_song_dna_energy"),
+    "songDnaDanceability": t("musicai_song_dna_danceability"),
+    "songDnaBrightness": t("musicai_song_dna_brightness"),
+    "songDnaDynamics": t("musicai_song_dna_dynamics"),
+    "songDnaClarity": t("musicai_song_dna_clarity"),
+    "songDnaAverage": t("musicai_song_dna_average"),
+
+    "filterGenreLabel": t("musicai_filter_genre_label"),
+    "filterKeyLabel": t("musicai_filter_key_label"),
+    "filterVocalNoteLabel": t("musicai_filter_vocal_note_label"),
+
+    "filterGenreSummaryTemplate": t("musicai_filter_genre_summary_template"),
+    "filterKeySummaryTemplate": t("musicai_filter_key_summary_template"),
+    "filterGenreKeySummaryTemplate": t("musicai_filter_genre_key_summary_template"),
+    "filterNoteSummaryTemplate": t("musicai_filter_note_summary_template"),
+    "filterGenreNoteSummaryTemplate": t("musicai_filter_genre_note_summary_template"),
+    "filterCountSummaryTemplate": t("musicai_filter_count_summary_template"),
+
+    "noteSongListDescTemplate": t("musicai_note_song_list_desc_template"),
+    "genreSongListDescTemplate": t("musicai_genre_song_list_desc_template"),
+    "keySongListDescTemplate": t("musicai_key_song_list_desc_template"),
+    "allSongListDesc": t("musicai_all_song_list_desc"),
+    "songMetaTemplate": t("musicai_song_meta_template"),
+    "songVocalRangeTemplate": t("musicai_song_vocal_range_template"),
+
+    "vocalRangeNoScopeDataTemplate": t("musicai_vocal_range_no_scope_data_template"),
+    "vocalRangeUnavailableTemplate": t("musicai_vocal_range_unavailable_template"),
+    "vocalRangeOutOfKeyboardTemplate": t("musicai_vocal_range_out_of_keyboard_template"),
+    "vocalRangeDesc": t("musicai_vocal_range_desc")
+  }
+} | tojson }}
+</script>

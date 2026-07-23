@@ -1,0 +1,195 @@
+{
+    "file_info": {
+        "file_name": "All In My Mind - Jazz Dream Pop.mp3",
+        "file_path": "/Users/jeea/Documents/Portfolio/project/musicAI/uploads/1784844132764545000/01_All_In_My_Mind_-_Jazz_Dream_Pop.mp3",
+        "duration": 244.29,
+        "duration_text": "4:04"
+    },
+    "original_audio_analysis": {
+        "key": "G# 小调",
+        "key_confidence": "95.8%",
+        "key_method": "librosa",
+        "tempo": 105,
+        "tempo_name": "Andante",
+        "tempo_category": "中等偏慢",
+        "tempo_description": "以步行的速度",
+        "rhythm_pattern": "稳定的节奏",
+        "beat_count": 405,
+        "beat_strength": "强",
+        "beat_regularity": "有一定变化",
+        "energy_score": 70,
+        "energy_level": "高",
+        "rms": 0.13127,
+        "genre": "流行风格",
+        "mood": "戏剧性 / 感性",
+        "spectral_centroid": "柔和温暖的音色",
+        "spectral_centroid_value": 1816,
+        "spectral_bandwidth": 2514.82,
+        "spectral_rolloff": 3686.48,
+        "spectral_flatness": "噪声成分非常少",
+        "spectral_flux": "较少",
+        "zero_crossing_rate": "较低",
+        "mfcc_mean": [
+            -189.63058,
+            167.58237,
+            -7.51458,
+            23.99205,
+            -0.84464,
+            8.49054,
+            -4.9836,
+            6.13458,
+            -0.00894,
+            -2.60079,
+            -0.582,
+            -2.77165,
+            -2.55795,
+            -1.74148,
+            -1.28353,
+            -1.26652,
+            -1.85781,
+            -1.74429,
+            -0.65841,
+            -2.51139
+        ],
+        "mfcc_std": [
+            57.1511,
+            29.45374,
+            27.79089,
+            26.4626,
+            19.14662,
+            15.96714,
+            13.14104,
+            12.68027,
+            10.91443,
+            10.38915,
+            10.07282,
+            10.06523,
+            9.38403,
+            8.90266,
+            8.34426,
+            8.34892,
+            7.99674,
+            7.71066,
+            7.59057,
+            6.98507
+        ],
+        "spectral_contrast_mean": [
+            20.5411,
+            10.12768,
+            15.78599,
+            18.02896,
+            17.06018,
+            18.59247,
+            51.24886
+        ],
+        "chroma_mean": [
+            "C",
+            "C#",
+            "D#",
+            "E",
+            "F",
+            "F#",
+            "G",
+            "G#",
+            "A",
+            "A#",
+            "B"
+        ],
+        "tonnetz_mean": [
+            -0.04137,
+            -0.05557,
+            0.03474,
+            0.01142,
+            0.01164,
+            0.01659
+        ],
+        "dynamic_range": "适中",
+        "dynamic_range_value": 11.65,
+        "harmonic_to_noise_ratio": "声音清晰度较低",
+        "harmonic_to_noise_ratio_value": 2.03,
+        "danceability": "偏低",
+        "danceability_value": 44
+    },
+    "vocal_pitch_analysis": {
+        "lowest_pitch_hz": 139,
+        "lowest_note": "C♯3",
+        "highest_pitch_hz": 415,
+        "highest_note": "G♯4",
+        "pitch_range_semitones": 19,
+        "pitch_range_octaves": 1.58
+    },
+    "background_instrument_analysis": {
+        "instrument_count": 6,
+        "instruments": [
+            {
+                "instrument": "吉他",
+                "instrument_key": "guitar",
+                "score": 0.3464506268501282,
+                "percentage": 34.6,
+                "matched_labels": [
+                    "Steel guitar, slide guitar",
+                    "Guitar",
+                    "Electric guitar",
+                    "Bass guitar",
+                    "Acoustic guitar",
+                    "Tapping (guitar technique)"
+                ]
+            },
+            {
+                "instrument": "弦乐器",
+                "instrument_key": "strings",
+                "score": 0.1826203465461731,
+                "percentage": 18.3,
+                "matched_labels": [
+                    "Plucked string instrument"
+                ]
+            },
+            {
+                "instrument": "贝斯",
+                "instrument_key": "bass",
+                "score": 0.022587453946471214,
+                "percentage": 2.3,
+                "matched_labels": [
+                    "Bass guitar"
+                ]
+            },
+            {
+                "instrument": "钢琴 / 键盘",
+                "instrument_key": "piano_keyboard",
+                "score": 0.01627568155527115,
+                "percentage": 1.6,
+                "matched_labels": [
+                    "Keyboard (musical)",
+                    "Piano",
+                    "Electric piano"
+                ]
+            },
+            {
+                "instrument": "电子乐器",
+                "instrument_key": "electronic",
+                "score": 0.013012747280299664,
+                "percentage": 1.3,
+                "matched_labels": [
+                    "Synthesizer"
+                ]
+            },
+            {
+                "instrument": "风琴 / 手风琴",
+                "instrument_key": "organ_accordion",
+                "score": 0.010549000464379787,
+                "percentage": 1.1,
+                "matched_labels": [
+                    "Electronic organ",
+                    "Organ"
+                ]
+            }
+        ]
+    },
+    "analysis_time_summary": {
+        "original_audio_analysis_time": 18,
+        "vocal_separation_time": 0,
+        "vocal_pitch_analysis_time": 7,
+        "background_instrument_analysis_time": 0,
+        "total_analysis_time": 26
+    }
+}

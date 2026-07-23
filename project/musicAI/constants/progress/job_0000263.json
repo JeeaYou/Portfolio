@@ -1,0 +1,32 @@
+{
+    "status": "cancelled",
+    "total_files": 3,
+    "current_file_index": 1,
+    "processed_count": 0,
+    "current_step": "由于用户离开页面，分析已取消。",
+    "files": [
+        {
+            "index": 1,
+            "file_name": "All In My Mind - Jazz Dream Pop.mp3",
+            "status": "failed",
+            "percent": 100
+        },
+        {
+            "index": 2,
+            "file_name": "City Of Stars.mp3",
+            "status": "waiting",
+            "percent": 0
+        },
+        {
+            "index": 3,
+            "file_name": "The Dark Protector.mp3",
+            "status": "waiting",
+            "percent": 0
+        }
+    ],
+    "result": null,
+    "error": null,
+    "cancel_requested": true,
+    "cancel_reason": "user_navigation",
+    "language": "zh"
+}

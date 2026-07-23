@@ -1,0 +1,73 @@
+{% macro summary_stat(card_class, icon, label, field, unit_text='') %}
+                  <div class="summary-stat-card {{ card_class }}">
+                    <span class="summary-stat-icon">{{ icon }}</span>
+                    <div>
+                      <span>{{ label }}</span>
+                      <strong><span data-field="{{ field }}"></span>{% if unit_text %} <em>{{ unit_text }}</em>{% endif %}</strong>
+                    </div>
+                  </div>
+{% endmacro %}
+
+<section id="cat-{{ cat.category_id }}" class="music-ai-hero">
+  <div class="music-ai-badge">{{ t('musicai_hero_badge') }}</div>
+
+  <h1>{{ cat.display_name }}</h1>
+  <p>{{ cat.display_desc }}</p>
+
+  <div class="upload-box">
+    <label for="audioFile" class="upload-label">
+      <span class="upload-label-title">{{ t('musicai_upload_label_title') }}</span>
+      <span class="upload-label-button">{{ t('musicai_upload_file_button') }}</span>
+    </label>
+
+    <input
+      id="audioFile"
+      class="audio-file-input"
+      type="file"
+      accept=".mp3,.wav,audio/*"
+      multiple
+    >
+
+    <div class="selected-file-panel">
+      <div id="selectedFileName" class="selected-file-name is-empty">
+        <p id="selectedFileEmptyText" class="selected-file-empty-text">
+          {{ t('musicai_no_file_selected') }}
+        </p>
+
+        <div id="selectedFileCountRow" class="selected-file-count" hidden>
+          <span id="selectedFileCountText">{{ t('musicai_selected_file_count_default') }}</span>
+
+          <button id="clearFileBtn" class="clear-file-btn" type="button" style="display: none;">
+            {{ t('musicai_clear_all_files') }}
+          </button>
+        </div>
+
+        <div id="selectedFileList" class="selected-file-list" hidden></div>
+
+        <div id="selectedFileItemBlueprint" class="selected-file-item" hidden>
+          <span class="selected-file-icon" aria-hidden="true">♪</span>
+
+          <span class="selected-file-meta">
+            <span class="selected-file-text"></span>
+            <span class="selected-file-size"></span>
+          </span>
+
+          <span class="selected-file-type"></span>
+
+          <button
+            class="remove-file-btn"
+            type="button"
+            data-index=""
+            aria-label="{{ t('musicai_remove_file_aria') }}"
+          >
+            ×
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <button id="analyzeBtn" class="analyze-btn" type="button">
+      {{ t('musicai_analyze_button') }}
+    </button>
+  </div>
+</section>

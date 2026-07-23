@@ -1,0 +1,233 @@
+{% macro summary_stat(card_class, icon, label, field, unit_text="") %}
+  <div class="summary-stat-card {{ card_class }}">
+    <span class="summary-stat-icon">{{ icon }}</span>
+    <div>
+      <span>{{ label }}</span>
+      <strong>
+        <span data-field="{{ field }}"></span>
+        {% if unit_text %}<em>{{ unit_text }}</em>{% endif %}
+      </strong>
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro info_box(icon, label, field) %}
+  <div class="info-box">
+    <span class="info-icon">{{ icon }}</span>
+    <div>
+      <span>{{ label }}</span>
+      <strong data-field="{{ field }}"></strong>
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro time_box(label, field) %}
+  <div class="time-box">
+    <span>{{ label }}</span>
+    <strong data-field="{{ field }}"></strong>
+  </div>
+{% endmacro %}
+
+{% macro metric_row(icon, label, field, help_key) %}
+  <p class="metric-row">
+    <span aria-hidden="true">{{ icon }}</span>
+    <b class="metric-label" tabindex="0" aria-describedby="tooltip-{{ field }}">
+      {{ label }}
+      <span id="tooltip-{{ field }}" class="metric-tooltip" role="tooltip">{{ t(help_key) }}</span>
+    </b>
+    <strong data-field="{{ field }}"></strong>
+  </p>
+{% endmacro %}
+
+<section id="cat-{{ cat.category_id }}" class="music-ai-anchor-section analysis-result-zone result-dashboard">
+  <section id="resultSection" class="result-section">
+    <h2>{{ t('musicai_result_title') }}</h2>
+    <p>{{ t('musicai_result_description') }}</p>
+
+    <div id="analysisProgressCard" class="analysis-progress-card" hidden>
+      <p class="progress-title">{{ t('musicai_progress_title') }}</p>
+      <p class="progress-desc">{{ t('musicai_progress_desc') }}</p>
+      <div id="fileProgressList" class="file-progress-list"></div>
+    </div>
+
+    <div id="analysisErrorCard" class="analysis-error" hidden>
+      <h2 id="analysisErrorTitle"></h2>
+      <p id="analysisErrorMessage"></p>
+    </div>
+
+    <div id="resultRoot" class="analysis-dashboard-shell" hidden>
+      <div class="analysis-summary-panel">
+        <span class="complete-pill">{{ t('musicai_complete_pill') }}</span>
+
+        <div class="summary-grid">
+          {{ summary_stat('summary-stat-file', '♬', t('musicai_summary_total_file_count'), 'summary_total_file_count', t('musicai_summary_file_unit')) }}
+          {{ summary_stat('summary-stat-duration', '♪', t('musicai_summary_total_music_duration'), 'summary_total_music_duration') }}
+          {{ summary_stat('summary-stat-time', '◷', t('musicai_summary_total_execution_time'), 'summary_total_program_execution_time') }}
+        </div>
+      </div>
+
+      <div id="analysisTrackTabs" class="analysis-track-tabs"></div>
+      <div id="analysisTrackCards" class="analysis-track-cards"></div>
+
+      <div class="analysis-footnote">
+        <span>i</span>
+        <p>{{ t('musicai_analysis_footnote') }}</p>
+      </div>
+    </div>
+
+    <div id="analysisBlueprints" hidden>
+      <div id="fileProgressItemBlueprint" class="file-progress-item">
+        <div class="file-progress-header">
+          <span class="file-progress-name"></span>
+          <span class="file-progress-percent">0%</span>
+        </div>
+
+        <div class="file-progress-track">
+          <div class="file-progress-bar" style="width: 0%;"></div>
+        </div>
+
+        <p class="file-progress-status">{{ t('musicai_progress_waiting') }}</p>
+      </div>
+
+      <button id="analysisTrackTabBlueprint" class="analysis-track-tab" type="button">
+        <span class="tab-wave-icon" aria-hidden="true">
+          <i></i><i></i><i></i>
+        </span>
+
+        <span class="tab-title">
+          <strong data-field="tab_title"></strong>
+          <small data-field="tab_duration"></small>
+        </span>
+      </button>
+
+      <article id="analysisTrackCardBlueprint" class="analysis-card dashboard-track-card">
+        <div class="dashboard-track-top">
+          <div class="dashboard-track-title">
+            <span class="track-number" data-field="track_number"></span>
+
+            <div>
+              <h2 data-field="file_name"></h2>
+              <div class="mini-wave" aria-hidden="true">
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-grid">
+            {{ info_box('◷', t('musicai_info_duration'), 'duration_text') }}
+            {{ info_box('𝄞', t('musicai_info_key'), 'key') }}
+            {{ info_box('♜', t('musicai_info_tempo'), 'tempo') }}
+            {{ info_box('◇', t('musicai_info_genre'), 'genre') }}
+          </div>
+        </div>
+
+        <div class="analysis-dashboard-grid">
+          <section class="analysis-section original-analysis-card">
+            <h3><span>◆</span> {{ t('musicai_original_audio_title') }}</h3>
+
+            <div class="metric-columns original-metric-columns">
+              <div class="metric-group original-metric-left">
+                {{ metric_row('♬', t('musicai_metric_key_confidence'), 'key_confidence', 'musicai_help_key_confidence') }}
+                {{ metric_row('◎', t('musicai_metric_tempo_category'), 'tempo_category', 'musicai_help_tempo_category') }}
+                {{ metric_row('◷', t('musicai_metric_tempo_description'), 'tempo_description', 'musicai_help_tempo_description') }}
+
+                <hr>
+
+                {{ metric_row('♪', t('musicai_metric_rhythm_pattern'), 'rhythm_pattern_detail', 'musicai_help_rhythm_pattern') }}
+                {{ metric_row('♯', t('musicai_metric_beat_count'), 'beat_count', 'musicai_help_beat_count') }}
+                {{ metric_row('✦', t('musicai_metric_beat_strength'), 'beat_strength', 'musicai_help_beat_strength') }}
+                {{ metric_row('⌘', t('musicai_metric_beat_regularity'), 'beat_regularity', 'musicai_help_beat_regularity') }}
+
+                <hr>
+
+                {{ metric_row('✦', t('musicai_metric_energy'), 'energy_level', 'musicai_help_energy') }}
+                {{ metric_row('◇', t('musicai_metric_energy_score'), 'energy_score', 'musicai_help_energy_score') }}
+                <!-- {{ metric_row('⌁', t('musicai_metric_rms'), 'rms', 'musicai_help_rms') }} -->
+                {{ metric_row('◎', t('musicai_metric_mood'), 'mood_detail', 'musicai_help_mood') }}
+              </div>
+
+              <div class="metric-group original-metric-right">
+                {{ metric_row('✣', t('musicai_metric_dynamic_range'), 'dynamic_range', 'musicai_help_dynamic_range') }}
+                {{ metric_row('♬', t('musicai_metric_danceability'), 'danceability', 'musicai_help_danceability') }}
+                {{ metric_row('♫', t('musicai_metric_hnr'), 'harmonic_to_noise_ratio', 'musicai_help_hnr') }}
+                <hr>
+
+                {{ metric_row('⌁', t('musicai_metric_spectral_centroid'), 'spectral_centroid', 'musicai_help_spectral_centroid') }}
+                <!-- {{ metric_row('⌁', t('musicai_metric_spectral_bandwidth'), 'spectral_bandwidth', 'musicai_help_spectral_bandwidth') }} -->
+                <!-- {{ metric_row('⌁', t('musicai_metric_spectral_rolloff'), 'spectral_rolloff', 'musicai_help_spectral_rolloff') }} -->
+                {{ metric_row('⌁', t('musicai_metric_spectral_flatness'), 'spectral_flatness', 'musicai_help_spectral_flatness') }}
+                {{ metric_row('⌁', t('musicai_metric_spectral_flux'), 'spectral_flux', 'musicai_help_spectral_flux') }}
+                {{ metric_row('⌁', t('musicai_metric_zero_crossing_rate'), 'zero_crossing_rate', 'musicai_help_zero_crossing_rate') }}
+
+                <hr>
+
+                <!-- {{ metric_row('⌁', t('musicai_metric_mfcc_mean'), 'mfcc_mean', 'musicai_help_mfcc_mean') }} -->
+                <!-- {{ metric_row('⌁', t('musicai_metric_mfcc_std'), 'mfcc_std', 'musicai_help_mfcc_std') }} -->
+                <!-- {{ metric_row('⌁', t('musicai_metric_spectral_contrast'), 'spectral_contrast_mean', 'musicai_help_spectral_contrast') }} -->
+                {{ metric_row('⌁', t('musicai_metric_chroma_mean'), 'chroma_mean', 'musicai_help_chroma_mean') }}
+                <!-- {{ metric_row('⌁', t('musicai_metric_tonnetz_mean'), 'tonnetz_mean', 'musicai_help_tonnetz_mean') }} -->
+              </div>
+            </div>
+          </section>
+
+          <div class="analysis-side-column">
+            <section class="analysis-section vocal-analysis-card">
+              <h3><span>♫</span> {{ t('musicai_vocal_title') }}</h3>
+
+              <div class="metric-columns vocal-metric-columns">
+                <div class="metric-group vocal-metric-left">
+                  {{ metric_row('✦', t('musicai_vocal_presence'), 'vocal_presence', 'musicai_help_vocal_presence') }}
+                  {{ metric_row('♬', t('musicai_vocal_octaves'), 'pitch_range_octaves', 'musicai_help_vocal_octaves') }}
+                  {{ metric_row('↟', t('musicai_vocal_pitch_range'), 'pitch_range_semitones', 'musicai_help_vocal_pitch_range') }}
+                </div>
+
+                <div class="metric-group vocal-metric-right">
+                  {{ metric_row('↡', t('musicai_vocal_min_pitch'), 'vocal_pitch_min', 'musicai_help_vocal_min_pitch') }}
+                  {{ metric_row('↟', t('musicai_vocal_max_pitch'), 'vocal_pitch_max', 'musicai_help_vocal_max_pitch') }}
+                </div>
+              </div>
+            </section>
+
+            <section class="analysis-section instrument-analysis-card">
+              <h3><span>◆</span> {{ t('musicai_instrument_title') }}</h3>
+
+              <div class="instrument-metric-list">
+                <p class="instrument-count-row">
+                  <span class="instrument-row-icon">♬</span>
+                  <b>{{ t('musicai_instrument_count') }}</b>
+                  <strong data-field="instrument_count"></strong>
+                </p>
+
+                <p class="instrument-count-row instrument-label-row">
+                  <span class="instrument-row-icon">✣</span>
+                  <b>{{ t('musicai_instruments') }}</b>
+                </p>
+              </div>
+
+              <div class="instrument-list" data-field="instrument_list"></div>
+            </section>
+
+            <section class="analysis-time-detail">
+              <h3><span>◷</span> {{ t('musicai_time_title') }}</h3>
+
+              <div class="time-grid">
+                {{ time_box(t('musicai_time_audio_analysis'), 'original_audio_analysis_time') }}
+
+                {{ time_box(t('musicai_time_vocal_separation'), 'vocal_separation_time') }}
+
+                {{ time_box(t('musicai_time_vocal_pitch_analysis'), 'vocal_pitch_analysis_time') }}
+
+                {{ time_box(t('musicai_time_instrument_analysis'), 'background_instrument_analysis_time') }}
+
+                <div class="total-time-box">
+                  <span>{{ t('musicai_time_total_time') }}</span>
+                  <strong data-field="total_analysis_time"></strong>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+</section>
