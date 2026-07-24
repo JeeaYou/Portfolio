@@ -1,6 +1,6 @@
 /* =========================
    Music AI Page - Cleaned CSS
-   중복/미사용 스타일 정리본
+   Duplicate and unused styles removed
 ========================= */
 
 /* =========================
@@ -261,6 +261,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 14px;
   padding: 13px 16px;
   color: var(--primary);
   font-size: 12px;
@@ -2195,10 +2196,9 @@
   }
 }
 
-
 /* =========================
    Upload Selected Files - HTML Blueprint Rendering
-   JS createElement 없이 HTML 구조를 복제해서 사용
+   Uses cloned HTML blueprints instead of creating elements with JavaScript
 ========================= */
 
 .selected-file-name [hidden],
@@ -2217,10 +2217,6 @@
   text-align: center !important;
 }
 
-.selected-file-count {
-  gap: 14px;
-}
-
 .selected-file-count > span {
   min-width: 0;
   color: var(--primary);
@@ -2237,9 +2233,8 @@
 
 /* =========================
    Sidebar Active State
-   현재 섹션 선택 표시
+   Highlights the currently selected section
 ========================= */
-
 
 .t-nav-list a.is-active svg,
 .t-nav-list a[aria-current="page"] svg,
@@ -2249,8 +2244,8 @@
 }
 
 /* =========================
-   Original audio metric tooltip
-   항목명 hover/focus 시 설명 표시
+   Original Audio Metric Tooltip
+   Shows metric descriptions on hover or keyboard focus
 ========================= */
 
 .original-analysis-card,

@@ -2,29 +2,66 @@
 <footer id="dkFoot" class="t-footer" role="contentinfo">
   <div class="t-footer-inner">
 
-    <div class="footer-stats">
-      <span class="footer-stat">
-        <span class="stat-icon">◉</span>
-        <b>{{ total_visits or "0" }}</b>
-      </span>
+    <nav class="footer-social-links" aria-label="Social and contact links">
+      <a
+        href="https://github.com/JeeaYou/Portfolio"
+        class="footer-social-link footer-github-link"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Open Jeea's GitHub portfolio"
+      >
+        <span class="footer-social-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path
+              fill="currentColor"
+              d="M12 .7A11.3 11.3 0 0 0 8.4 22.8c.6.1.8-.3.8-.6v-2.2c-3.4.7-4.1-1.4-4.1-1.4-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-6A4.7 4.7 0 0 1 5.7 8.5a4.4 4.4 0 0 1 .1-3.2s1-.3 3.1 1.2a10.8 10.8 0 0 1 5.7 0c2.1-1.5 3.1-1.2 3.1-1.2a4.4 4.4 0 0 1 .1 3.2A4.7 4.7 0 0 1 19 11.7c0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.3 11.3 0 0 0 12 .7Z"
+            />
+          </svg>
+        </span>
+        <span>GitHub</span>
+      </a>
 
-      <span class="footer-divider"></span>
+      <span class="footer-divider" aria-hidden="true"></span>
 
-      <span class="footer-stat">
-        <span class="stat-icon">Today</span>
-        <b class="today-num">{{ today_visits or "0" }}</b>
-      </span>
+      <a
+        href="https://www.linkedin.com/in/jeea-you-5150562bb/"
+        class="footer-social-link footer-linkedin-link"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Open Jeea's LinkedIn profile"
+      >
+        <span class="footer-social-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path
+              fill="currentColor"
+              d="M5.3 7.8A2.3 2.3 0 1 0 5.3 3a2.3 2.3 0 0 0 0 4.7ZM3.4 21h3.8V9H3.4v12ZM9.4 9v12h3.8v-6.7c0-1.8.3-3.5 2.6-3.5 2.2 0 2.2 2.1 2.2 3.6V21h3.8v-7.4c0-3.6-.8-6.4-5-6.4-2 0-3.4 1.1-4 2.1h-.1V9H9.4Z"
+            />
+          </svg>
+        </span>
+        <span>LinkedIn</span>
+      </a>
 
-      <span class="footer-divider"></span>
+      <span class="footer-divider" aria-hidden="true"></span>
 
-      <span class="footer-stat">
-        <span class="stat-icon">Yesterday</span>
-        <b class="yesterday-num">{{ yesterday_visits or "0" }}</b>
-      </span>
-    </div>
+      <a
+        href="mailto:yumei199200@gmail.com"
+        class="footer-social-link footer-email-link"
+        aria-label="Send an email to Jeea"
+      >
+        <span class="footer-social-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path
+              fill="currentColor"
+              d="M3 5h18a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Zm9 7.2L20.4 7H3.6L12 12.2ZM3 17h18V9.3l-8.5 5.2a1 1 0 0 1-1 0L3 9.3V17Z"
+            />
+          </svg>
+        </span>
+        <span>yumei199200@gmail.com</span>
+      </a>
+    </nav>
 
     <div class="footer-copy">
-      © 2026 Jeea. All rights reserved.
+      © 2026 <strong>Jeea.</strong> All rights reserved.
     </div>
 
   </div>

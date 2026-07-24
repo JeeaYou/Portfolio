@@ -1,6 +1,6 @@
 /* =========================================================
    layout.css
-   헤더 / 사이드바 / 메인 레이아웃 / 카드 / 버튼 / 푸터
+   Header / Sidebar / Main Layout / Cards / Buttons / Footer
 ========================================================= */
 
 /* =========================
@@ -130,7 +130,7 @@ body {
   transform: translateY(-1px);
 }
 
-/* 예전 topnav 장식 제거 */
+/* Removes legacy top navigation decorations. */
 .t-topnav a::before,
 .t-topnav a::after,
 .t-topnav a span::before,
@@ -551,7 +551,7 @@ body {
   font-weight: bold;
 }
 
-/* 하위 카테고리 */
+/* Subcategory navigation */
 .sub_category_list {
   list-style: none;
   margin: 8px 0 12px 38px;
@@ -980,29 +980,6 @@ body {
   color: #333333;
 }
 
-/* =========================
-   6. Footer
-========================= */
-
-.area_foot {
-  position: fixed;
-  bottom: 0;
-  z-index: 1;
-
-  width: 100%;
-  height: 50px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background-color: #f0f0f0;
-  color: #aaaaaa;
-
-  font-size: 12px;
-  line-height: 50px;
-  text-align: center;
-}
 
 /* =========================
    7. Responsive
@@ -1170,133 +1147,24 @@ body {
   color: #4f46e5;
 }
 
-/* =========================
-  Footer
-========================= */
-
-.t-footer {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 900;
-  height: 50px;
-  background: rgba(255, 255, 255, 0.92);
-  border-top: 1px solid rgba(226, 232, 240, 0.95);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  box-shadow: 0 -12px 36px rgba(15, 23, 42, 0.06);
-}
-
-.t-footer-inner {
-  width: 100%;
-  height: 100%;
-  padding: 0 44px;
-  box-sizing: border-box;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-}
-
-.footer-stats {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  color: #64748b;
-  font-size: 0.86rem;
-  font-weight: 700;
-}
-
-.footer-stat {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  white-space: nowrap;
-}
-
-.footer-stat b {
-  color: #4f46e5;
-  font-size: 0.95rem;
-  font-weight: 900;
-}
-
-.today-num {
-  color: #10b981 !important;
-}
-
-.yesterday-num {
-  color: #f97316 !important;
-}
-
-.stat-icon {
-  color: #334155;
-  font-size: 0.78rem;
-  font-weight: 800;
-}
-
-.footer-divider {
-  width: 1px;
-  height: 18px;
-  background: rgba(203, 213, 225, 0.9);
-}
-
-.footer-copy {
-  color: #64748b;
-  font-size: 0.86rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-/* footer가 본문을 가리지 않게 */
-/* body {
-  padding-bottom: 64px;
-} */
-
-@media screen and (max-width: 760px) {
-  .t-footer {
-    height: 76px;
-  }
-
-  .t-footer-inner {
-    padding: 0 18px;
-    flex-direction: column;
-    justify-content: center;
-    gap: 8px;
-  }
-
-  .footer-stats {
-    gap: 10px;
-    font-size: 0.78rem;
-  }
-
-  .footer-copy {
-    font-size: 0.76rem;
-  }
-
-  body {
-    padding-bottom: 76px;
-  }
-}
 
 /* =========================
    Project Hover Header
-   Projects hover 시 header 높이 200px 변경
+   Expands the header when the Projects menu is open
 ========================= */
 
-/* JS가 hover 시 붙이는 클래스 */
+/* Applied by JavaScript while the Projects menu is open. */
 .t-header.is-project-open {
   height: 25% !important;
 }
 
-/* 헤더 높이가 늘어나도 기존 메뉴 위치는 그대로 유지 */
+/* Keeps the main header content aligned while the header expands. */
 .t-header .t-container {
   height: 120px !important;
   max-height: 120px !important;
 }
 
-/* Projects 메뉴 기준 */
+/* Positions the Projects menu trigger. */
 .t-project-hover-item {
   position: relative;
   display: flex;
@@ -1304,12 +1172,12 @@ body {
   cursor: pointer;
 }
 
-/* Projects 글자도 손모양 */
+/* Shows a pointer cursor over the Projects label. */
 .t-project-main-link {
   cursor: pointer !important;
 }
 
-/* Projects와 하위 메뉴 사이에 마우스가 지나가도 hover 끊김 방지 */
+/* Prevents the hover state from breaking between the trigger and submenu. */
 .t-project-hover-item::after {
   content: "";
   position: absolute;
@@ -1322,7 +1190,7 @@ body {
   transform: translateX(-50%);
 }
 
-/* 하위 프로젝트 메뉴 */
+/* Project submenu */
 .t-project-hover-menu {
   position: absolute;
   left: 50%;
@@ -1348,7 +1216,7 @@ body {
     transform 0.2s ease;
 }
 
-/* 헤더가 열렸을 때 프로젝트 이름 표시 */
+/* Displays project links while the expanded header is open. */
 .t-header.is-project-open .t-project-hover-menu {
   opacity: 1;
   visibility: visible;
@@ -1356,7 +1224,7 @@ body {
   transform: translateX(-50%) translateY(0);
 }
 
-/* 프로젝트 이름 링크 */
+/* Project submenu links */
 .t-project-hover-link {
   min-height: 34px !important;
   padding: 0 14px !important;
@@ -1389,13 +1257,13 @@ body {
   transform: translateY(-1px);
 }
 
-/* 프로젝트 이름에는 기존 nav underline 제거 */
+/* Removes the default navigation underline from project links. */
 .t-project-hover-link::before,
 .t-project-hover-link::after {
   display: none !important;
 }
 
-/* 모바일에서는 기존 헤더 유지 */
+/* Keeps the standard compact header on mobile devices. */
 @media (max-width: 980px) {
   .t-header.is-project-open {
     height: 72px !important;
@@ -1408,5 +1276,194 @@ body {
 
   .t-project-hover-menu {
     display: none;
+  }
+}
+
+/* =========================
+   Footer
+========================= */
+
+.t-footer {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 900;
+  width: 100%;
+  min-height: 64px;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.t-footer-inner {
+  width: 100%;
+  min-height: 64px;
+  padding: 12px 42px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  border-top: 1px solid rgba(124, 92, 255, 0.12);
+  background:
+    radial-gradient(circle at 85% 50%, rgba(124, 92, 255, 0.05), transparent 30%),
+    rgba(255, 255, 255, 0.96);
+  box-shadow: 0 -6px 24px rgba(79, 70, 229, 0.04);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-sizing: border-box;
+}
+
+.footer-social-links {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  gap: 18px;
+}
+
+.footer-social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: #4b5563;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.footer-social-link:hover {
+  color: #111827;
+  transform: translateY(-1px);
+}
+
+.footer-social-icon {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow:
+    0 5px 14px rgba(15, 23, 42, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.98);
+}
+
+.footer-social-icon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.footer-github-link .footer-social-icon {
+  color: #24292f;
+}
+
+.footer-linkedin-link .footer-social-icon {
+  color: #0a66c2;
+}
+
+.footer-email-link .footer-social-icon {
+  color: #8b5cf6;
+}
+
+.footer-github-link .footer-social-icon path {
+  fill: #24292f;
+}
+
+.footer-linkedin-link .footer-social-icon path {
+  fill: #0a66c2;
+}
+
+.footer-email-link .footer-social-icon path {
+  fill: #8b5cf6;
+}
+
+.footer-divider {
+  width: 1px;
+  height: 26px;
+  flex: 0 0 auto;
+  background: rgba(148, 163, 184, 0.26);
+}
+
+.footer-copy {
+  flex: 0 0 auto;
+  color: #8b93a5;
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 400;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.footer-copy strong {
+  color: #8b5cf6;
+  font-weight: 700;
+}
+
+body {
+  padding-bottom: 64px;
+}
+
+@media (max-width: 900px) {
+  .t-footer {
+    position: static;
+  }
+
+  .t-footer-inner {
+    padding: 18px 24px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .footer-social-links {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .footer-divider {
+    display: none;
+  }
+
+  .footer-copy {
+    width: 100%;
+    text-align: left;
+  }
+
+  body {
+    padding-bottom: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .footer-social-links {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+
+  .footer-social-link {
+    width: 100%;
+    padding: 6px 8px;
+    border-radius: 10px;
+    box-sizing: border-box;
+  }
+
+  .footer-social-link:hover {
+    background: rgba(124, 92, 255, 0.05);
+  }
+
+  .footer-email-link span:last-child {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
