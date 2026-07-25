@@ -17,6 +17,9 @@ project/musicAI/static/music/separated/
 project/musicAI/static/music/analysis_results/
 project/musicAI/static/music/progress/
 
+# EyecareX generated files
+project/eyecarex/static/csv_file/
+
 # Logs
 *.log
 
