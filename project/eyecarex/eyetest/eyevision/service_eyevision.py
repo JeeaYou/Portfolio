@@ -229,10 +229,10 @@ def cam():
                 # 결과 화면까지 프레임에 그려서 보여주고 루프 종료
                 overlay_test_result_screen(frame, background, name, List, timeStart, height, w2, h2, font, eyecarex_dir, lang)
             elif next_test:
+                eye = "왼쪽눈" if lang == "ko" else "Right Eye"
                 if overlay_next_test_screen(frame, background, timeStart, height, w2, h2, eye, eyecarex_dir, lang):
                     next_test = False
 
-                    eye = "왼쪽눈" if lang == "ko" else "Right Eye"
 
                     level = 1
                     wrong_cnt = 0

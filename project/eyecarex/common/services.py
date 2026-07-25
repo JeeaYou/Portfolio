@@ -141,9 +141,9 @@ def save_results(userID, nowDatetime, eye, answer, List, disease_name, eyecarex_
         'tf':answer
     })  
     df = pd.DataFrame(List)
-    out_dir = eyecarex_static + 'csv_file'
+    out_dir = eyecarex_static + '/csv_file'
     os.makedirs(out_dir, exist_ok=True)
-    df.to_csv(eyecarex_static + f'csv_file/{disease_name}.csv')
+    df.to_csv(eyecarex_static + f'/csv_file/{disease_name}.csv')
     return List
 
 # 계속 검사 창

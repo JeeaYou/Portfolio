@@ -256,7 +256,7 @@ def cam():
 
                         # 3개 선택 완료 시 판정
                         if len(seq) == 3:
-                            answer = decide_answer(tuple(seq))
+                            answer = decide_answer(tuple(seq), lang)
                             seq.clear()
 
                             result_list = save_results(
@@ -322,6 +322,7 @@ def cam():
                         break
 
                 elif next_test:
+                    eye = "왼쪽눈" if lang == "ko" else "Right Eye"
                     should_next = overlay_next_test_screen(
                         frame,
                         background,
@@ -336,7 +337,6 @@ def cam():
 
                     if should_next:
                         next_test = False
-                        eye = "왼쪽눈" if lang == "ko" else "Right Eye"
                         selected_btns = []
                         seq = []
                         counter = 0

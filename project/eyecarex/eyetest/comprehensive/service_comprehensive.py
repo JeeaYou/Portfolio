@@ -84,7 +84,7 @@ TESTS = {
     "maculopathy": {
         "name": {
             "ko": "황반변성",
-            "en": "Macular degeneration",
+            "en": "Maculopathy",
         },
         "img_rel": (
             "image",
@@ -325,11 +325,11 @@ def cam(disease):
                 # 다음 눈 검사 안내 화면
                 # ----------------------------
                 elif next_test:
+                    eye = "왼쪽눈" if lang == "ko" else "Right eye"
                     should_next = overlay_next_test_screen(frame, background, time_start, height, w2, h2, eye, eyecarex_dir, lang)
 
                     if should_next:
                         next_test = False
-                        eye = "왼쪽눈" if lang == "ko" else "Left eye"
                         counter, active_button = 0, None
                         time_start = time.time()
 
