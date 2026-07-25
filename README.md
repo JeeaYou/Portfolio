@@ -411,3 +411,4 @@ Backend Developer focused on Java, Spring Boot, Python, Flask, SQL, and applied 
 
 * GitHub: [JeeaYou](https://github.com/JeeaYou)
 * Repository: [Portfolio](https://github.com/JeeaYou/Portfolio)
+* Linked-in: [JeeaYou](https://www.linkedin.com/in/jeea-you-5150562bb)
