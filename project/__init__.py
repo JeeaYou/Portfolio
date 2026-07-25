@@ -9,7 +9,10 @@ from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 
-# .env 파일 로드
+# =========================
+# Environment and Database
+# =========================
+
 ROOT_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(ROOT_DIR / ".env", override=True)
 
@@ -20,10 +23,6 @@ bio_text = "Backend & AI"
 
 
 def _get_database_uri():
-    """
-    DB 연결 문자열 생성.
-    코드 안에 비밀번호를 직접 쓰지 않기 위해 환경변수를 사용한다.
-    """
 
     database_url = os.getenv("DATABASE_URL")
     if database_url:
@@ -47,17 +46,11 @@ def _get_database_uri():
     )
 
 
+# =========================
+# Localization Helpers
+# =========================
+
 def _get_lang_value(obj, lang, field_type="name"):
-    """
-    선택 언어에 맞는 값을 가져온다.
-
-    field_type="name"이면:
-      ko_name / en_name / zh_name
-
-    field_type="des"이면:
-      ko_des / en_des / zh_des
-    """
-
     if obj is None:
         return ""
 
@@ -94,11 +87,6 @@ def _get_lang_value(obj, lang, field_type="name"):
 
 
 def _object_to_dict(obj):
-    """
-    SQLAlchemy ORM 객체를 dict로 복사한다.
-    원본 DB 객체의 name을 직접 바꾸면 commit 시 DB 값이 바뀔 수 있으므로 복사본을 만든다.
-    """
-
     if obj is None:
         return {}
 
@@ -119,17 +107,6 @@ def _object_to_dict(obj):
 
 
 def localize_record(obj, lang=None):
-    """
-    Project / Category / Feature 객체를 선택 언어 기준 출력용 객체로 변환한다.
-
-    예:
-      lang == "ko" -> name = ko_name, des = ko_des
-      lang == "en" -> name = en_name, des = en_des
-      lang == "zh" -> name = zh_name, des = zh_des
-
-    화면에서는 p.name, p.des만 사용하면 된다.
-    """
-
     if obj is None:
         return None
 
@@ -164,15 +141,15 @@ def localize_record(obj, lang=None):
 
 
 def localize_records(rows, lang=None):
-    """
-    여러 개의 객체를 선택 언어 기준으로 변환한다.
-    """
-
     if lang is None:
         lang = getattr(g, "lang", "ko")
 
     return [localize_record(row, lang) for row in rows]
 
+
+# =========================
+# Application Factory
+# =========================
 
 def create_app():
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -190,18 +167,22 @@ def create_app():
 
     db.init_app(app)
 
+    # =========================
+    # Request Language
+    # =========================
+
     @app.before_request
     def set_current_language():
-        """
-        메인페이지에서 선택한 언어를 쿠키에서 읽는다.
-        쿠키가 없으면 기본값은 ko.
-        """
         lang = request.cookies.get("lang", "ko")
 
         if lang not in SUPPORTED_LANGS:
             lang = "ko"
 
         g.lang = lang
+
+    # =========================
+    # Blueprint Registration
+    # =========================
 
     from .main import bp as main_bp
     app.register_blueprint(main_bp)
@@ -215,6 +196,10 @@ def create_app():
     from . import musicAI
     musicAI.register_into(app)
 
+    # =========================
+    # Startup Checks
+    # =========================
+
     with app.app_context():
         print("=== URL MAP ===")
         for r in app.url_map.iter_rules():
@@ -225,6 +210,10 @@ def create_app():
             print("DB ping OK")
         except Exception as e:
             print("DB ping FAILED:", e)
+
+    # =========================
+    # Sidebar Helpers
+    # =========================
 
     def _get_current_project_path():
         path = request.path or "/"
@@ -426,13 +415,12 @@ def create_app():
             "category": category,
         }
 
+    # =========================
+    # Template Context Processors
+    # =========================
+
     @app.context_processor
     def inject_i18n():
-        """
-        모든 템플릿에서 사용 가능:
-        {{ t('content_key') }}
-        {{ current_lang }}
-        """
         from project.models import Translate
 
         lang = getattr(g, "lang", "ko")
@@ -474,10 +462,6 @@ def create_app():
 
     @app.context_processor
     def inject_header_projects():
-        """
-        header.html의 Projects hover 메뉴에서 사용할 프로젝트 리스트.
-        모든 페이지에서 header_projects 사용 가능.
-        """
         from project.models import Project
 
         lang = getattr(g, "lang", "ko")
