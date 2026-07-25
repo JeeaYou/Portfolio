@@ -24,6 +24,10 @@ from weasyprint import HTML, CSS
 bp = Blueprint("main", __name__)
 
 
+# =========================
+# Main Page Routes
+# =========================
+
 @bp.get("/")
 def index():
     lang = getattr(g, "lang", "ko")
@@ -83,6 +87,10 @@ def archive():
     )
 
 
+# =========================
+# Resume Helpers
+# =========================
+
 def get_resume_content(row, lang):
     if lang == "ko":
         return row.ko_content or row.en_content or ""
@@ -90,6 +98,10 @@ def get_resume_content(row, lang):
         return row.zh_content or row.en_content or ""
     return row.en_content or ""
 
+
+# =========================
+# Resume Page
+# =========================
 
 @bp.get("/resume")
 def resume():
@@ -228,10 +240,14 @@ def resume():
     )
 
 
+# =========================
+# Resume Update API
+# =========================
+
 @bp.post("/resume/update")
 def update_resume():
     """
-    resume.js에서 보내는 데이터 형식:
+    Expected data format sent from resume.js:
 
     {
       "lang": "ko",
@@ -320,6 +336,10 @@ def update_resume():
             "message": f"DB 저장 중 오류가 발생했습니다: {str(e)}"
         }), 500
     
+
+# =========================
+# Resume Email API
+# =========================
 
 @bp.post("/resume/send")
 def send_resume():
@@ -453,6 +473,10 @@ def send_resume():
             "message": f"메일 발송 중 오류가 발생했습니다: {str(e)}"
         }), 500
     
+
+# =========================
+# Resume PDF Download API
+# =========================
 
 @bp.post("/resume/download")
 def download_resume_pdf():

@@ -1,8 +1,8 @@
 /* =========================================================
    Resume Page
    UK CV Style - Modern Minimal
-   화면: 프로필 이미지 표시
-   출력/PDF: 프로필 이미지 숨김
+   Screen: Show Profile Image
+   Print / PDF: Hide Profile Image
 ========================================================= */
 
 .resume-page {
@@ -543,7 +543,7 @@
 
 /* =========================
    Print / PDF
-   영국 CV 제출용: 사진 숨김
+   Hide the profile image for UK CV submissions
 ========================= */
 
 @media print {
@@ -730,7 +730,7 @@
   color: #dc2626;
 }
 
-/* 편집 모드 표시 */
+/* Edit Mode Indicator */
 .resume-paper.is-editing {
   outline: 2px dashed rgba(37, 99, 235, 0.35);
   outline-offset: 8px;
@@ -769,7 +769,7 @@
   }
 }
 
-/* Print/PDF에서는 버튼, 이메일 폼, 편집 표시 숨김 */
+/* Hide buttons, the email form, and edit indicators in Print / PDF */
 @media print {
   .resume-send-form,
   .resume-actions {
